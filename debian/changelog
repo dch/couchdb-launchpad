@@ -1,5 +1,20 @@
 apache-couchdb (1.5.0-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release (Closes: #1234)
+  * Backport of Trusty/CouchDB for new upstream release (LP: #1254371)
+  * Includes following changes from Jason Gerard DeRose <jason@system76.com>
+  * Don't include `couchdb` info page in `couchdb-bin` binary package as it
+    provides no meaningful benefit over the `couchdb` man page (note this change
+    means we don't need to add a Build-Depends on `install-info` for Trusty)
+  * Remove Build-Depends: texlive-latex-base, texlive-latex-recommended,
+    texlive-latex-extra, texlive-fonts-recommended, texinfo (as documentation
+    thus produced doesn't get included in the binary packages anyway)
+  * debian/rules: don't call ./configure with --enable-strictness as we dropped
+    Build-Depends on `texlive-*`, `texinfo`, plus didn't add `install-info` 
+  * Add Build-Depends: lsb-release (used for [vendor] info in default.ini)
+  * debian/rules: insert proper [vendor] info in default.ini (note this should
+    be improved once there is a better mechanism upstream)
+  * debian/couchdb.upstart: start on filesystem and static-network-up,
+    stop on deconfiguring-networking, plus add "author" line
 
- -- vagrant <vagrant@unknown>  Mon, 09 Dec 2013 05:06:44 -0800
+ -- Dave Cottlehuber <dch@apache.org>  Mon, 09 Dec 2013 05:06:44 -0800
