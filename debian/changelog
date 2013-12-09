@@ -1,0 +1,5 @@
+apache-couchdb (1.5.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- vagrant <vagrant@unknown>  Mon, 09 Dec 2013 05:06:44 -0800
