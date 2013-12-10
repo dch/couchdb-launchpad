@@ -4,8 +4,8 @@
 	dh $@
 
 override_dh_auto_configure:
-	sed -i s/%package_author_name%/`lsb_release -si`/ etc/couchdb/default.ini.tpl
-	sed -i s/%version%/`lsb_release -sr`/ etc/couchdb/default.ini.tpl
+	sed -i s/%package_author_name%/`lsb_release -si`/ etc/couchdb/default.ini.tpl.in
+	sed -i s/%version%/`lsb_release -sr`/ etc/couchdb/default.ini.tpl.in
 	dh_auto_configure -- --disable-init
 
 override_dh_auto_install:
