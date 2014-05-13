@@ -1,3 +1,9 @@
+apache-couchdb (1.6.0-0ubuntu2) precise; urgency=low
+
+  * Remove init and launchd scripts using new configure options
+
+ -- Dave Cottlehuber <dch@apache.org>  Wed, 16 Jul 2014 16:13:34 -0700
+
 apache-couchdb (1.6.0-0ubuntu1) precise; urgency=low
 
   * Apache CouchDB 1.6.0 released
