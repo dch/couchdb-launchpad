@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10.3.11. /db/_purge &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>10.3.11. /db/_purge &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,9 +42,9 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../../index.html" />
-    <link rel="up" title="10.3. Database Methods" href="index.html" />
-    <link rel="next" title="10.4. Document Methods" href="../document/index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../../index.html" />
+    <link rel="up" title="10.3. Databases" href="index.html" />
+    <link rel="next" title="10.4. Documents" href="../document/index.html" />
     <link rel="prev" title="10.3.10. /db/_temp_view" href="temp-views.html" /> 
   </head>
   <body>
@@ -58,14 +58,14 @@ specific language governing permissions and limitations under the License.
           <a href="../../config-ref.html" title="Configuration Reference"
              >Config Reference</a> |</li>
         <li class="right" >
-          <a href="../document/index.html" title="10.4. Document Methods"
+          <a href="../document/index.html" title="10.4. Documents"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="temp-views.html" title="10.3.10. /db/_temp_view"
              accesskey="P">previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">10.3. Database Methods</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">10.3. Databases</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -77,8 +77,8 @@ specific language governing permissions and limitations under the License.
   <div class="section" id="db-purge">
 <span id="api-db-purge"></span><h1>10.3.11. <tt class="docutils literal"><span class="pre">/db/_purge</span></tt><a class="headerlink" href="#db-purge" title="Permalink to this headline">¶</a></h1>
 <dl class="post">
-<dt id="post--{db}-_purge">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_purge</tt><a class="headerlink" href="#post--{db}-_purge" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_purge">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_purge</tt><a class="headerlink" href="#post--db-_purge" title="Permalink to this definition">¶</a></dt>
 <dd><p>A database purge permanently removes the references to deleted documents
 from the database. Normal deletion of a document within CouchDB does not
 remove the document from the database, instead, the document is marked as
@@ -216,8 +216,8 @@ database must be examined.</p>
 <div class="section" id="db-missing-revs">
 <span id="api-db-missing-revs"></span><h1>10.3.12. <tt class="docutils literal"><span class="pre">/db/_missing_revs</span></tt><a class="headerlink" href="#db-missing-revs" title="Permalink to this headline">¶</a></h1>
 <dl class="post">
-<dt id="post--{db}-_missing_revs">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_missing_revs</tt><a class="headerlink" href="#post--{db}-_missing_revs" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_missing_revs">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_missing_revs</tt><a class="headerlink" href="#post--db-_missing_revs" title="Permalink to this definition">¶</a></dt>
 <dd><p>With given a list of document revisions, returns the document revisions that
 do not exist in the database.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -308,8 +308,8 @@ do not exist in the database.</p>
 <div class="section" id="db-revs-diff">
 <span id="api-db-revs-diff"></span><h1>10.3.13. <tt class="docutils literal"><span class="pre">/db/_revs_diff</span></tt><a class="headerlink" href="#db-revs-diff" title="Permalink to this headline">¶</a></h1>
 <dl class="post">
-<dt id="post--{db}-_revs_diff">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_revs_diff</tt><a class="headerlink" href="#post--{db}-_revs_diff" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_revs_diff">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_revs_diff</tt><a class="headerlink" href="#post--db-_revs_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a set of document/revision IDs, returns the subset of those that do
 not correspond to revisions stored in the database.</p>
 <p>Its primary use is by the replicator, as an important optimization: after
@@ -321,9 +321,9 @@ already-known document bodies.</p>
 IDs; but the values are structured differently:</p>
 <ul class="simple">
 <li>In the request, a value is an array of revision IDs for that document.</li>
-<li>In the response, a value is an object with a &#8220;missing&#8221;: key, whose value
+<li>In the response, a value is an object with a <tt class="docutils literal"><span class="pre">missing</span></tt>: key, whose value
 is a list of revision IDs for that document (the ones that are not stored
-in the database) and optionally a &#8220;possible_ancestors&#8221; key, whose value is
+in the database) and optionally a <tt class="docutils literal"><span class="pre">possible_ancestors</span></tt> key, whose value is
 an array of revision IDs that are known that might be ancestors of
 the missing revisions.</li>
 </ul>
@@ -365,7 +365,9 @@ the missing revisions.</li>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Response JSON Object:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>missing_revs</strong> (<em>object</em>) &#8211; Mapping of document ID to list of missed revisions</li>
+<li><strong>missing</strong> (<em>array</em>) &#8211; List of missed revisions for specified document</li>
+<li><strong>possible_ancestors</strong> (<em>array</em>) &#8211; List of revisions that <em>may be</em> ancestors
+for specified document and its current revision in requested database</li>
 </ul>
 </td>
 </tr>
@@ -387,7 +389,8 @@ the missing revisions.</li>
 <span class="p">{</span>
   <span class="nt">&quot;190f721ca3411be7aa9477db5f948bbb&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="s2">&quot;3-bb72a7682290f94a985f7afac8b27137&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;4-10265e5a26d807a3cfa459cf1a82ef2e&quot;</span>
+    <span class="s2">&quot;4-10265e5a26d807a3cfa459cf1a82ef2e&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;5-067a00dff5e02add41819138abb3284d&quot;</span>
   <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -403,7 +406,11 @@ the missing revisions.</li>
 <span class="p">{</span>
   <span class="nt">&quot;190f721ca3411be7aa9477db5f948bbb&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;missing&quot;</span><span class="p">:</span> <span class="p">[</span>
-      <span class="s2">&quot;3-bb72a7682290f94a985f7afac8b27137&quot;</span>
+      <span class="s2">&quot;3-bb72a7682290f94a985f7afac8b27137&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;5-067a00dff5e02add41819138abb3284d&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;possible_ancestors&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&quot;4-10265e5a26d807a3cfa459cf1a82ef2e&quot;</span>
     <span class="p">]</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -415,8 +422,8 @@ the missing revisions.</li>
 <div class="section" id="db-revs-limit">
 <span id="api-db-revs-limit"></span><h1>10.3.14. <tt class="docutils literal"><span class="pre">/db/_revs_limit</span></tt><a class="headerlink" href="#db-revs-limit" title="Permalink to this headline">¶</a></h1>
 <dl class="get">
-<dt id="get--{db}-_revs_limit">
-<tt class="descname">GET </tt><tt class="descname">/{db}/_revs_limit</tt><a class="headerlink" href="#get--{db}-_revs_limit" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-_revs_limit">
+<tt class="descname">GET </tt><tt class="descname">/{db}/_revs_limit</tt><a class="headerlink" href="#get--db-_revs_limit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the current <tt class="docutils literal"><span class="pre">revs_limit</span></tt> (revision limit) setting.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -474,8 +481,8 @@ the missing revisions.</li>
 </dd></dl>
 
 <dl class="put">
-<dt id="put--{db}-_revs_limit">
-<tt class="descname">PUT </tt><tt class="descname">/{db}/_revs_limit</tt><a class="headerlink" href="#put--{db}-_revs_limit" title="Permalink to this definition">¶</a></dt>
+<dt id="put--db-_revs_limit">
+<tt class="descname">PUT </tt><tt class="descname">/{db}/_revs_limit</tt><a class="headerlink" href="#put--db-_revs_limit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the maximum number of document revisions that will be tracked by
 CouchDB, even after compaction has occurred. You can set the revision
 limit on a database with a scalar integer of the limit that you want
@@ -578,8 +585,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -606,7 +613,7 @@ specific language governing permissions and limitations under the License.
                         title="previous chapter">10.3.10. <tt class="docutils literal"><span class="pre">/db/_temp_view</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../document/index.html"
-                        title="next chapter">10.4. Document Methods</a></p><!--
+                        title="next chapter">10.4. Documents</a></p><!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
@@ -655,7 +662,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/api/database/misc.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -670,18 +692,18 @@ specific language governing permissions and limitations under the License.
           <a href="../../config-ref.html" title="Configuration Reference"
              >Config Reference</a> |</li>
         <li class="right" >
-          <a href="../document/index.html" title="10.4. Document Methods"
+          <a href="../document/index.html" title="10.4. Documents"
              >next</a> |</li>
         <li class="right" >
           <a href="temp-views.html" title="10.3.10. /db/_temp_view"
              >previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" >10.3. Database Methods</a> &raquo;</li> 
+          <li><a href="index.html" >10.3. Databases</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

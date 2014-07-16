@@ -44,7 +44,7 @@ handle_request(#httpd{path_parts=[DbName|RestParts],method=Method,
         case couch_httpd:qs_value(Req, "rev", false) of
             false -> delete_db_req(Req, DbName);
             _Rev -> throw({bad_request,
-                "You tried to DELETE a database with a ?=rev parameter. "
+                "You tried to DELETE a database with a ?rev= parameter. "
                 ++ "Did you mean to DELETE a document instead?"})
         end;
     {_, []} ->
@@ -1141,6 +1141,12 @@ parse_changes_query(Req, Db) ->
             Args#changes_args{timeout=list_to_integer(Value)};
         {"include_docs", "true"} ->
             Args#changes_args{include_docs=true};
+        {"attachments", "true"} ->
+            Opts = Args#changes_args.doc_options,
+            Args#changes_args{doc_options=[attachments|Opts]};
+        {"att_encoding_info", "true"} ->
+            Opts = Args#changes_args.doc_options,
+            Args#changes_args{doc_options=[att_encoding_info|Opts]};
         {"conflicts", "true"} ->
             Args#changes_args{conflicts=true};
         {"filter", _} ->

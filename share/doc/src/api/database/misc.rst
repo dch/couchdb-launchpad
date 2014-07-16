@@ -17,6 +17,7 @@
 ==============
 
 .. http:post:: /{db}/_purge
+  :synopsis: Purges some historical documents entirely from database history
 
   A database purge permanently removes the references to deleted documents
   from the database. Normal deletion of a document within CouchDB does not
@@ -129,6 +130,7 @@ database must be examined.
 =====================
 
 .. http:post:: /{db}/_missing_revs
+  :synopsis: By given list of document revisions returns the document revisions that do not exist in the database
 
   With given a list of document revisions, returns the document revisions that
   do not exist in the database.
@@ -187,6 +189,7 @@ database must be examined.
 ==================
 
 .. http:post:: /{db}/_revs_diff
+  :synopsis: By given list of document revisions returns differences between the given revisions and ones that are in the database
 
   Given a set of document/revision IDs, returns the subset of those that do
   not correspond to revisions stored in the database.
@@ -202,9 +205,9 @@ database must be examined.
 
   - In the request, a value is an array of revision IDs for that document.
 
-  - In the response, a value is an object with a "missing": key, whose value
+  - In the response, a value is an object with a ``missing``: key, whose value
     is a list of revision IDs for that document (the ones that are not stored
-    in the database) and optionally a "possible_ancestors" key, whose value is
+    in the database) and optionally a ``possible_ancestors`` key, whose value is
     an array of revision IDs that are known that might be ancestors of
     the missing revisions.
 
@@ -215,7 +218,9 @@ database must be examined.
   :<json object: Mapping of document ID to list of revisions to lookup
   :>header Content-Type: - :mimetype:`application/json`
                          - :mimetype:`text/plain; charset=utf-8`
-  :>json object missing_revs: Mapping of document ID to list of missed revisions
+  :>json array missing: List of missed revisions for specified document
+  :>json array possible_ancestors: List of revisions that *may be* ancestors
+    for specified document and its current revision in requested database
   :code 200: Request completed successfully
   :code 400: Invalid database name or JSON payload
 
@@ -232,7 +237,8 @@ database must be examined.
     {
       "190f721ca3411be7aa9477db5f948bbb": [
         "3-bb72a7682290f94a985f7afac8b27137",
-        "4-10265e5a26d807a3cfa459cf1a82ef2e"
+        "4-10265e5a26d807a3cfa459cf1a82ef2e",
+        "5-067a00dff5e02add41819138abb3284d"
       ]
     }
 
@@ -250,7 +256,11 @@ database must be examined.
     {
       "190f721ca3411be7aa9477db5f948bbb": {
         "missing": [
-          "3-bb72a7682290f94a985f7afac8b27137"
+          "3-bb72a7682290f94a985f7afac8b27137",
+          "5-067a00dff5e02add41819138abb3284d"
+        ],
+        "possible_ancestors": [
+          "4-10265e5a26d807a3cfa459cf1a82ef2e"
         ]
       }
     }
@@ -262,6 +272,7 @@ database must be examined.
 ===================
 
 .. http:get:: /{db}/_revs_limit
+  :synopsis: Returns the limit of historical revisions to store for a single document in the database
 
   Gets the current ``revs_limit`` (revision limit) setting.
 
@@ -295,6 +306,7 @@ database must be examined.
 
 
 .. http:put:: /{db}/_revs_limit
+  :synopsis: Sets the limit of historical revisions to store for a single document in the database
 
   Sets the maximum number of document revisions that will be tracked by
   CouchDB, even after compaction has occurred. You can set the revision

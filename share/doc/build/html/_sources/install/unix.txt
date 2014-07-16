@@ -52,10 +52,10 @@ Dependencies
 
 You should have the following installed:
 
-* `Erlang OTP (>=R13B04, <R17)  <http://erlang.org/>`_
+* `Erlang OTP (>=R14B01, =<R17) <http://erlang.org/>`_
 * `ICU                          <http://icu-project.org/>`_
 * `OpenSSL                      <http://www.openssl.org/>`_
-* `Mozilla SpiderMonkey (1.7)   <http://www.mozilla.org/js/spidermonkey/>`_
+* `Mozilla SpiderMonkey (1.8.5) <http://www.mozilla.org/js/spidermonkey/>`_
 * `GNU Make                     <http://www.gnu.org/software/make/>`_
 * `GNU Compiler Collection      <http://gcc.gnu.org/>`_
 * `libcurl                      <http://curl.haxx.se/libcurl/>`_
@@ -102,19 +102,20 @@ RedHat-based (Fedora, Centos, RHEL) Systems
 
 You can install the dependencies by running::
 
-    sudo yum groupinstall "Development Tools"
     sudo yum install autoconf
     sudo yum install autoconf-archive
     sudo yum install automake
+    sudo yum install curl-devel
+    sudo yum install erlang-asn1
+    sudo yum install erlang-erts
+    sudo yum install erlang-eunit
+    sudo yum install erlang-os_mon
+    sudo yum install erlang-xmerl
+    sudo yum install help2man
+    sudo yum install js-devel
+    sudo yum install libicu-devel
     sudo yum install libtool
     sudo yum install perl-Test-Harness
-    sudo yum install erlang-etap
-    sudo yum install erlang-erts
-    sudo yum install erlang-os_mon
-    sudo yum install erlang-eunit
-    sudo yum install libicu-devel
-    sudo yum install js-devel
-    sudo yum install curl-devel
 
 While CouchDB builds against the default js-devel-1.7.0 included in some
 distributions, it's recommended to use a more recent js-devel-1.8.5.
@@ -175,7 +176,9 @@ To check that everything has worked, point your web browser to::
 
     http://127.0.0.1:5984/_utils/index.html
 
-From here you should run the test suite in Firefox.
+From here you should verify your installation by pointing your web browser to::
+
+    http://localhost:5984/_utils/verify_install.html
 
 Security Considerations
 -----------------------

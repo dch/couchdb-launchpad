@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Configuration Reference &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>Configuration Reference &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="index.html" />
  
 
 
@@ -57,7 +57,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="#" title="Configuration Reference"
              >Config Reference</a> |</li>
-  <li><a href="index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li> 
+  <li><a href="index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -189,6 +189,16 @@ specific language governing permissions and limitations under the License.
        <td>&nbsp;&nbsp;&nbsp;
        <a href="config/auth.html#couch_httpd_auth/iterations"><tt class="xref">iterations</tt></a></td><td>
        <em>PBKDF2 iterations count</em></td></tr>
+     <tr class="cg-6">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
+       <a href="config/auth.html#couch_httpd_auth/max_iterations"><tt class="xref">max_iterations</tt></a></td><td>
+       <em>Maximum PBKDF2 iterations count</em></td></tr>
+     <tr class="cg-6">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
+       <a href="config/auth.html#couch_httpd_auth/min_iterations"><tt class="xref">min_iterations</tt></a></td><td>
+       <em>Minimum PBKDF2 iterations count</em></td></tr>
      <tr class="cg-6">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
@@ -795,6 +805,11 @@ specific language governing permissions and limitations under the License.
      <tr class="cg-23">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
+       <a href="config/replicator.html#replicator/checkpoint_interval"><tt class="xref">checkpoint_interval</tt></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-23">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
        <a href="config/replicator.html#replicator/connection_timeout"><tt class="xref">connection_timeout</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-23">
@@ -841,6 +856,11 @@ specific language governing permissions and limitations under the License.
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
        <a href="config/replicator.html#replicator/ssl_trusted_certificates_file"><tt class="xref">ssl_trusted_certificates_file</tt></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-23">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
+       <a href="config/replicator.html#replicator/use_checkpoints"><tt class="xref">use_checkpoints</tt></a></td><td>
        <em></em></td></tr>
      <tr class="cg-23">
        <td></td>
@@ -946,6 +966,11 @@ specific language governing permissions and limitations under the License.
      <tr class="cg-27">
        <td></td>
        <td>&nbsp;&nbsp;&nbsp;
+       <a href="config/misc.html#uuids/max_count"><tt class="xref">max_count</tt></a></td><td>
+       <em>Per-Request UUID Limit</em></td></tr>
+     <tr class="cg-27">
+       <td></td>
+       <td>&nbsp;&nbsp;&nbsp;
        <a href="config/misc.html#uuids/utc_id_suffix"><tt class="xref">utc_id_suffix</tt></a></td><td>
        <em>UTC ID Suffix</em></td></tr>
      <tr class="pcap"><td></td><td>&nbsp;</td><td></td></tr>
@@ -1010,7 +1035,7 @@ specific language governing permissions and limitations under the License.
 <h3>Quick Search</h3>
 
 <form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -1065,7 +1090,22 @@ specific language governing permissions and limitations under the License.
 <li><a href="http://webchat.freenode.net/?channels=couchdb">IRC</a></li>
 <li><a href="https://issues.apache.org/jira/browse/CouchDB">Issues</a></li>
 <li><a href="download.html">Download</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -1079,11 +1119,11 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="#" title="Configuration Reference"
              >Config Reference</a> |</li>
-  <li><a href="index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li> 
+  <li><a href="index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

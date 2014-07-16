@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10.4.2. /db/doc/attachment &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>10.4.2. /db/doc/attachment &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,9 +42,9 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../../index.html" />
-    <link rel="up" title="10.4. Document Methods" href="index.html" />
-    <link rel="next" title="10.5. Design Document Methods" href="../ddoc/index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../../index.html" />
+    <link rel="up" title="10.4. Documents" href="index.html" />
+    <link rel="next" title="10.5. Design Documents" href="../ddoc/index.html" />
     <link rel="prev" title="10.4.1. /db/doc" href="common.html" /> 
   </head>
   <body>
@@ -58,14 +58,14 @@ specific language governing permissions and limitations under the License.
           <a href="../../config-ref.html" title="Configuration Reference"
              >Config Reference</a> |</li>
         <li class="right" >
-          <a href="../ddoc/index.html" title="10.5. Design Document Methods"
+          <a href="../ddoc/index.html" title="10.5. Design Documents"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="common.html" title="10.4.1. /db/doc"
              accesskey="P">previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">10.4. Document Methods</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">10.4. Documents</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -77,11 +77,11 @@ specific language governing permissions and limitations under the License.
   <div class="section" id="db-doc-attachment">
 <span id="api-doc-attachment"></span><h1>10.4.2. <tt class="docutils literal"><span class="pre">/db/doc/attachment</span></tt><a class="headerlink" href="#db-doc-attachment" title="Permalink to this headline">¶</a></h1>
 <dl class="head">
-<dt id="head--{db}-{docid}-{attname}">
-<tt class="descname">HEAD </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#head--{db}-{docid}-{attname}" title="Permalink to this definition">¶</a></dt>
+<dt id="head--db-docid-attname">
+<tt class="descname">HEAD </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#head--db-docid-attname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the HTTP headers containing a minimal amount of information
 about the specified attachment. The method supports the same query
-arguments as the <a class="reference internal" href="#get--{db}-{docid}-{attname}" title="GET /{db}/{docid}/{attname}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}/{attname}</span></tt></a> method, but only
+arguments as the <a class="reference internal" href="#get--db-docid-attname" title="GET /{db}/{docid}/{attname}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}/{attname}</span></tt></a> method, but only
 the header information (including attachment size, encoding and the MD5 hash
 as an <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19">ETag</a>), is returned.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -154,8 +154,8 @@ this value is about compressed size, not actual</li>
 </dd></dl>
 
 <dl class="get">
-<dt id="get--{db}-{docid}-{attname}">
-<tt class="descname">GET </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#get--{db}-{docid}-{attname}" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-docid-attname">
+<tt class="descname">GET </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#get--db-docid-attname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the file attachment associated with the document.
 The raw data of the associated attachment is returned (just as if you were
 accessing a static file. The returned <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a>
@@ -216,8 +216,8 @@ this value is about compressed size, not actual</li>
 </dd></dl>
 
 <dl class="put">
-<dt id="put--{db}-{docid}-{attname}">
-<tt class="descname">PUT </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#put--{db}-{docid}-{attname}" title="Permalink to this definition">¶</a></dt>
+<dt id="put--db-docid-attname">
+<tt class="descname">PUT </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#put--db-docid-attname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads the supplied content as an attachment to the specified document.
 The attachment name provided must be a URL encoded string. You must also
 supply either the <tt class="docutils literal"><span class="pre">rev</span></tt> query argument or the <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.24">If-Match</a>
@@ -325,8 +325,8 @@ this value is about compressed size, not actual</li>
 </dd></dl>
 
 <dl class="delete">
-<dt id="delete--{db}-{docid}-{attname}">
-<tt class="descname">DELETE </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#delete--{db}-{docid}-{attname}" title="Permalink to this definition">¶</a></dt>
+<dt id="delete--db-docid-attname">
+<tt class="descname">DELETE </tt><tt class="descname">/{db}/{docid}/{attname}</tt><a class="headerlink" href="#delete--db-docid-attname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes the attachment <tt class="docutils literal"><span class="pre">attachment</span></tt> of the specified <tt class="docutils literal"><span class="pre">doc</span></tt>. You must
 supply the <tt class="docutils literal"><span class="pre">rev</span></tt> query parameter or <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.24">If-Match</a> with the current
 revision to delete the attachment.</p>
@@ -471,9 +471,9 @@ ranges. Read all about it in <span class="target" id="index-0"></span><a class="
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Databases that have been created with CouchDB 1.0.2 or earlier will
-support range requests in 1.5, but they are using a less-optimal
+support range requests in 1.6, but they are using a less-optimal
 algorithm. If you plan to make heavy use of this feature, make sure
-to compact your database with CouchDB 1.5 to take advantage of a
+to compact your database with CouchDB 1.6 to take advantage of a
 better algorithm to find byte ranges.</p>
 </div>
 </div>
@@ -506,8 +506,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -531,7 +531,7 @@ specific language governing permissions and limitations under the License.
                         title="previous chapter">10.4.1. <tt class="docutils literal"><span class="pre">/db/doc</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../ddoc/index.html"
-                        title="next chapter">10.5. Design Document Methods</a></p><!--
+                        title="next chapter">10.5. Design Documents</a></p><!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
@@ -580,7 +580,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/api/document/attachments.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -595,18 +610,18 @@ specific language governing permissions and limitations under the License.
           <a href="../../config-ref.html" title="Configuration Reference"
              >Config Reference</a> |</li>
         <li class="right" >
-          <a href="../ddoc/index.html" title="10.5. Design Document Methods"
+          <a href="../ddoc/index.html" title="10.5. Design Documents"
              >next</a> |</li>
         <li class="right" >
           <a href="common.html" title="10.4.1. /db/doc"
              >previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" >10.4. Document Methods</a> &raquo;</li> 
+          <li><a href="index.html" >10.4. Documents</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

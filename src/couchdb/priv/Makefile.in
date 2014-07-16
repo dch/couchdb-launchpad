@@ -108,7 +108,8 @@ am__DEPENDENCIES_1 =
 @USE_EJSON_COMPARE_NIF_TRUE@	$(am__DEPENDENCIES_1)
 am__couch_ejson_compare_la_SOURCES_DIST =  \
 	couch_ejson_compare/couch_ejson_compare.c
-@USE_EJSON_COMPARE_NIF_TRUE@am_couch_ejson_compare_la_OBJECTS = couch_ejson_compare_la-couch_ejson_compare.lo
+am__dirstamp = $(am__leading_dot)dirstamp
+@USE_EJSON_COMPARE_NIF_TRUE@am_couch_ejson_compare_la_OBJECTS = couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo
 couch_ejson_compare_la_OBJECTS = $(am_couch_ejson_compare_la_OBJECTS)
 couch_ejson_compare_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -117,14 +118,16 @@ couch_ejson_compare_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 @USE_EJSON_COMPARE_NIF_TRUE@	$(couchprivlibdir)
 couch_icu_driver_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_couch_icu_driver_la_OBJECTS =  \
-	couch_icu_driver_la-couch_icu_driver.lo
+	icu_driver/couch_icu_driver_la-couch_icu_driver.lo
 couch_icu_driver_la_OBJECTS = $(am_couch_icu_driver_la_OBJECTS)
 couch_icu_driver_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(couch_icu_driver_la_LDFLAGS) $(LDFLAGS) -o $@
 PROGRAMS = $(couchpriv_PROGRAMS) $(locallibbin_PROGRAMS)
-am__objects_1 = couchjs-http.$(OBJEXT) couchjs-main.$(OBJEXT) \
-	couchjs-utf8.$(OBJEXT) couchjs-util.$(OBJEXT)
+am__objects_1 = couch_js/couchjs-http.$(OBJEXT) \
+	couch_js/couchjs-main.$(OBJEXT) \
+	couch_js/couchjs-utf8.$(OBJEXT) \
+	couch_js/couchjs-util.$(OBJEXT)
 am_couchjs_OBJECTS = $(am__objects_1)
 couchjs_OBJECTS = $(am_couchjs_OBJECTS)
 couchjs_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -134,7 +137,7 @@ couchjs_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 am__couchspawnkillable_SOURCES_DIST =  \
 	spawnkillable/couchspawnkillable_win.c
 @WINDOWS_TRUE@am_couchspawnkillable_OBJECTS =  \
-@WINDOWS_TRUE@	couchspawnkillable_win.$(OBJEXT)
+@WINDOWS_TRUE@	spawnkillable/couchspawnkillable_win.$(OBJEXT)
 couchspawnkillable_OBJECTS = $(am_couchspawnkillable_OBJECTS)
 couchspawnkillable_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir) -I$(top_builddir)/src/snappy/google-snappy
@@ -345,6 +348,7 @@ version_minor = @version_minor@
 version_release = @version_release@
 version_revision = @version_revision@
 version_stage = @version_stage@
+AUTOMAKE_OPTIONS = subdir-objects
 MAKE_SAFE = $(MAKE)
 couchlibdir = $(localerlanglibdir)/couch-$(version)
 couchprivdir = $(couchlibdir)/priv
@@ -456,8 +460,26 @@ clean-couchprivlibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+couch_ejson_compare/$(am__dirstamp):
+	@$(MKDIR_P) couch_ejson_compare
+	@: > couch_ejson_compare/$(am__dirstamp)
+couch_ejson_compare/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) couch_ejson_compare/$(DEPDIR)
+	@: > couch_ejson_compare/$(DEPDIR)/$(am__dirstamp)
+couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo:  \
+	couch_ejson_compare/$(am__dirstamp) \
+	couch_ejson_compare/$(DEPDIR)/$(am__dirstamp)
 couch_ejson_compare.la: $(couch_ejson_compare_la_OBJECTS) $(couch_ejson_compare_la_DEPENDENCIES) $(EXTRA_couch_ejson_compare_la_DEPENDENCIES) 
 	$(couch_ejson_compare_la_LINK) $(am_couch_ejson_compare_la_rpath) $(couch_ejson_compare_la_OBJECTS) $(couch_ejson_compare_la_LIBADD) $(LIBS)
+icu_driver/$(am__dirstamp):
+	@$(MKDIR_P) icu_driver
+	@: > icu_driver/$(am__dirstamp)
+icu_driver/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) icu_driver/$(DEPDIR)
+	@: > icu_driver/$(DEPDIR)/$(am__dirstamp)
+icu_driver/couch_icu_driver_la-couch_icu_driver.lo:  \
+	icu_driver/$(am__dirstamp) \
+	icu_driver/$(DEPDIR)/$(am__dirstamp)
 couch_icu_driver.la: $(couch_icu_driver_la_OBJECTS) $(couch_icu_driver_la_DEPENDENCIES) $(EXTRA_couch_icu_driver_la_DEPENDENCIES) 
 	$(couch_icu_driver_la_LINK) -rpath $(couchprivlibdir) $(couch_icu_driver_la_OBJECTS) $(couch_icu_driver_la_LIBADD) $(LIBS)
 install-couchprivPROGRAMS: $(couchpriv_PROGRAMS)
@@ -552,137 +574,160 @@ clean-locallibbinPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+couch_js/$(am__dirstamp):
+	@$(MKDIR_P) couch_js
+	@: > couch_js/$(am__dirstamp)
+couch_js/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) couch_js/$(DEPDIR)
+	@: > couch_js/$(DEPDIR)/$(am__dirstamp)
+couch_js/couchjs-http.$(OBJEXT): couch_js/$(am__dirstamp) \
+	couch_js/$(DEPDIR)/$(am__dirstamp)
+couch_js/couchjs-main.$(OBJEXT): couch_js/$(am__dirstamp) \
+	couch_js/$(DEPDIR)/$(am__dirstamp)
+couch_js/couchjs-utf8.$(OBJEXT): couch_js/$(am__dirstamp) \
+	couch_js/$(DEPDIR)/$(am__dirstamp)
+couch_js/couchjs-util.$(OBJEXT): couch_js/$(am__dirstamp) \
+	couch_js/$(DEPDIR)/$(am__dirstamp)
 couchjs$(EXEEXT): $(couchjs_OBJECTS) $(couchjs_DEPENDENCIES) $(EXTRA_couchjs_DEPENDENCIES) 
 	@rm -f couchjs$(EXEEXT)
 	$(couchjs_LINK) $(couchjs_OBJECTS) $(couchjs_LDADD) $(LIBS)
+spawnkillable/$(am__dirstamp):
+	@$(MKDIR_P) spawnkillable
+	@: > spawnkillable/$(am__dirstamp)
+spawnkillable/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) spawnkillable/$(DEPDIR)
+	@: > spawnkillable/$(DEPDIR)/$(am__dirstamp)
+spawnkillable/couchspawnkillable_win.$(OBJEXT):  \
+	spawnkillable/$(am__dirstamp) \
+	spawnkillable/$(DEPDIR)/$(am__dirstamp)
 @WINDOWS_TRUE@couchspawnkillable$(EXEEXT): $(couchspawnkillable_OBJECTS) $(couchspawnkillable_DEPENDENCIES) $(EXTRA_couchspawnkillable_DEPENDENCIES) 
 @WINDOWS_TRUE@	@rm -f couchspawnkillable$(EXEEXT)
 @WINDOWS_TRUE@	$(LINK) $(couchspawnkillable_OBJECTS) $(couchspawnkillable_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.$(OBJEXT)
+	-rm -f couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo
+	-rm -f couch_js/couchjs-http.$(OBJEXT)
+	-rm -f couch_js/couchjs-main.$(OBJEXT)
+	-rm -f couch_js/couchjs-utf8.$(OBJEXT)
+	-rm -f couch_js/couchjs-util.$(OBJEXT)
+	-rm -f icu_driver/couch_icu_driver_la-couch_icu_driver.$(OBJEXT)
+	-rm -f icu_driver/couch_icu_driver_la-couch_icu_driver.lo
+	-rm -f spawnkillable/couchspawnkillable_win.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/couchjs-http.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/couchjs-main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/couchjs-utf8.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/couchjs-util.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/couchspawnkillable_win.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@couch_ejson_compare/$(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@couch_js/$(DEPDIR)/couchjs-http.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@couch_js/$(DEPDIR)/couchjs-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@couch_js/$(DEPDIR)/couchjs-utf8.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@couch_js/$(DEPDIR)/couchjs-util.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@icu_driver/$(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@spawnkillable/$(DEPDIR)/couchspawnkillable_win.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-couch_ejson_compare_la-couch_ejson_compare.lo: couch_ejson_compare/couch_ejson_compare.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_ejson_compare_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT couch_ejson_compare_la-couch_ejson_compare.lo -MD -MP -MF $(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Tpo -c -o couch_ejson_compare_la-couch_ejson_compare.lo `test -f 'couch_ejson_compare/couch_ejson_compare.c' || echo '$(srcdir)/'`couch_ejson_compare/couch_ejson_compare.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Tpo $(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_ejson_compare/couch_ejson_compare.c' object='couch_ejson_compare_la-couch_ejson_compare.lo' libtool=yes @AMDEPBACKSLASH@
+couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo: couch_ejson_compare/couch_ejson_compare.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_ejson_compare_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo -MD -MP -MF couch_ejson_compare/$(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Tpo -c -o couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo `test -f 'couch_ejson_compare/couch_ejson_compare.c' || echo '$(srcdir)/'`couch_ejson_compare/couch_ejson_compare.c
+@am__fastdepCC_TRUE@	$(am__mv) couch_ejson_compare/$(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Tpo couch_ejson_compare/$(DEPDIR)/couch_ejson_compare_la-couch_ejson_compare.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_ejson_compare/couch_ejson_compare.c' object='couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_ejson_compare_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o couch_ejson_compare_la-couch_ejson_compare.lo `test -f 'couch_ejson_compare/couch_ejson_compare.c' || echo '$(srcdir)/'`couch_ejson_compare/couch_ejson_compare.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_ejson_compare_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o couch_ejson_compare/couch_ejson_compare_la-couch_ejson_compare.lo `test -f 'couch_ejson_compare/couch_ejson_compare.c' || echo '$(srcdir)/'`couch_ejson_compare/couch_ejson_compare.c
 
-couch_icu_driver_la-couch_icu_driver.lo: icu_driver/couch_icu_driver.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_icu_driver_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT couch_icu_driver_la-couch_icu_driver.lo -MD -MP -MF $(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Tpo -c -o couch_icu_driver_la-couch_icu_driver.lo `test -f 'icu_driver/couch_icu_driver.c' || echo '$(srcdir)/'`icu_driver/couch_icu_driver.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Tpo $(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='icu_driver/couch_icu_driver.c' object='couch_icu_driver_la-couch_icu_driver.lo' libtool=yes @AMDEPBACKSLASH@
+icu_driver/couch_icu_driver_la-couch_icu_driver.lo: icu_driver/couch_icu_driver.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_icu_driver_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT icu_driver/couch_icu_driver_la-couch_icu_driver.lo -MD -MP -MF icu_driver/$(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Tpo -c -o icu_driver/couch_icu_driver_la-couch_icu_driver.lo `test -f 'icu_driver/couch_icu_driver.c' || echo '$(srcdir)/'`icu_driver/couch_icu_driver.c
+@am__fastdepCC_TRUE@	$(am__mv) icu_driver/$(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Tpo icu_driver/$(DEPDIR)/couch_icu_driver_la-couch_icu_driver.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='icu_driver/couch_icu_driver.c' object='icu_driver/couch_icu_driver_la-couch_icu_driver.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_icu_driver_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o couch_icu_driver_la-couch_icu_driver.lo `test -f 'icu_driver/couch_icu_driver.c' || echo '$(srcdir)/'`icu_driver/couch_icu_driver.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(couch_icu_driver_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o icu_driver/couch_icu_driver_la-couch_icu_driver.lo `test -f 'icu_driver/couch_icu_driver.c' || echo '$(srcdir)/'`icu_driver/couch_icu_driver.c
 
-couchjs-http.o: couch_js/http.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-http.o -MD -MP -MF $(DEPDIR)/couchjs-http.Tpo -c -o couchjs-http.o `test -f 'couch_js/http.c' || echo '$(srcdir)/'`couch_js/http.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-http.Tpo $(DEPDIR)/couchjs-http.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/http.c' object='couchjs-http.o' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-http.o: couch_js/http.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-http.o -MD -MP -MF couch_js/$(DEPDIR)/couchjs-http.Tpo -c -o couch_js/couchjs-http.o `test -f 'couch_js/http.c' || echo '$(srcdir)/'`couch_js/http.c
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-http.Tpo couch_js/$(DEPDIR)/couchjs-http.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/http.c' object='couch_js/couchjs-http.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-http.o `test -f 'couch_js/http.c' || echo '$(srcdir)/'`couch_js/http.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-http.o `test -f 'couch_js/http.c' || echo '$(srcdir)/'`couch_js/http.c
 
-couchjs-http.obj: couch_js/http.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-http.obj -MD -MP -MF $(DEPDIR)/couchjs-http.Tpo -c -o couchjs-http.obj `if test -f 'couch_js/http.c'; then $(CYGPATH_W) 'couch_js/http.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/http.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-http.Tpo $(DEPDIR)/couchjs-http.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/http.c' object='couchjs-http.obj' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-http.obj: couch_js/http.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-http.obj -MD -MP -MF couch_js/$(DEPDIR)/couchjs-http.Tpo -c -o couch_js/couchjs-http.obj `if test -f 'couch_js/http.c'; then $(CYGPATH_W) 'couch_js/http.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/http.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-http.Tpo couch_js/$(DEPDIR)/couchjs-http.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/http.c' object='couch_js/couchjs-http.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-http.obj `if test -f 'couch_js/http.c'; then $(CYGPATH_W) 'couch_js/http.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/http.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-http.obj `if test -f 'couch_js/http.c'; then $(CYGPATH_W) 'couch_js/http.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/http.c'; fi`
 
-couchjs-main.o: couch_js/main.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-main.o -MD -MP -MF $(DEPDIR)/couchjs-main.Tpo -c -o couchjs-main.o `test -f 'couch_js/main.c' || echo '$(srcdir)/'`couch_js/main.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-main.Tpo $(DEPDIR)/couchjs-main.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/main.c' object='couchjs-main.o' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-main.o: couch_js/main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-main.o -MD -MP -MF couch_js/$(DEPDIR)/couchjs-main.Tpo -c -o couch_js/couchjs-main.o `test -f 'couch_js/main.c' || echo '$(srcdir)/'`couch_js/main.c
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-main.Tpo couch_js/$(DEPDIR)/couchjs-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/main.c' object='couch_js/couchjs-main.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-main.o `test -f 'couch_js/main.c' || echo '$(srcdir)/'`couch_js/main.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-main.o `test -f 'couch_js/main.c' || echo '$(srcdir)/'`couch_js/main.c
 
-couchjs-main.obj: couch_js/main.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-main.obj -MD -MP -MF $(DEPDIR)/couchjs-main.Tpo -c -o couchjs-main.obj `if test -f 'couch_js/main.c'; then $(CYGPATH_W) 'couch_js/main.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/main.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-main.Tpo $(DEPDIR)/couchjs-main.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/main.c' object='couchjs-main.obj' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-main.obj: couch_js/main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-main.obj -MD -MP -MF couch_js/$(DEPDIR)/couchjs-main.Tpo -c -o couch_js/couchjs-main.obj `if test -f 'couch_js/main.c'; then $(CYGPATH_W) 'couch_js/main.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/main.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-main.Tpo couch_js/$(DEPDIR)/couchjs-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/main.c' object='couch_js/couchjs-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-main.obj `if test -f 'couch_js/main.c'; then $(CYGPATH_W) 'couch_js/main.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/main.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-main.obj `if test -f 'couch_js/main.c'; then $(CYGPATH_W) 'couch_js/main.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/main.c'; fi`
 
-couchjs-utf8.o: couch_js/utf8.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-utf8.o -MD -MP -MF $(DEPDIR)/couchjs-utf8.Tpo -c -o couchjs-utf8.o `test -f 'couch_js/utf8.c' || echo '$(srcdir)/'`couch_js/utf8.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-utf8.Tpo $(DEPDIR)/couchjs-utf8.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/utf8.c' object='couchjs-utf8.o' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-utf8.o: couch_js/utf8.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-utf8.o -MD -MP -MF couch_js/$(DEPDIR)/couchjs-utf8.Tpo -c -o couch_js/couchjs-utf8.o `test -f 'couch_js/utf8.c' || echo '$(srcdir)/'`couch_js/utf8.c
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-utf8.Tpo couch_js/$(DEPDIR)/couchjs-utf8.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/utf8.c' object='couch_js/couchjs-utf8.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-utf8.o `test -f 'couch_js/utf8.c' || echo '$(srcdir)/'`couch_js/utf8.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-utf8.o `test -f 'couch_js/utf8.c' || echo '$(srcdir)/'`couch_js/utf8.c
 
-couchjs-utf8.obj: couch_js/utf8.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-utf8.obj -MD -MP -MF $(DEPDIR)/couchjs-utf8.Tpo -c -o couchjs-utf8.obj `if test -f 'couch_js/utf8.c'; then $(CYGPATH_W) 'couch_js/utf8.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/utf8.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-utf8.Tpo $(DEPDIR)/couchjs-utf8.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/utf8.c' object='couchjs-utf8.obj' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-utf8.obj: couch_js/utf8.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-utf8.obj -MD -MP -MF couch_js/$(DEPDIR)/couchjs-utf8.Tpo -c -o couch_js/couchjs-utf8.obj `if test -f 'couch_js/utf8.c'; then $(CYGPATH_W) 'couch_js/utf8.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/utf8.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-utf8.Tpo couch_js/$(DEPDIR)/couchjs-utf8.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/utf8.c' object='couch_js/couchjs-utf8.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-utf8.obj `if test -f 'couch_js/utf8.c'; then $(CYGPATH_W) 'couch_js/utf8.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/utf8.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-utf8.obj `if test -f 'couch_js/utf8.c'; then $(CYGPATH_W) 'couch_js/utf8.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/utf8.c'; fi`
 
-couchjs-util.o: couch_js/util.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-util.o -MD -MP -MF $(DEPDIR)/couchjs-util.Tpo -c -o couchjs-util.o `test -f 'couch_js/util.c' || echo '$(srcdir)/'`couch_js/util.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-util.Tpo $(DEPDIR)/couchjs-util.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/util.c' object='couchjs-util.o' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-util.o: couch_js/util.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-util.o -MD -MP -MF couch_js/$(DEPDIR)/couchjs-util.Tpo -c -o couch_js/couchjs-util.o `test -f 'couch_js/util.c' || echo '$(srcdir)/'`couch_js/util.c
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-util.Tpo couch_js/$(DEPDIR)/couchjs-util.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/util.c' object='couch_js/couchjs-util.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-util.o `test -f 'couch_js/util.c' || echo '$(srcdir)/'`couch_js/util.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-util.o `test -f 'couch_js/util.c' || echo '$(srcdir)/'`couch_js/util.c
 
-couchjs-util.obj: couch_js/util.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couchjs-util.obj -MD -MP -MF $(DEPDIR)/couchjs-util.Tpo -c -o couchjs-util.obj `if test -f 'couch_js/util.c'; then $(CYGPATH_W) 'couch_js/util.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/util.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchjs-util.Tpo $(DEPDIR)/couchjs-util.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/util.c' object='couchjs-util.obj' libtool=no @AMDEPBACKSLASH@
+couch_js/couchjs-util.obj: couch_js/util.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -MT couch_js/couchjs-util.obj -MD -MP -MF couch_js/$(DEPDIR)/couchjs-util.Tpo -c -o couch_js/couchjs-util.obj `if test -f 'couch_js/util.c'; then $(CYGPATH_W) 'couch_js/util.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/util.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) couch_js/$(DEPDIR)/couchjs-util.Tpo couch_js/$(DEPDIR)/couchjs-util.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='couch_js/util.c' object='couch_js/couchjs-util.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couchjs-util.obj `if test -f 'couch_js/util.c'; then $(CYGPATH_W) 'couch_js/util.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/util.c'; fi`
-
-couchspawnkillable_win.o: spawnkillable/couchspawnkillable_win.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT couchspawnkillable_win.o -MD -MP -MF $(DEPDIR)/couchspawnkillable_win.Tpo -c -o couchspawnkillable_win.o `test -f 'spawnkillable/couchspawnkillable_win.c' || echo '$(srcdir)/'`spawnkillable/couchspawnkillable_win.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchspawnkillable_win.Tpo $(DEPDIR)/couchspawnkillable_win.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='spawnkillable/couchspawnkillable_win.c' object='couchspawnkillable_win.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o couchspawnkillable_win.o `test -f 'spawnkillable/couchspawnkillable_win.c' || echo '$(srcdir)/'`spawnkillable/couchspawnkillable_win.c
-
-couchspawnkillable_win.obj: spawnkillable/couchspawnkillable_win.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT couchspawnkillable_win.obj -MD -MP -MF $(DEPDIR)/couchspawnkillable_win.Tpo -c -o couchspawnkillable_win.obj `if test -f 'spawnkillable/couchspawnkillable_win.c'; then $(CYGPATH_W) 'spawnkillable/couchspawnkillable_win.c'; else $(CYGPATH_W) '$(srcdir)/spawnkillable/couchspawnkillable_win.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/couchspawnkillable_win.Tpo $(DEPDIR)/couchspawnkillable_win.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='spawnkillable/couchspawnkillable_win.c' object='couchspawnkillable_win.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o couchspawnkillable_win.obj `if test -f 'spawnkillable/couchspawnkillable_win.c'; then $(CYGPATH_W) 'spawnkillable/couchspawnkillable_win.c'; else $(CYGPATH_W) '$(srcdir)/spawnkillable/couchspawnkillable_win.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(couchjs_CFLAGS) $(CFLAGS) -c -o couch_js/couchjs-util.obj `if test -f 'couch_js/util.c'; then $(CYGPATH_W) 'couch_js/util.c'; else $(CYGPATH_W) '$(srcdir)/couch_js/util.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf couch_ejson_compare/.libs couch_ejson_compare/_libs
+	-rm -rf icu_driver/.libs icu_driver/_libs
 install-couchprivDATA: $(couchpriv_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(couchpriv_DATA)'; test -n "$(couchprivdir)" || list=; \
@@ -823,6 +868,14 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f couch_ejson_compare/$(DEPDIR)/$(am__dirstamp)
+	-rm -f couch_ejson_compare/$(am__dirstamp)
+	-rm -f couch_js/$(DEPDIR)/$(am__dirstamp)
+	-rm -f couch_js/$(am__dirstamp)
+	-rm -f icu_driver/$(DEPDIR)/$(am__dirstamp)
+	-rm -f icu_driver/$(am__dirstamp)
+	-rm -f spawnkillable/$(DEPDIR)/$(am__dirstamp)
+	-rm -f spawnkillable/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -835,7 +888,7 @@ clean-am: clean-couchprivPROGRAMS clean-couchprivlibLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf couch_ejson_compare/$(DEPDIR) couch_js/$(DEPDIR) icu_driver/$(DEPDIR) spawnkillable/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -884,7 +937,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf couch_ejson_compare/$(DEPDIR) couch_js/$(DEPDIR) icu_driver/$(DEPDIR) spawnkillable/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

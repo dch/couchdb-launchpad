@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1.1. Technical Overview &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>1.1. Technical Overview &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="1. Introduction" href="index.html" />
     <link rel="next" title="1.2. Why CouchDB?" href="why.html" />
     <link rel="prev" title="1. Introduction" href="index.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="index.html" title="1. Introduction"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">1. Introduction</a> &raquo;</li> 
       </ul>
     </div>  
@@ -114,12 +114,12 @@ operation.</p>
 <p>Documents are indexed in <a class="reference external" href="http://en.wikipedia.org/wiki/B-tree">B-trees</a> by their name (DocID) and a Sequence ID.
 Each update to a database instance generates a new sequential number.
 Sequence IDs are used later for incrementally finding changes in a database.
-TheseBb-tree indexes are updated simultaneously when documents are saved or
+These B-tree indexes are updated simultaneously when documents are saved or
 deleted. The index updates always occur at the end of the file (append-only
 updates).</p>
 <p>Documents have the advantage of data being already conveniently packaged for
 storage rather than split out across numerous tables and rows in most
-databases systems. When documents are committed to disk, the document fields
+database systems. When documents are committed to disk, the document fields
 and metadata are packed into buffers, sequentially one document after another
 (helpful later for efficient building of views).</p>
 <p>When CouchDB documents are updated, all data and associated indexes are
@@ -144,12 +144,12 @@ after a crash or a power failure are never necessary.</p>
 database file exceeds a certain amount of wasted space, the compaction process
 clones all the active data to a new file and then discards the old file.
 The database remains completely online the entire time and all updates and
-reads are allowed to complete successfully. The old file is deleted only when
+reads are allowed to complete successfully. The old database file is deleted only when
 all the data has been copied and all users transitioned to the new file.</p>
 </div>
 <div class="section" id="views">
 <h2>1.1.4. Views<a class="headerlink" href="#views" title="Permalink to this headline">¶</a></h2>
-<p>ACID properties only deal with storage and updates, we also need the ability
+<p>ACID properties only deal with storage and updates, but we also need the ability
 to show our data in interesting and useful ways. Unlike SQL databases where
 data must be carefully decomposed into tables, data in CouchDB is stored in
 semi-structured documents. CouchDB documents are flexible and each has its
@@ -169,7 +169,7 @@ organize and report on data that hasn&#8217;t been decomposed into tables.</p>
 <p>To address this problem of adding structure back to unstructured and
 semi-structured data, CouchDB integrates a view model. Views are the method
 of aggregating and reporting on the documents in a database, and are built
-on-demand to aggregate, join and report on database documents. Views are built
+on-demand to aggregate, join and report on database documents. Because views are built
 dynamically and don’t affect the underlying document, you can have as many
 different view representations of the same data as you like.</p>
 <p>View definitions are strictly virtual and only display the documents from the
@@ -219,9 +219,10 @@ without blocking the first client. This is true for any number of
 simultaneous client readers, who can read and query the view while the index
 is concurrently being refreshed for other clients without causing problems
 for the readers.</p>
-<p>As documents are examined, their previous row values are removed from the
-view indexes, if they exist. If the document is selected by a view function,
-the function results are inserted into the view as a new row.</p>
+<p>As documents are processed by the view engine through your &#8216;map&#8217; and &#8216;reduce&#8217;
+functions, their previous row values are removed from the view indexes, if
+they exist. If the document is selected by a view function, the function results
+are inserted into the view as a new row.</p>
 <p>When view index changes are written to disk, the updates are always appended
 at the end of the file, serving to both reduce disk head seek times during
 disk commits and to ensure crashes and power failures can not cause
@@ -270,9 +271,9 @@ updates, ensuring security and data validation in a shared, distributed system.<
 </div>
 <div class="section" id="distributed-updates-and-replication">
 <h2>1.1.6. Distributed Updates and Replication<a class="headerlink" href="#distributed-updates-and-replication" title="Permalink to this headline">¶</a></h2>
-<p>CouchDB is a peer-based distributed database system, it allows for users and
-servers to access and update the same shared data while disconnected and then
-bi-directionally replicate those changes later.</p>
+<p>CouchDB is a peer-based distributed database system. It allows users and servers
+to access and update the same shared data while disconnected. Those changes can
+then be replicated bi-directionally later.</p>
 <p>The CouchDB document storage, view and security models are designed to work
 together to make true bi-directional replication efficient and reliable.
 Both documents and designs can replicate, allowing full database applications
@@ -405,8 +406,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -498,7 +499,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/intro/overview.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -518,12 +534,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="index.html" title="1. Introduction"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >1. Introduction</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

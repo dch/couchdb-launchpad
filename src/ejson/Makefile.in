@@ -102,10 +102,12 @@ am__ejson_la_SOURCES_DIST = ejson.c decode.c encode.c \
 	yajl/yajl_alloc.c yajl/yajl_buf.c yajl/yajl.c \
 	yajl/yajl_encode.c yajl/yajl_gen.c yajl/yajl_lex.c \
 	yajl/yajl_parser.c
+am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = ejson_la-ejson.lo ejson_la-decode.lo \
-	ejson_la-encode.lo ejson_la-yajl_alloc.lo ejson_la-yajl_buf.lo \
-	ejson_la-yajl.lo ejson_la-yajl_encode.lo ejson_la-yajl_gen.lo \
-	ejson_la-yajl_lex.lo ejson_la-yajl_parser.lo
+	ejson_la-encode.lo yajl/ejson_la-yajl_alloc.lo \
+	yajl/ejson_la-yajl_buf.lo yajl/ejson_la-yajl.lo \
+	yajl/ejson_la-yajl_encode.lo yajl/ejson_la-yajl_gen.lo \
+	yajl/ejson_la-yajl_lex.lo yajl/ejson_la-yajl_parser.lo
 @USE_OTP_NIFS_TRUE@am_ejson_la_OBJECTS = $(am__objects_1)
 ejson_la_OBJECTS = $(am_ejson_la_OBJECTS)
 ejson_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -316,6 +318,7 @@ version_minor = @version_minor@
 version_release = @version_release@
 version_revision = @version_revision@
 version_stage = @version_stage@
+AUTOMAKE_OPTIONS = subdir-objects
 ejsonebindir = $(localerlanglibdir)/ejson-0.1.0/ebin
 ejsonprivdir = $(localerlanglibdir)/ejson-0.1.0/priv
 CLEANFILES = \
@@ -439,11 +442,45 @@ clean-ejsonprivLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+yajl/$(am__dirstamp):
+	@$(MKDIR_P) yajl
+	@: > yajl/$(am__dirstamp)
+yajl/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) yajl/$(DEPDIR)
+	@: > yajl/$(DEPDIR)/$(am__dirstamp)
+yajl/ejson_la-yajl_alloc.lo: yajl/$(am__dirstamp) \
+	yajl/$(DEPDIR)/$(am__dirstamp)
+yajl/ejson_la-yajl_buf.lo: yajl/$(am__dirstamp) \
+	yajl/$(DEPDIR)/$(am__dirstamp)
+yajl/ejson_la-yajl.lo: yajl/$(am__dirstamp) \
+	yajl/$(DEPDIR)/$(am__dirstamp)
+yajl/ejson_la-yajl_encode.lo: yajl/$(am__dirstamp) \
+	yajl/$(DEPDIR)/$(am__dirstamp)
+yajl/ejson_la-yajl_gen.lo: yajl/$(am__dirstamp) \
+	yajl/$(DEPDIR)/$(am__dirstamp)
+yajl/ejson_la-yajl_lex.lo: yajl/$(am__dirstamp) \
+	yajl/$(DEPDIR)/$(am__dirstamp)
+yajl/ejson_la-yajl_parser.lo: yajl/$(am__dirstamp) \
+	yajl/$(DEPDIR)/$(am__dirstamp)
 ejson.la: $(ejson_la_OBJECTS) $(ejson_la_DEPENDENCIES) $(EXTRA_ejson_la_DEPENDENCIES) 
 	$(ejson_la_LINK) $(am_ejson_la_rpath) $(ejson_la_OBJECTS) $(ejson_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl.lo
+	-rm -f yajl/ejson_la-yajl_alloc.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl_alloc.lo
+	-rm -f yajl/ejson_la-yajl_buf.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl_buf.lo
+	-rm -f yajl/ejson_la-yajl_encode.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl_encode.lo
+	-rm -f yajl/ejson_la-yajl_gen.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl_gen.lo
+	-rm -f yajl/ejson_la-yajl_lex.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl_lex.lo
+	-rm -f yajl/ejson_la-yajl_parser.$(OBJEXT)
+	-rm -f yajl/ejson_la-yajl_parser.lo
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -451,31 +488,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-decode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-ejson.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-encode.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-yajl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-yajl_alloc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-yajl_buf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-yajl_encode.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-yajl_gen.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-yajl_lex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ejson_la-yajl_parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@yajl/$(DEPDIR)/ejson_la-yajl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@yajl/$(DEPDIR)/ejson_la-yajl_alloc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@yajl/$(DEPDIR)/ejson_la-yajl_buf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@yajl/$(DEPDIR)/ejson_la-yajl_encode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@yajl/$(DEPDIR)/ejson_la-yajl_gen.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@yajl/$(DEPDIR)/ejson_la-yajl_lex.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@yajl/$(DEPDIR)/ejson_la-yajl_parser.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
@@ -501,60 +541,61 @@ ejson_la-encode.lo: encode.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-encode.lo `test -f 'encode.c' || echo '$(srcdir)/'`encode.c
 
-ejson_la-yajl_alloc.lo: yajl/yajl_alloc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT ejson_la-yajl_alloc.lo -MD -MP -MF $(DEPDIR)/ejson_la-yajl_alloc.Tpo -c -o ejson_la-yajl_alloc.lo `test -f 'yajl/yajl_alloc.c' || echo '$(srcdir)/'`yajl/yajl_alloc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ejson_la-yajl_alloc.Tpo $(DEPDIR)/ejson_la-yajl_alloc.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_alloc.c' object='ejson_la-yajl_alloc.lo' libtool=yes @AMDEPBACKSLASH@
+yajl/ejson_la-yajl_alloc.lo: yajl/yajl_alloc.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT yajl/ejson_la-yajl_alloc.lo -MD -MP -MF yajl/$(DEPDIR)/ejson_la-yajl_alloc.Tpo -c -o yajl/ejson_la-yajl_alloc.lo `test -f 'yajl/yajl_alloc.c' || echo '$(srcdir)/'`yajl/yajl_alloc.c
+@am__fastdepCC_TRUE@	$(am__mv) yajl/$(DEPDIR)/ejson_la-yajl_alloc.Tpo yajl/$(DEPDIR)/ejson_la-yajl_alloc.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_alloc.c' object='yajl/ejson_la-yajl_alloc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-yajl_alloc.lo `test -f 'yajl/yajl_alloc.c' || echo '$(srcdir)/'`yajl/yajl_alloc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o yajl/ejson_la-yajl_alloc.lo `test -f 'yajl/yajl_alloc.c' || echo '$(srcdir)/'`yajl/yajl_alloc.c
 
-ejson_la-yajl_buf.lo: yajl/yajl_buf.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT ejson_la-yajl_buf.lo -MD -MP -MF $(DEPDIR)/ejson_la-yajl_buf.Tpo -c -o ejson_la-yajl_buf.lo `test -f 'yajl/yajl_buf.c' || echo '$(srcdir)/'`yajl/yajl_buf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ejson_la-yajl_buf.Tpo $(DEPDIR)/ejson_la-yajl_buf.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_buf.c' object='ejson_la-yajl_buf.lo' libtool=yes @AMDEPBACKSLASH@
+yajl/ejson_la-yajl_buf.lo: yajl/yajl_buf.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT yajl/ejson_la-yajl_buf.lo -MD -MP -MF yajl/$(DEPDIR)/ejson_la-yajl_buf.Tpo -c -o yajl/ejson_la-yajl_buf.lo `test -f 'yajl/yajl_buf.c' || echo '$(srcdir)/'`yajl/yajl_buf.c
+@am__fastdepCC_TRUE@	$(am__mv) yajl/$(DEPDIR)/ejson_la-yajl_buf.Tpo yajl/$(DEPDIR)/ejson_la-yajl_buf.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_buf.c' object='yajl/ejson_la-yajl_buf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-yajl_buf.lo `test -f 'yajl/yajl_buf.c' || echo '$(srcdir)/'`yajl/yajl_buf.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o yajl/ejson_la-yajl_buf.lo `test -f 'yajl/yajl_buf.c' || echo '$(srcdir)/'`yajl/yajl_buf.c
 
-ejson_la-yajl.lo: yajl/yajl.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT ejson_la-yajl.lo -MD -MP -MF $(DEPDIR)/ejson_la-yajl.Tpo -c -o ejson_la-yajl.lo `test -f 'yajl/yajl.c' || echo '$(srcdir)/'`yajl/yajl.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ejson_la-yajl.Tpo $(DEPDIR)/ejson_la-yajl.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl.c' object='ejson_la-yajl.lo' libtool=yes @AMDEPBACKSLASH@
+yajl/ejson_la-yajl.lo: yajl/yajl.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT yajl/ejson_la-yajl.lo -MD -MP -MF yajl/$(DEPDIR)/ejson_la-yajl.Tpo -c -o yajl/ejson_la-yajl.lo `test -f 'yajl/yajl.c' || echo '$(srcdir)/'`yajl/yajl.c
+@am__fastdepCC_TRUE@	$(am__mv) yajl/$(DEPDIR)/ejson_la-yajl.Tpo yajl/$(DEPDIR)/ejson_la-yajl.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl.c' object='yajl/ejson_la-yajl.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-yajl.lo `test -f 'yajl/yajl.c' || echo '$(srcdir)/'`yajl/yajl.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o yajl/ejson_la-yajl.lo `test -f 'yajl/yajl.c' || echo '$(srcdir)/'`yajl/yajl.c
 
-ejson_la-yajl_encode.lo: yajl/yajl_encode.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT ejson_la-yajl_encode.lo -MD -MP -MF $(DEPDIR)/ejson_la-yajl_encode.Tpo -c -o ejson_la-yajl_encode.lo `test -f 'yajl/yajl_encode.c' || echo '$(srcdir)/'`yajl/yajl_encode.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ejson_la-yajl_encode.Tpo $(DEPDIR)/ejson_la-yajl_encode.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_encode.c' object='ejson_la-yajl_encode.lo' libtool=yes @AMDEPBACKSLASH@
+yajl/ejson_la-yajl_encode.lo: yajl/yajl_encode.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT yajl/ejson_la-yajl_encode.lo -MD -MP -MF yajl/$(DEPDIR)/ejson_la-yajl_encode.Tpo -c -o yajl/ejson_la-yajl_encode.lo `test -f 'yajl/yajl_encode.c' || echo '$(srcdir)/'`yajl/yajl_encode.c
+@am__fastdepCC_TRUE@	$(am__mv) yajl/$(DEPDIR)/ejson_la-yajl_encode.Tpo yajl/$(DEPDIR)/ejson_la-yajl_encode.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_encode.c' object='yajl/ejson_la-yajl_encode.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-yajl_encode.lo `test -f 'yajl/yajl_encode.c' || echo '$(srcdir)/'`yajl/yajl_encode.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o yajl/ejson_la-yajl_encode.lo `test -f 'yajl/yajl_encode.c' || echo '$(srcdir)/'`yajl/yajl_encode.c
 
-ejson_la-yajl_gen.lo: yajl/yajl_gen.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT ejson_la-yajl_gen.lo -MD -MP -MF $(DEPDIR)/ejson_la-yajl_gen.Tpo -c -o ejson_la-yajl_gen.lo `test -f 'yajl/yajl_gen.c' || echo '$(srcdir)/'`yajl/yajl_gen.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ejson_la-yajl_gen.Tpo $(DEPDIR)/ejson_la-yajl_gen.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_gen.c' object='ejson_la-yajl_gen.lo' libtool=yes @AMDEPBACKSLASH@
+yajl/ejson_la-yajl_gen.lo: yajl/yajl_gen.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT yajl/ejson_la-yajl_gen.lo -MD -MP -MF yajl/$(DEPDIR)/ejson_la-yajl_gen.Tpo -c -o yajl/ejson_la-yajl_gen.lo `test -f 'yajl/yajl_gen.c' || echo '$(srcdir)/'`yajl/yajl_gen.c
+@am__fastdepCC_TRUE@	$(am__mv) yajl/$(DEPDIR)/ejson_la-yajl_gen.Tpo yajl/$(DEPDIR)/ejson_la-yajl_gen.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_gen.c' object='yajl/ejson_la-yajl_gen.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-yajl_gen.lo `test -f 'yajl/yajl_gen.c' || echo '$(srcdir)/'`yajl/yajl_gen.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o yajl/ejson_la-yajl_gen.lo `test -f 'yajl/yajl_gen.c' || echo '$(srcdir)/'`yajl/yajl_gen.c
 
-ejson_la-yajl_lex.lo: yajl/yajl_lex.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT ejson_la-yajl_lex.lo -MD -MP -MF $(DEPDIR)/ejson_la-yajl_lex.Tpo -c -o ejson_la-yajl_lex.lo `test -f 'yajl/yajl_lex.c' || echo '$(srcdir)/'`yajl/yajl_lex.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ejson_la-yajl_lex.Tpo $(DEPDIR)/ejson_la-yajl_lex.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_lex.c' object='ejson_la-yajl_lex.lo' libtool=yes @AMDEPBACKSLASH@
+yajl/ejson_la-yajl_lex.lo: yajl/yajl_lex.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT yajl/ejson_la-yajl_lex.lo -MD -MP -MF yajl/$(DEPDIR)/ejson_la-yajl_lex.Tpo -c -o yajl/ejson_la-yajl_lex.lo `test -f 'yajl/yajl_lex.c' || echo '$(srcdir)/'`yajl/yajl_lex.c
+@am__fastdepCC_TRUE@	$(am__mv) yajl/$(DEPDIR)/ejson_la-yajl_lex.Tpo yajl/$(DEPDIR)/ejson_la-yajl_lex.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_lex.c' object='yajl/ejson_la-yajl_lex.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-yajl_lex.lo `test -f 'yajl/yajl_lex.c' || echo '$(srcdir)/'`yajl/yajl_lex.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o yajl/ejson_la-yajl_lex.lo `test -f 'yajl/yajl_lex.c' || echo '$(srcdir)/'`yajl/yajl_lex.c
 
-ejson_la-yajl_parser.lo: yajl/yajl_parser.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT ejson_la-yajl_parser.lo -MD -MP -MF $(DEPDIR)/ejson_la-yajl_parser.Tpo -c -o ejson_la-yajl_parser.lo `test -f 'yajl/yajl_parser.c' || echo '$(srcdir)/'`yajl/yajl_parser.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ejson_la-yajl_parser.Tpo $(DEPDIR)/ejson_la-yajl_parser.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_parser.c' object='ejson_la-yajl_parser.lo' libtool=yes @AMDEPBACKSLASH@
+yajl/ejson_la-yajl_parser.lo: yajl/yajl_parser.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -MT yajl/ejson_la-yajl_parser.lo -MD -MP -MF yajl/$(DEPDIR)/ejson_la-yajl_parser.Tpo -c -o yajl/ejson_la-yajl_parser.lo `test -f 'yajl/yajl_parser.c' || echo '$(srcdir)/'`yajl/yajl_parser.c
+@am__fastdepCC_TRUE@	$(am__mv) yajl/$(DEPDIR)/ejson_la-yajl_parser.Tpo yajl/$(DEPDIR)/ejson_la-yajl_parser.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yajl/yajl_parser.c' object='yajl/ejson_la-yajl_parser.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o ejson_la-yajl_parser.lo `test -f 'yajl/yajl_parser.c' || echo '$(srcdir)/'`yajl/yajl_parser.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ejson_la_CFLAGS) $(CFLAGS) -c -o yajl/ejson_la-yajl_parser.lo `test -f 'yajl/yajl_parser.c' || echo '$(srcdir)/'`yajl/yajl_parser.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf yajl/.libs yajl/_libs
 install-ejsonebinDATA: $(ejsonebin_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(ejsonebin_DATA)'; test -n "$(ejsonebindir)" || list=; \
@@ -693,6 +734,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f yajl/$(DEPDIR)/$(am__dirstamp)
+	-rm -f yajl/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -703,7 +746,7 @@ clean-am: clean-ejsonprivLTLIBRARIES clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) yajl/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -749,7 +792,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) yajl/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

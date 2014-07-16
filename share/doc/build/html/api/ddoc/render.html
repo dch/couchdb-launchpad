@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10.5.5. /db/_design/design-doc/_show/show-name &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>10.5.5. /db/_design/design-doc/_show/show-name &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,8 +42,8 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../../index.html" />
-    <link rel="up" title="10.5. Design Document Methods" href="index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../../index.html" />
+    <link rel="up" title="10.5. Design Documents" href="index.html" />
     <link rel="next" title="10.5.11. /db/_design/design-doc/_rewrite/path" href="rewrites.html" />
     <link rel="prev" title="10.5.4. /db/_design/design-doc/_view/view-name" href="views.html" /> 
   </head>
@@ -63,9 +63,9 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="views.html" title="10.5.4. /db/_design/design-doc/_view/view-name"
              accesskey="P">previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">10.5. Design Document Methods</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">10.5. Design Documents</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -77,13 +77,13 @@ specific language governing permissions and limitations under the License.
   <div class="section" id="db-design-design-doc-show-show-name">
 <span id="api-ddoc-show"></span><h1>10.5.5. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_show/show-name</span></tt><a class="headerlink" href="#db-design-design-doc-show-show-name" title="Permalink to this headline">¶</a></h1>
 <dl class="get">
-<dt id="get--{db}-_design-{ddoc}-_show-{func}">
-<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}</tt><a class="headerlink" href="#get--{db}-_design-{ddoc}-_show-{func}" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-_design-ddoc-_show-func">
+<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}</tt><a class="headerlink" href="#get--db-_design-ddoc-_show-func" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="post">
-<dt id="post--{db}-_design-{ddoc}-_show-{func}">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}</tt><a class="headerlink" href="#post--{db}-_design-{ddoc}-_show-{func}" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_design-ddoc-_show-func">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}</tt><a class="headerlink" href="#post--db-_design-ddoc-_show-func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies <a class="reference internal" href="../../couchapp/ddocs.html#showfun"><em>show function</em></a> for <cite>null</cite> document.</p>
 <p>The request and response parameters are depended upon function implementation.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -153,13 +153,13 @@ no doc
 <div class="section" id="db-design-design-doc-show-show-name-doc-id">
 <span id="api-ddoc-show-id"></span><h1>10.5.6. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_show/show-name/doc-id</span></tt><a class="headerlink" href="#db-design-design-doc-show-show-name-doc-id" title="Permalink to this headline">¶</a></h1>
 <dl class="get">
-<dt id="get--{db}-_design-{ddoc}-_show-{func}-{docid}">
-<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}/{docid}</tt><a class="headerlink" href="#get--{db}-_design-{ddoc}-_show-{func}-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-_design-ddoc-_show-func-docid">
+<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}/{docid}</tt><a class="headerlink" href="#get--db-_design-ddoc-_show-func-docid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="post">
-<dt id="post--{db}-_design-{ddoc}-_show-{func}-{docid}">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}/{docid}</tt><a class="headerlink" href="#post--{db}-_design-{ddoc}-_show-{func}-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_design-ddoc-_show-func-docid">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_show/{func}/{docid}</tt><a class="headerlink" href="#post--db-_design-ddoc-_show-func-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies <a class="reference internal" href="../../couchapp/ddocs.html#showfun"><em>show function</em></a> for the specified document.</p>
 <p>The request and response parameters are depended upon function implementation.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -230,13 +230,13 @@ An Italian-American dish that usually consists of spaghetti, tomato sauce and me
 <div class="section" id="db-design-design-doc-list-list-name-view-name">
 <span id="api-ddoc-list"></span><h1>10.5.7. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_list/list-name/view-name</span></tt><a class="headerlink" href="#db-design-design-doc-list-list-name-view-name" title="Permalink to this headline">¶</a></h1>
 <dl class="get">
-<dt id="get--{db}-_design-{ddoc}-_list-{func}-{view}">
-<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{view}</tt><a class="headerlink" href="#get--{db}-_design-{ddoc}-_list-{func}-{view}" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-_design-ddoc-_list-func-view">
+<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{view}</tt><a class="headerlink" href="#get--db-_design-ddoc-_list-func-view" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="post">
-<dt id="post--{db}-_design-{ddoc}-_list-{func}-{view}">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{view}</tt><a class="headerlink" href="#post--{db}-_design-{ddoc}-_list-{func}-{view}" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_design-ddoc-_list-func-view">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{view}</tt><a class="headerlink" href="#post--db-_design-ddoc-_list-func-view" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies <a class="reference internal" href="../../couchapp/ddocs.html#listfun"><em>list function</em></a> for the <a class="reference internal" href="../../couchapp/ddocs.html#viewfun"><em>view function</em></a>
 from the same design document.</p>
 <p>The request and response parameters are depended upon function implementation.</p>
@@ -311,13 +311,13 @@ meatballs, spaghetti, tomato sauce
 <div class="section" id="db-design-design-doc-list-list-name-other-ddoc-view-name">
 <span id="api-ddoc-list-ddoc"></span><h1>10.5.8. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_list/list-name/other-ddoc/view-name</span></tt><a class="headerlink" href="#db-design-design-doc-list-list-name-other-ddoc-view-name" title="Permalink to this headline">¶</a></h1>
 <dl class="get">
-<dt id="get--{db}-_design-{ddoc}-_list-{func}-{other-ddoc}-{view}">
-<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{other-ddoc}/{view}</tt><a class="headerlink" href="#get--{db}-_design-{ddoc}-_list-{func}-{other-ddoc}-{view}" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-_design-ddoc-_list-func-other-ddoc-view">
+<tt class="descname">GET </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{other-ddoc}/{view}</tt><a class="headerlink" href="#get--db-_design-ddoc-_list-func-other-ddoc-view" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="post">
-<dt id="post--{db}-_design-{ddoc}-_list-{func}-{other-ddoc}-{view}">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{other-ddoc}/{view}</tt><a class="headerlink" href="#post--{db}-_design-{ddoc}-_list-{func}-{other-ddoc}-{view}" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_design-ddoc-_list-func-other-ddoc-view">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_list/{func}/{other-ddoc}/{view}</tt><a class="headerlink" href="#post--db-_design-ddoc-_list-func-other-ddoc-view" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies <a class="reference internal" href="../../couchapp/ddocs.html#listfun"><em>list function</em></a> for the <a class="reference internal" href="../../couchapp/ddocs.html#viewfun"><em>view function</em></a>
 from the other design document.</p>
 <p>The request and response parameters are depended upon function implementation.</p>
@@ -393,8 +393,8 @@ spaghetti
 <div class="section" id="db-design-design-doc-update-update-name">
 <span id="api-ddoc-update"></span><h1>10.5.9. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_update/update-name</span></tt><a class="headerlink" href="#db-design-design-doc-update-update-name" title="Permalink to this headline">¶</a></h1>
 <dl class="post">
-<dt id="post--{db}-_design-{ddoc}-_update-{func}">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_update/{func}</tt><a class="headerlink" href="#post--{db}-_design-{ddoc}-_update-{func}" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_design-ddoc-_update-func">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_design/{ddoc}/_update/{func}</tt><a class="headerlink" href="#post--db-_design-ddoc-_update-func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes <a class="reference internal" href="../../couchapp/ddocs.html#updatefun"><em>update function</em></a> on server side for <tt class="docutils literal"><span class="pre">null</span></tt>
 document.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -466,8 +466,8 @@ something</pre>
 <div class="section" id="db-design-design-doc-update-update-name-doc-id">
 <span id="api-ddoc-update-id"></span><h1>10.5.10. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_update/update-name/doc-id</span></tt><a class="headerlink" href="#db-design-design-doc-update-update-name-doc-id" title="Permalink to this headline">¶</a></h1>
 <dl class="put">
-<dt id="put--{db}-_design-{ddoc}-_update-{func}-{docid}">
-<tt class="descname">PUT </tt><tt class="descname">/{db}/_design/{ddoc}/_update/{func}/{docid}</tt><a class="headerlink" href="#put--{db}-_design-{ddoc}-_update-{func}-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="put--db-_design-ddoc-_update-func-docid">
+<tt class="descname">PUT </tt><tt class="descname">/{db}/_design/{ddoc}/_update/{func}/{docid}</tt><a class="headerlink" href="#put--db-_design-ddoc-_update-func-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes <a class="reference internal" href="../../couchapp/ddocs.html#updatefun"><em>update function</em></a> on server side for the specified
 document.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -566,8 +566,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -642,7 +642,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/api/ddoc/render.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -662,13 +677,13 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="views.html" title="10.5.4. /db/_design/design-doc/_view/view-name"
              >previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" >10.5. Design Document Methods</a> &raquo;</li> 
+          <li><a href="index.html" >10.5. Design Documents</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

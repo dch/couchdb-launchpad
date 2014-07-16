@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1.6. Security &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>1.6. Security &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="1. Introduction" href="index.html" />
     <link rel="next" title="1.7. Futon: Web GUI Administration Panel" href="futon.html" />
     <link rel="prev" title="1.5. The Core API" href="api.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="api.html" title="1.5. The Core API"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">1. Introduction</a> &raquo;</li> 
       </ul>
     </div>  
@@ -75,7 +75,7 @@ specific language governing permissions and limitations under the License.
             
   <div class="section" id="security">
 <span id="intro-security"></span><h1>1.6. Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h1>
-<p>In this chapter, we&#8217;ll look at the basic security mechanisms in CouchDB: the
+<p>In this document, we&#8217;ll look at the basic security mechanisms in CouchDB: the
 <cite>Admin Party</cite>, <cite>Basic Authentication</cite>, <cite>Cookie Authentication</cite>; how CouchDB
 handles users and protects their credentials.</p>
 <div class="section" id="authentication">
@@ -107,21 +107,18 @@ users with a username and password as their credentials.</p>
 do. If you have defined one or more specific admin users, CouchDB will ask for
 identification for certain requests:</p>
 <ul class="simple">
-<li>Creating a database (<a class="reference internal" href="../api/database/common.html#put--{db}" title="PUT /{db}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/database</span></tt></a>)</li>
-<li>Deleting a database (<a class="reference internal" href="../api/database/common.html#put--{db}" title="PUT /{db}"><tt class="xref http http-put docutils literal"><span class="pre">DELETE</span> <span class="pre">/database</span></tt></a>)</li>
-<li>Setup a database security (<a class="reference internal" href="../api/database/security.html#put--{db}-_security" title="PUT /{db}/_security"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/database/_security</span></tt></a>)</li>
-<li>Creating a design document (<em>:put:`PUT /database/_design/app
-&lt;/{db}/_design/{ddocname}&gt;`</em>)</li>
-<li>Updating a design document (<em>:put:`PUT /database/_design/app?rev=1-4E2
-&lt;/{db}/_design/{ddocname}&gt;`</em>)</li>
-<li>Deleting a design document (<em>:delete:`DELETE /database/_design/app?rev=2-6A7
-&lt;/{db}/_design/{ddocname}&gt;`</em>)</li>
-<li>Execute a temporary view (<a class="reference internal" href="../api/database/temp-views.html#post--{db}-_temp_view" title="POST /{db}/_temp_view"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/database/_temp_view</span></tt></a>)</li>
-<li>Triggering compaction (<a class="reference internal" href="../api/database/compact.html#post--{db}-_compact" title="POST /{db}/_compact"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/database/_compact</span></tt></a>)</li>
+<li>Creating a database (<a class="reference internal" href="../api/database/common.html#put--db" title="PUT /{db}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/database</span></tt></a>)</li>
+<li>Deleting a database (<a class="reference internal" href="../api/database/common.html#put--db" title="PUT /{db}"><tt class="xref http http-put docutils literal"><span class="pre">DELETE</span> <span class="pre">/database</span></tt></a>)</li>
+<li>Setup a database security (<a class="reference internal" href="../api/database/security.html#put--db-_security" title="PUT /{db}/_security"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/database/_security</span></tt></a>)</li>
+<li>Creating a design document (<a class="reference internal" href="../api/ddoc/common.html#put--db-_design-ddoc" title="PUT /{db}/_design/{ddoc}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/database/_design/app</span></tt></a>)</li>
+<li>Updating a design document (<a class="reference internal" href="../api/ddoc/common.html#put--db-_design-ddoc" title="PUT /{db}/_design/{ddoc}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/database/_design/app?rev=1-4E2</span></tt></a>)</li>
+<li>Deleting a design document (<a class="reference internal" href="../api/ddoc/common.html#delete--db-_design-ddoc" title="DELETE /{db}/_design/{ddoc}"><tt class="xref http http-delete docutils literal"><span class="pre">DELETE</span> <span class="pre">/database/_design/app?rev=2-6A7</span></tt></a>)</li>
+<li>Execute a temporary view (<a class="reference internal" href="../api/database/temp-views.html#post--db-_temp_view" title="POST /{db}/_temp_view"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/database/_temp_view</span></tt></a>)</li>
+<li>Triggering compaction (<a class="reference internal" href="../api/database/compact.html#post--db-_compact" title="POST /{db}/_compact"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/database/_compact</span></tt></a>)</li>
 <li>Reading the task status list (<a class="reference internal" href="../api/server/common.html#get--_active_tasks" title="GET /_active_tasks"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_active_tasks</span></tt></a>)</li>
-<li>Restarting the server (<a class="reference internal" href="../api/server/common.html#post--_restart" title="POST /_restart"><tt class="xref http http-post docutils literal"><span class="pre">:POST</span> <span class="pre">/_restart</span></tt></a>)</li>
+<li>Restarting the server (<a class="reference internal" href="../api/server/common.html#post--_restart" title="POST /_restart"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/_restart</span></tt></a>)</li>
 <li>Reading the active configuration (<a class="reference internal" href="../api/server/configuration.html#get--_config" title="GET /_config"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_config</span></tt></a>)</li>
-<li>Updating the active configuration (<a class="reference internal" href="../api/server/configuration.html#put--_config-{section}-{key}" title="PUT /_config/{section}/{key}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/_config/section/key</span></tt></a>)</li>
+<li>Updating the active configuration (<a class="reference internal" href="../api/server/configuration.html#put--_config-section-key" title="PUT /_config/{section}/{key}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/_config/section/key</span></tt></a>)</li>
 </ul>
 <div class="section" id="creating-new-admin-user">
 <h4>Creating New Admin User<a class="headerlink" href="#creating-new-admin-user" title="Permalink to this headline">¶</a></h4>
@@ -280,16 +277,16 @@ special security-related constraints applied and used agreements on documents
 structure. So how <cite>authentication database</cite> is different from others?</p>
 <ul class="simple">
 <li>Only administrators may browse list of all documents
-(<a class="reference internal" href="../api/database/bulk-api.html#get--{db}-_all_docs" title="GET /{db}/_all_docs"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_users/_all_docs</span></tt></a>)</li>
-<li>Only administrators may listen <a class="reference internal" href="../api/database/changes.html#changes"><em>changes feed</em></a> (<a class="reference internal" href="../api/database/changes.html#get--{db}-_changes" title="GET /{db}/_changes"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_users/_changes</span></tt></a>)</li>
+(<a class="reference internal" href="../api/database/bulk-api.html#get--db-_all_docs" title="GET /{db}/_all_docs"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_users/_all_docs</span></tt></a>)</li>
+<li>Only administrators may listen <a class="reference internal" href="../api/database/changes.html#changes"><em>changes feed</em></a> (<a class="reference internal" href="../api/database/changes.html#get--db-_changes" title="GET /{db}/_changes"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_users/_changes</span></tt></a>)</li>
 <li>Only administrators may execute design functions like <a class="reference internal" href="../couchapp/ddocs.html#viewfun"><em>views</em></a>,
 <a class="reference internal" href="../couchapp/ddocs.html#showfun"><em>shows</em></a> and <a class="reference internal" href="../couchapp/ddocs.html#ddocs"><em>others</em></a></li>
 <li>Only administrators may <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3">GET</a>, <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">PUT</a> or <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.7">DELETE</a>
 any document (to be honest, that they always can do)</li>
 <li>There is special design document <tt class="docutils literal"><span class="pre">_auth</span></tt> that cannot be modified</li>
 <li>Every document (of course, except <cite>design documents</cite>) represents registered
-CouchDB users and belong to him</li>
-<li>Users may only access (<a class="reference internal" href="../api/document/common.html#get--{db}-{docid}" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_users/org.couchdb.user:Jan</span></tt></a>) or modify (<a class="reference internal" href="../api/document/common.html#put--{db}-{docid}" title="PUT /{db}/{docid}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/_users/org.couchdb.user:Jan</span></tt></a>) documents that they owns</li>
+CouchDB users and belong to them</li>
+<li>Users may only access (<a class="reference internal" href="../api/document/common.html#get--db-docid" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_users/org.couchdb.user:Jan</span></tt></a>) or modify (<a class="reference internal" href="../api/document/common.html#put--db-docid" title="PUT /{db}/{docid}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/_users/org.couchdb.user:Jan</span></tt></a>) documents that they owns</li>
 </ul>
 <p>These draconian rules are reasonable: CouchDB cares about user&#8217;s personal
 information and doesn&#8217;t discloses it for everyone. Often, users documents are
@@ -320,8 +317,8 @@ administrators may assign roles to users - by default all users have no roles</l
 <li><strong>type</strong> (<em>string</em>): Document type. Constantly have value <tt class="docutils literal"><span class="pre">user</span></tt></li>
 </ul>
 <p>Additionally, you may specify any custom fields that are relates to the target
-user. This is good place to store user&#8217;s private information because only he and
-CouchDB administrators may browse it.</p>
+user. This is good place to store user&#8217;s private information because only the
+target user and CouchDB administrators may browse it.</p>
 <div class="section" id="why-org-couchdb-user-prefix">
 <span id="org-couchdb-user"></span><h4>Why <tt class="docutils literal"><span class="pre">org.couchdb.user:</span></tt> prefix?<a class="headerlink" href="#why-org-couchdb-user-prefix" title="Permalink to this headline">¶</a></h4>
 <p>The reason to have special prefix before user&#8217;s login name is to have
@@ -381,7 +378,7 @@ the next error message:</p>
 </div>
 <div class="section" id="password-changing">
 <h3>Password Changing<a class="headerlink" href="#password-changing" title="Permalink to this headline">¶</a></h3>
-<p>This is quite common situation: user had forgot his password, it was leaked
+<p>This is quite common situation: user had forgot their password, it was leaked
 somehow (via copy-paste, screenshot, or by typing in wrong chat window) or
 something else. Let&#8217;s change password for our user <cite>jan</cite>.</p>
 <p>First of all, let&#8217;s define what is the password changing from the point of
@@ -435,7 +432,7 @@ amount of posted data:</p>
 </pre></div>
 </div>
 <p>Hooray! You may wonder why so complex: need to retrieve user&#8217;s document, add
-special field to him, post it back - where is one big button that changes the
+special field to it, post it back - where is one big button that changes the
 password without worry about document&#8217;s content? Actually, <a class="reference internal" href="futon.html#intro-futon"><em>Futon</em></a> has such at the right bottom corner if you have logged in -
 all implementation details are hidden from your sight.</p>
 <div class="admonition note">
@@ -449,7 +446,7 @@ on your application layer like Futon does.</p>
 <p class="versionadded">
 <span class="versionmodified">New in version 1.4.</span></p>
 <p>Sometimes users <em>wants</em> to share some information with the World. For instance,
-their contact email to let other users get in touch with him. To solve this
+their contact email to let other users get in touch with them. To solve this
 problem, but still keep sensitive and private information secured there is
 special <a class="reference internal" href="../config/index.html#config"><em>configuration</em></a> option <a class="reference internal" href="../config/auth.html#couch_httpd_auth/public_fields" title="public_fields"><tt class="xref config config-option docutils literal"><span class="pre">public_fields</span></tt></a>. In this options you may define comma
 separated list of users document fields that will be publicity available.</p>
@@ -464,7 +461,7 @@ this document owner, CouchDB will respond with <a class="reference external" hre
 security reasons.</p>
 <p>Now let&#8217;s share field <tt class="docutils literal"><span class="pre">name</span></tt>. First, setup the <tt class="docutils literal"><span class="pre">public_fields</span></tt> configuration
 option. Remember, that this action requires administrator&#8217;s privileges and
-the next command will ask for password for user <cite>admin</cite>, assuming that he is
+the next command will ask for password for user <cite>admin</cite>, assuming that they are
 the server administrator:</p>
 <div class="highlight-json"><pre>curl -X PUT http://localhost:5984/_config/couch_http_auth/public_fields \
      -H "Content-Type: application/json" \
@@ -512,8 +509,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -605,7 +602,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/intro/security.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -625,12 +637,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="api.html" title="1.5. The Core API"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >1. Introduction</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

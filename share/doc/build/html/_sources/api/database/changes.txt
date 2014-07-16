@@ -18,6 +18,7 @@
 ================
 
 .. http:get:: /{db}/_changes
+  :synopsis: Returns changes for the given database
 
   Returns a sorted list of changes made to documents in the database, in time
   order of application, can be obtained from the database's ``_changes``
@@ -39,8 +40,8 @@
     previous connection. Overrides `since` query parameter.
   :query array doc_ids: List of document IDs to filter the changes feed as
    valid JSON array. Used with :ref:`_doc_ids <changes/filter/doc_ids>` filter.
-   Since `length of URL is limited`_, you better use :post:`/{db}/_changes`
-   method instead.
+   Since `length of URL is limited`_, it is better to use
+   :post:`/{db}/_changes` instead.
   :query boolean conflicts: Includes `conflicts` information in response.
     Ignored if `include_docs` isn't ``true``. Default is ``false``.
   :query boolean descending: Return the change results in descending sequence
@@ -48,7 +49,8 @@
   :query string feed: see :ref:`changes`. Default is ``normal``.
   :query string filter: Reference to a :ref:`filter function <filterfun>`
     from a design document that will filter whole stream emitting only filtered
-    events. See the `section in the book`_ for more information.
+    events. See the section `Change Notifications in the book
+    CouchDB The Definitive Guide`_ for more information.
   :query number heartbeat: Period in *milliseconds* after which an empty line is
     sent in the results. Only applicable for :ref:`longpoll <changes/longpoll>`
     or :ref:`continuous <changes/continuous>` feeds. Overrides any timeout to
@@ -57,6 +59,13 @@
   :query boolean include_docs: Include the associated document with each result.
     If there are conflicts, only the winning revision is returned.
     Default is ``false``.
+  :query boolean attachments: Include the Base64-encoded content of
+    :ref:`attachments <api/doc/attachments>` in the documents that are included
+    if `include_docs` is ``true``. Ignored if `include_docs` isn't ``true``.
+    Default is ``false``.
+  :query boolean att_encoding_info: Include encoding information in attachment
+    stubs if `include_docs` is ``true`` and the particular attachment is
+    compressed. Ignored if `include_docs` isn't ``true``. Default is ``false``.
   :query number last-event-id: Alias of `Last-Event-ID` header.
   :query number limit: Limit number of result rows to the specified value
     (note that using ``0`` here has the same effect as ``1``).
@@ -160,13 +169,22 @@
    listen changes since current seq number.
 .. versionchanged:: 1.3.0 ``eventsource`` feed type added.
 .. versionchanged:: 1.4.0 Support ``Last-Event-ID`` header.
+.. versionchanged:: 1.6.0 added ``attachments`` and ``att_encoding_info``
+   parameters
+
+.. warning::
+   Using the ``attachments`` parameter to include attachments in the changes
+   feed is not recommended for large attachment sizes. Also note that the
+   Base64-encoding that is used leads to a 33% overhead (i.e. one third) in
+   transfer size for attachments.
 
 
 .. http:post:: /{db}/_changes
+  :synopsis: Returns changes for the given database for certain document IDs
 
   Requests the database changes feed in the same way as
-  :get:`/{db}/_changes` does, but this method is widely used with
-  ``?filter=_doc_ids`` query parameter and allows to pass larger list of
+  :get:`/{db}/_changes` does, but is widely used with
+  ``?filter=_doc_ids`` query parameter and allows one to pass a larger list of
   document IDs to filter.
 
   **Request**:
@@ -340,7 +358,7 @@ results.
 Obviously, `... tum tee tum ...` does not appear in the actual response, but
 represents a long pause before the change with seq 6 occurred.  
 
-.. _section in the book: http://guide.couchdb.org/draft/notifications.html
+.. _Change Notifications in the book CouchDB The Definitive Guide: http://guide.couchdb.org/draft/notifications.html
 
 .. _changes/eventsource:
 
@@ -495,9 +513,9 @@ _view
 
 .. versionadded:: 1.2
 
-The special filter ``_view`` allows to use existed :ref:`map function <mapfun>`
+The special filter ``_view`` allows to use existing :ref:`map function <mapfun>`
 as the :ref:`filter <filterfun>`. If the map function emits anything for the
-processed document he counts as accepted and the changes event emits to the
+processed document it counts as accepted and the changes event emits to the
 feed. For most use-practice cases `filter` functions are very similar to `map`
 ones, so this feature helps to reduce amount of duplicated code.
 
@@ -513,7 +531,7 @@ ones, so this feature helps to reduce amount of duplicated code.
    Using ``_view`` filter doesn't queries the view index files, so you cannot
    use common :ref:`view query parameters <api/ddoc/view>` to additionally
    filter the changes feed by index key. Also, CouchDB doesn't returns
-   the result instantly as he does for views - it really uses the specified
+   the result instantly as it does for views - it really uses the specified
    map function as filter.
 
    Moreover, you cannot make such filters dynamic e.g. process the request

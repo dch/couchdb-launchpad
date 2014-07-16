@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10.4.1. /db/doc &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>10.4.1. /db/doc &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,10 +42,10 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../../index.html" />
-    <link rel="up" title="10.4. Document Methods" href="index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../../index.html" />
+    <link rel="up" title="10.4. Documents" href="index.html" />
     <link rel="next" title="10.4.2. /db/doc/attachment" href="attachments.html" />
-    <link rel="prev" title="10.4. Document Methods" href="index.html" /> 
+    <link rel="prev" title="10.4. Documents" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -61,11 +61,11 @@ specific language governing permissions and limitations under the License.
           <a href="attachments.html" title="10.4.2. /db/doc/attachment"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="10.4. Document Methods"
+          <a href="index.html" title="10.4. Documents"
              accesskey="P">previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">10.4. Document Methods</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">10.4. Documents</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -77,17 +77,17 @@ specific language governing permissions and limitations under the License.
   <div class="section" id="db-doc">
 <span id="api-doc"></span><h1>10.4.1. <tt class="docutils literal"><span class="pre">/db/doc</span></tt><a class="headerlink" href="#db-doc" title="Permalink to this headline">¶</a></h1>
 <dl class="head">
-<dt id="head--{db}-{docid}">
-<tt class="descname">HEAD </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#head--{db}-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="head--db-docid">
+<tt class="descname">HEAD </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#head--db-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the HTTP Headers containing a minimal amount of information
 about the specified document. The method supports the same query
-arguments as the <a class="reference internal" href="#get--{db}-{docid}" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a> method, but only the header
+arguments as the <a class="reference internal" href="#get--db-docid" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a> method, but only the header
 information (including document size, and the revision as an ETag), is
 returned.</p>
 <p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19">ETag</a> header shows the current revision for the requested
 document, and the <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13">Content-Length</a> specifies the length of the
 data, if the document were requested in full.</p>
-<p>Adding any of the query arguments (see <a class="reference internal" href="#get--{db}-{docid}" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a>), then the
+<p>Adding any of the query arguments (see <a class="reference internal" href="#get--db-docid" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a>), then the
 resulting HTTP Headers will correspond to what would be returned.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -141,8 +141,8 @@ resulting HTTP Headers will correspond to what would be returned.</p>
 </dd></dl>
 
 <dl class="get">
-<dt id="get--{db}-{docid}">
-<tt class="descname">GET </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#get--{db}-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-docid">
+<tt class="descname">GET </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#get--db-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns document by the specified <tt class="docutils literal"><span class="pre">docid</span></tt> from the specified <tt class="docutils literal"><span class="pre">db</span></tt>.
 Unless you request a specific revision, the latest revision of the
 document will always be returned.</p>
@@ -172,8 +172,8 @@ document will always be returned.</p>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
 <li><strong>attachments</strong> (<em>boolean</em>) &#8211; Includes attachments bodies in response.
 Default is <tt class="docutils literal"><span class="pre">false</span></tt></li>
-<li><strong>att_encoding_info</strong> (<em>boolean</em>) &#8211; Includes encoding information into
-attachment&#8217;s stubs for compressed ones. Default is <tt class="docutils literal"><span class="pre">false</span></tt></li>
+<li><strong>att_encoding_info</strong> (<em>boolean</em>) &#8211; Includes encoding information in attachment
+stubs if the particular attachment is compressed. Default is <tt class="docutils literal"><span class="pre">false</span></tt>.</li>
 <li><strong>atts_since</strong> (<em>array</em>) &#8211; Includes attachments only since specified revisions.
 Doesn&#8217;t includes attachments for specified revisions. <em>Optional</em></li>
 <li><strong>conflicts</strong> (<em>boolean</em>) &#8211; Includes information about conflicts in document.
@@ -275,10 +275,10 @@ Available if requested with <tt class="docutils literal"><span class="pre">revs=
 </dd></dl>
 
 <dl class="put">
-<dt id="put--{db}-{docid}">
-<tt class="descname">PUT </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#put--{db}-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="put--db-docid">
+<tt class="descname">PUT </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#put--db-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">PUT</a> method creates a new named document, or creates a new
-revision of the existing document. Unlike the <a class="reference internal" href="../database/common.html#post--{db}" title="POST /{db}"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/{db}</span></tt></a> method, you
+revision of the existing document. Unlike the <a class="reference internal" href="../database/common.html#post--db" title="POST /{db}"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/{db}</span></tt></a>, you
 must specify the document ID in the request URL.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -382,16 +382,22 @@ revision is not latest for target document</li>
 </dd></dl>
 
 <dl class="delete">
-<dt id="delete--{db}-{docid}">
-<tt class="descname">DELETE </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#delete--{db}-{docid}" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes the specified document from the database. You must supply the
-current (latest) revision, either by using the <tt class="docutils literal"><span class="pre">rev</span></tt> parameter to
-specify the revision.</p>
+<dt id="delete--db-docid">
+<tt class="descname">DELETE </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#delete--db-docid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the specified document as deleted by adding a field <tt class="docutils literal"><span class="pre">_deleted</span></tt> with
+the value <tt class="docutils literal"><span class="pre">true</span></tt>. Documents with this field will not be returned within
+requests anymore, but stay in the database. You must supply the current
+(latest) revision, either by using the <tt class="docutils literal"><span class="pre">rev</span></tt> parameter or by using the
+<a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.24">If-Match</a> header to specify the revision.</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#api-doc-retrieving-deleted-documents"><em>Retrieving Deleted Documents</em></a></p>
+</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Note that deletion of a record increments the revision number.
-The use of a revision for deletion of the record allows replication of
-the database to correctly track the deletion in synchronized copies.</p>
+<p class="last">CouchDB doesn&#8217;t actually delete documents. The reason is the need to track
+them correctly during the replication process between databases to prevent
+accidental document recovery for any previous state.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -488,8 +494,8 @@ are: <tt class="docutils literal"><span class="pre">false</span></tt> and <tt cl
 </dd></dl>
 
 <dl class="copy">
-<dt id="copy--{db}-{docid}">
-<tt class="descname">COPY </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#copy--{db}-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="copy--db-docid">
+<tt class="descname">COPY </tt><tt class="descname">/{db}/{docid}</tt><a class="headerlink" href="#copy--db-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <a class="reference external" href="http://tools.ietf.org/html/rfc2518#section-8.8">COPY</a> (which is non-standard HTTP) copies an existing
 document to a new or existing document.</p>
 <p>The source document is specified on the request line, with the
@@ -553,7 +559,7 @@ are: <tt class="docutils literal"><span class="pre">false</span></tt> and <tt cl
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.3">202 Accepted</a> &#8211; Request was accepted, but changes are not yet stored on disk</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">400 Bad Request</a> &#8211; Invalid request body or parameters</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> &#8211; Read or write privileges required</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> &#8211; Specified database, document ID  or his revision doesn&#8217;t exists</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> &#8211; Specified database, document ID  or revision doesn&#8217;t exists</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10">409 Conflict</a> &#8211; Document with the specified ID already exists or specified
 revision is not latest for target document</li>
 </ul>
@@ -595,23 +601,54 @@ not the attachment data itself.</p>
 field, with one or more attachment definitions.</p>
 <p>The <tt class="docutils literal"><span class="pre">_attachments</span></tt> object keys are attachments names while values are
 information objects with next structure:</p>
-<ul class="simple">
-<li><strong>content_type</strong> (<em>string</em>): Attachment MIME type</li>
-<li><strong>data</strong> (<em>string</em>): Base64-encoded content. Available if attachment content
-requested by using <tt class="docutils literal"><span class="pre">attachments=true</span></tt> or <tt class="docutils literal"><span class="pre">atts_since</span></tt> query parameters</li>
-<li><strong>digest</strong> (<em>string</em>): Content hash digest.
+<ul>
+<li><p class="first"><strong>content_type</strong> (<em>string</em>): Attachment MIME type</p>
+</li>
+<li><p class="first"><strong>data</strong> (<em>string</em>): Base64-encoded content. Available if attachment content
+is requested by using the following query parameters:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">attachments=true</span></tt> when querying a document</li>
+<li><tt class="docutils literal"><span class="pre">attachments=true&amp;include_docs=true</span></tt> when querying a
+<a class="reference internal" href="../database/changes.html#api-db-changes"><em>changes feed</em></a> or a <a class="reference internal" href="../ddoc/views.html#api-ddoc-view"><em>view</em></a></li>
+<li><tt class="docutils literal"><span class="pre">atts_since</span></tt>.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>digest</strong> (<em>string</em>): Content hash digest.
 It starts with prefix which announce hash type (<tt class="docutils literal"><span class="pre">md5-</span></tt>) and continues with
-Base64-encoded hash digest</li>
-<li><strong>encoded_length</strong> (<em>number</em>): Compressed attachment size in bytes
-Available when query parameter <tt class="docutils literal"><span class="pre">att_encoding_info=true</span></tt> was specified and
-<tt class="docutils literal"><span class="pre">content_type</span></tt> is in <a class="reference internal" href="../../config/misc.html#attachments/compressible_types" title="compressible_types"><tt class="xref config config-option docutils literal"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">compressiable</span> <span class="pre">types</span></tt></a></li>
-<li><strong>encoding</strong> (<em>string</em>): Compression codec. Available when query parameter
-<tt class="docutils literal"><span class="pre">att_encoding_info=true</span></tt> was specified</li>
-<li><strong>length</strong> (<em>number</em>): Real attachment size in bytes. Not available if attachment
-content requested</li>
-<li><strong>revpos</strong> (<em>number</em>): Revision <em>number</em> when attachment was added</li>
-<li><strong>stub</strong> (<em>boolean</em>): Has <tt class="docutils literal"><span class="pre">true</span></tt> value if object contains stub info and no
-content. Otherwise omitted in response</li>
+Base64-encoded hash digest</p>
+</li>
+<li><p class="first"><strong>encoded_length</strong> (<em>number</em>): Compressed attachment size in bytes.
+Available if <tt class="docutils literal"><span class="pre">content_type</span></tt> is in <a class="reference internal" href="../../config/misc.html#attachments/compressible_types" title="compressible_types"><tt class="xref config config-option docutils literal"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">compressible</span> <span class="pre">types</span></tt></a> when the attachment was added and the
+following query parameters are specified:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">att_encoding_info=true</span></tt> when querying a document</li>
+<li><tt class="docutils literal"><span class="pre">att_encoding_info=true&amp;include_docs=true</span></tt> when querying a
+<a class="reference internal" href="../database/changes.html#api-db-changes"><em>changes feed</em></a> or a <a class="reference internal" href="../ddoc/views.html#api-ddoc-view"><em>view</em></a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>encoding</strong> (<em>string</em>): Compression codec. Available if <tt class="docutils literal"><span class="pre">content_type</span></tt> is
+in <a class="reference internal" href="../../config/misc.html#attachments/compressible_types" title="compressible_types"><tt class="xref config config-option docutils literal"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">compressible</span> <span class="pre">types</span></tt></a> when the attachment was added and the
+following query parameters are specified:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">att_encoding_info=true</span></tt> when querying a document</li>
+<li><tt class="docutils literal"><span class="pre">att_encoding_info=true&amp;include_docs=true</span></tt> when querying a
+<a class="reference internal" href="../database/changes.html#api-db-changes"><em>changes feed</em></a> or a <a class="reference internal" href="../ddoc/views.html#api-ddoc-view"><em>view</em></a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>length</strong> (<em>number</em>): Real attachment size in bytes. Not available if attachment
+content requested</p>
+</li>
+<li><p class="first"><strong>revpos</strong> (<em>number</em>): Revision <em>number</em> when attachment was added</p>
+</li>
+<li><p class="first"><strong>stub</strong> (<em>boolean</em>): Has <tt class="docutils literal"><span class="pre">true</span></tt> value if object contains stub info and no
+content. Otherwise omitted in response</p>
+</li>
 </ul>
 <div class="section" id="basic-attachments-info">
 <h3>Basic Attachments Info<a class="headerlink" href="#basic-attachments-info" title="Permalink to this headline">¶</a></h3>
@@ -668,7 +705,7 @@ content. Otherwise omitted in response</li>
 </div>
 </div>
 <div class="section" id="retrieving-attachments-content">
-<h3>Retrieving Attachments Content<a class="headerlink" href="#retrieving-attachments-content" title="Permalink to this headline">¶</a></h3>
+<span id="api-doc-retrieving-deleted-documents"></span><h3>Retrieving Attachments Content<a class="headerlink" href="#retrieving-attachments-content" title="Permalink to this headline">¶</a></h3>
 <p>It&#8217;s possible to retrieve document with all attached files content by using
 <tt class="docutils literal"><span class="pre">attachements=true</span></tt> query parameter:</p>
 <p><strong>Request</strong>:</p>
@@ -890,7 +927,7 @@ just inline base64 encoded attachments data into the document body:</p>
 <p>Alternatively, you can upload a document with attachments more efficiently in
 <em class="mimetype">multipart/related</em> format. This avoids having to Base64-encode
 the attachments, saving CPU and bandwidth. To do this, set the
-<a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> header of the <a class="reference internal" href="#put--{db}-{docid}" title="PUT /{db}/{docid}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/{db}/{docid}</span></tt></a> request to
+<a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> header of the <a class="reference internal" href="#put--db-docid" title="PUT /{db}/{docid}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/{db}/{docid}</span></tt></a> request to
 <em class="mimetype">multipart/related</em>.</p>
 <p>The first MIME body is the document itself, which should have its own
 <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> of <em class="mimetype">application/json&quot;</em>. It also should
@@ -999,15 +1036,10 @@ the <tt class="docutils literal"><span class="pre">revs=true</span></tt> paramet
 </div>
 <p>The returned JSON structure includes the original document, including a
 <tt class="docutils literal"><span class="pre">_revisions</span></tt> structure that includes the revision information in next form:</p>
-<ul>
-<li><dl class="first docutils">
-<dt><strong>ids</strong> (<em>array</em>): Array of valid revision IDs, in reverse order</dt>
-<dd><p class="first last">(latest first)</p>
-</dd>
-</dl>
-</li>
-<li><p class="first"><strong>start</strong> (<em>number</em>): Prefix number for the latest revision</p>
-</li>
+<ul class="simple">
+<li><strong>ids</strong> (<em>array</em>): Array of valid revision IDs, in reverse order
+(latest first)</li>
+<li><strong>start</strong> (<em>number</em>): Prefix number for the latest revision</li>
 </ul>
 </div>
 <div class="section" id="obtaining-an-extended-revision-history">
@@ -1075,7 +1107,7 @@ document by supplying the <tt class="docutils literal"><span class="pre">revs_in
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The returned document contains <tt class="docutils literal"><span class="pre">_rev_info</span></tt> field with extended revision
+<p>The returned document contains <tt class="docutils literal"><span class="pre">_revs_info</span></tt> field with extended revision
 information, including the availability and status of each revision. This array
 field contains objects with following structure:</p>
 <ul class="simple">
@@ -1125,9 +1157,9 @@ requested.</p>
 </div>
 <div class="section" id="retrieving-deleted-documents">
 <h3>Retrieving Deleted Documents<a class="headerlink" href="#retrieving-deleted-documents" title="Permalink to this headline">¶</a></h3>
-<p>CouchDB doesn&#8217;t actually deletes documents via <a class="reference internal" href="#delete--{db}-{docid}" title="DELETE /{db}/{docid}"><tt class="xref http http-delete docutils literal"><span class="pre">DELETE</span> <span class="pre">/{db}/{docid}</span></tt></a>.
+<p>CouchDB doesn&#8217;t actually deletes documents via <a class="reference internal" href="#delete--db-docid" title="DELETE /{db}/{docid}"><tt class="xref http http-delete docutils literal"><span class="pre">DELETE</span> <span class="pre">/{db}/{docid}</span></tt></a>.
 Instead of this, it leaves tombstone with very basic information about document.
-If you just <a class="reference internal" href="#get--{db}-{docid}" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a> CouchDB returns <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a>
+If you just <a class="reference internal" href="#get--db-docid" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a> CouchDB returns <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a>
 response:</p>
 <p><strong>Request</strong>:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/recipes/FishStew</span>  <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
@@ -1150,7 +1182,7 @@ response:</p>
 </pre></div>
 </div>
 <p>However, you may retrieve document&#8217;s tombstone by using <tt class="docutils literal"><span class="pre">rev</span></tt> query parameter
-with <a class="reference internal" href="#get--{db}-{docid}" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a> request:</p>
+with <a class="reference internal" href="#get--db-docid" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a> request:</p>
 <p><strong>Request</strong>:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/recipes/FishStew?rev=2-056f5f44046ecafc08a2bc2b9c229e20</span>  <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
@@ -1325,8 +1357,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -1365,7 +1397,7 @@ specific language governing permissions and limitations under the License.
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">10.4. Document Methods</a></p>
+                        title="previous chapter">10.4. Documents</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="attachments.html"
                         title="next chapter">10.4.2. <tt class="docutils literal docutils literal docutils literal"><span class="pre">/db/doc/attachment</span></tt></a></p><!--
@@ -1417,7 +1449,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/api/document/common.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -1435,15 +1482,15 @@ specific language governing permissions and limitations under the License.
           <a href="attachments.html" title="10.4.2. /db/doc/attachment"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="10.4. Document Methods"
+          <a href="index.html" title="10.4. Documents"
              >previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" >10.4. Document Methods</a> &raquo;</li> 
+          <li><a href="index.html" >10.4. Documents</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

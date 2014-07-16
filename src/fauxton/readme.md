@@ -21,7 +21,7 @@ A recent of [node.js](http://nodejs.org/) and npm is required.
 
 ### CouchDB Setup ###
 
-    1. Clone the Couchdb repo: https://github.com/apache/couchdb.git or http://git-wip-us.apache.org/repos/asf/couchdb.git
+    1. Clone the CouchDB repo: https://github.com/apache/couchdb.git or http://git-wip-us.apache.org/repos/asf/couchdb.git
     cd couchdb
 
 ### Fauxton Setup ###
@@ -30,6 +30,15 @@ A recent of [node.js](http://nodejs.org/) and npm is required.
 
     # Install all dependencies
     npm install
+
+### Dev Server
+Using the dev server is the easiest way to use fauxton, specially when
+developing for it. Copy or symlink the `settings.json.default` (or the
+`settings.json.dev` file if you'd like to see the `styletests` addon).
+
+And then...
+
+    grunt dev
 
 #### (Optional) To avoid a npm global install
     # Add node_modules/.bin to your path
@@ -42,10 +51,15 @@ A recent of [node.js](http://nodejs.org/) and npm is required.
     # Or fully compiled install
     # ./bin/grunt couchdb
 
-### Dev Server
-    Using the dev server is the easiest way to use fauxton, specially when developing for it.
+### Prepare Fauxton Release
+    Follow the "Fauxton Setup" section,
+    Edit settings.json variable root where the document will live.  eg.  "/_utils/fauxton/"
+    
+    then:
 
-    grunt dev
+    ./bin/grunt couchdb
+
+    This will install the latest version of Fauxton into `/share/www/fauxton`
 
 ### Running Tests
     There are two ways to run the tests. `grunt test` will run the tests via the commandline. It is also possible to view them via the url
@@ -53,7 +67,7 @@ A recent of [node.js](http://nodejs.org/) and npm is required.
 
 ### To Deploy Fauxton
 
-    ./bin/grunt couchapp_deploy - to deploy to your local [Couchdb instance] (http://localhost:5984/fauxton/_design/fauxton/index.html)
+    ./bin/grunt couchapp_deploy - to deploy to your local [CouchDB instance] (http://localhost:5984/fauxton/_design/fauxton/index.html)
 
 ## Understang Fauxton Code layout
 

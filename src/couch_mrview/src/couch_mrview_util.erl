@@ -359,24 +359,19 @@ validate_args(Args) ->
         _ -> mrverror(<<"`keys` must be an array of strings.">>)
     end,
 
-    case {Args#mrargs.keys, Args#mrargs.start_key} of
-        {undefined, _} -> ok;
-        {[], _} -> ok;
-        {[_|_], undefined} -> ok;
-        _ -> mrverror(<<"`start_key` is incompatible with `keys`">>)
+    case {Args#mrargs.keys, Args#mrargs.start_key,
+          Args#mrargs.end_key} of
+        {undefined, _, _} -> ok;
+        {[], _, _} -> ok;
+        {[_|_], undefined, undefined} -> ok;
+        _ -> mrverror(<<"`keys` is incompatible with `key`"
+                        ", `start_key` and `end_key`">>)
     end,
 
     case Args#mrargs.start_key_docid of
         undefined -> ok;
         SKDocId0 when is_binary(SKDocId0) -> ok;
         _ -> mrverror(<<"`start_key_docid` must be a string.">>)
-    end,
-
-    case {Args#mrargs.keys, Args#mrargs.end_key} of
-        {undefined, _} -> ok;
-        {[], _} -> ok;
-        {[_|_], undefined} -> ok;
-        _ -> mrverror(<<"`end_key` is incompatible with `keys`">>)
     end,
 
     case Args#mrargs.end_key_docid of
@@ -540,7 +535,7 @@ delete_index_file(DbName, Sig) ->
 
 delete_compaction_file(DbName, Sig) ->
     delete_file(compaction_file(DbName, Sig)).
-    
+
 
 delete_file(FName) ->
     case filelib:is_file(FName) of
@@ -668,24 +663,24 @@ expand_dups([KV | Rest], Acc) ->
 
 maybe_load_doc(_Db, _DI, #mrargs{include_docs=false}) ->
     [];
-maybe_load_doc(Db, #doc_info{}=DI, #mrargs{conflicts=true}) ->
-    doc_row(couch_index_util:load_doc(Db, DI, [conflicts]));
-maybe_load_doc(Db, #doc_info{}=DI, _Args) ->
-    doc_row(couch_index_util:load_doc(Db, DI, [])).
+maybe_load_doc(Db, #doc_info{}=DI, #mrargs{conflicts=true, doc_options=Opts}) ->
+    doc_row(couch_index_util:load_doc(Db, DI, [conflicts]), Opts);
+maybe_load_doc(Db, #doc_info{}=DI, #mrargs{doc_options=Opts}) ->
+    doc_row(couch_index_util:load_doc(Db, DI, []), Opts).
 
 
 maybe_load_doc(_Db, _Id, _Val, #mrargs{include_docs=false}) ->
     [];
-maybe_load_doc(Db, Id, Val, #mrargs{conflicts=true}) ->
-    doc_row(couch_index_util:load_doc(Db, docid_rev(Id, Val), [conflicts]));
-maybe_load_doc(Db, Id, Val, _Args) ->
-    doc_row(couch_index_util:load_doc(Db, docid_rev(Id, Val), [])).
+maybe_load_doc(Db, Id, Val, #mrargs{conflicts=true, doc_options=Opts}) ->
+    doc_row(couch_index_util:load_doc(Db, docid_rev(Id, Val), [conflicts]), Opts);
+maybe_load_doc(Db, Id, Val, #mrargs{doc_options=Opts}) ->
+    doc_row(couch_index_util:load_doc(Db, docid_rev(Id, Val), []), Opts).
 
 
-doc_row(null) ->
+doc_row(null, _Opts) ->
     [{doc, null}];
-doc_row(Doc) ->
-    [{doc, couch_doc:to_json_obj(Doc, [])}].
+doc_row(Doc, Opts) ->
+    [{doc, couch_doc:to_json_obj(Doc, Opts)}].
 
 
 docid_rev(Id, {Props}) ->

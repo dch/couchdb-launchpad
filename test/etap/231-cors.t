@@ -32,7 +32,7 @@ server() ->
 main(_) ->
     test_util:init_code_path(),
 
-    etap:plan(30),
+    etap:plan(29),
     case (catch test()) of
         ok ->
             etap:end_tests();
@@ -58,10 +58,6 @@ cycle_db(DbName) ->
     Db.
 
 test() ->
-
-    ibrowse:start(),
-    crypto:start(),
-
     %% launch couchdb
     couch_server_sup:start_link(test_util:config_files()),
 
@@ -88,10 +84,10 @@ test() ->
     test_doc_with_attachment_request(),
     test_doc_with_attachment_range_request(),
     test_db_preflight_request(),
-    test_db_origin_request(),
     test_db1_origin_request(),
     test_preflight_with_port1(),
     test_preflight_with_scheme1(),
+    test_if_none_match_header(),
 
     ok = couch_config:set("cors", "origins", "http://example.com:5984", false),
     test_preflight_with_port2(),
@@ -129,7 +125,6 @@ test() ->
     test_preflight_request(true),
     test_db_request(true),
     test_db_preflight_request(true),
-    test_db_origin_request(true),
     test_db1_origin_request(true),
     test_preflight_with_port1(true),
     test_preflight_with_scheme1(true),
@@ -138,7 +133,7 @@ test() ->
     % test multiple per-host configuration
 
     %% do tests with auth
-    ok = set_admin_password("test", "test"),
+    ok = set_admin_password("test", <<"test">>),
 
     test_db_preflight_auth_request(),
     test_db_origin_auth_request(),
@@ -160,7 +155,6 @@ test() ->
 test_preflight_request() -> test_preflight_request(false).
 test_db_request() -> test_db_request(false).
 test_db_preflight_request() -> test_db_preflight_request(false).
-test_db_origin_request() -> test_db_origin_request(false).
 test_db1_origin_request() -> test_db1_origin_request(false).
 test_preflight_with_port1() -> test_preflight_with_port1(false).
 test_preflight_with_scheme1() -> test_preflight_with_scheme1(false).
@@ -219,7 +213,7 @@ test_db_request(VHost) ->
             "http://example.com",
             "db Access-Control-Allow-Origin ok"),
         etap:is(proplists:get_value("Access-Control-Expose-Headers", RespHeaders),
-            "Content-Type, Server",
+            "Cache-Control, Content-Type, Server",
             "db Access-Control-Expose-Headers ok");
     _ ->
         etap:is(false, true, "ibrowse failed")
@@ -308,19 +302,6 @@ test_db_preflight_request(VHost) ->
         etap:is(false, true, "ibrowse failed")
     end.
 
-
-test_db_origin_request(VHost) ->
-    Headers = [{"Origin", "http://example.com"}]
-               ++ maybe_append_vhost(VHost),
-    Url = server() ++ "etap-test-db",
-    case ibrowse:send_req(Url, Headers, get, []) of
-    {ok, _, RespHeaders, _Body} ->
-        etap:is(proplists:get_value("Access-Control-Allow-Origin", RespHeaders),
-            "http://example.com",
-            "db origin ok");
-    _ ->
-        etap:is(false, true, "ibrowse failed")
-    end.
 
 test_db1_origin_request(VHost) ->
     Headers = [{"Origin", "http://example.com"}]

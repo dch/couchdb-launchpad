@@ -15,13 +15,18 @@
 Replicator Database
 ===================
 
-A database where you ``PUT``/``POST`` documents to trigger replications
-and you ``DELETE`` to cancel ongoing replications. These documents have
-exactly the same content as the JSON objects we used to ``POST`` to
-``_replicate`` (fields ``source``, ``target``, ``create_target``,
-``continuous``, ``doc_ids``, ``filter``, ``query_params``.
+The ``_replicator`` database works like any other in CouchDB, but documents
+added to it will trigger replications. Creating (``PUT`` or ``POST``) a
+document to start a replication. ``DELETE`` a replicaiton document to
+cancel an ongoing replication.
 
-Replication documents can have a user defined ``_id``. Design documents
+These documents have exactly the same content as the JSON objects we use to
+``POST`` to ``_replicate`` (fields ``source``, ``target``, ``create_target``,
+``continuous``, ``doc_ids``, ``filter``, ``query_params``, ``use_checkpoints``,
+``checkpoint_interval``).
+
+Replication documents can have a user defined ``_id`` (handy for finding a
+specific replication request later). Design Documents
 (and ``_local`` documents) added to the replicator database are ignored.
 
 The default name of this database is ``_replicator``. The name can be
@@ -31,7 +36,7 @@ parameter ``db``.
 Basics
 ------
 
-Let's say you PUT the following document into ``_replicator``:
+Let's say you POST the following document into ``_replicator``:
 
 .. code-block:: javascript
 
@@ -82,6 +87,23 @@ Special fields set by the replicator start with the prefix
    when the current replication state (marked in ``_replication_state``)
    was set.
 
+-  ``_replication_state_reason``
+
+   If ``replication_state`` is ``error``, this field contains the reason.
+
+.. code-block:: javascript
+
+    {
+    "_id": "my_rep",
+    "_rev": "2-9f2c0d9372f4ee4dc75652ab8f8e7c70",
+    "source": "foodb",
+    "target": "bardb",
+    "_replication_state": "error",
+    "_replication_state_time": "2013-12-13T18:48:00+01:00",
+    "_replication_state_reason": "db_not_found: could not open foodb",
+    "_replication_id": "fe965cdc47b4d5f6c02811d9d351ac3d"
+    }
+
 When the replication finishes, it will update the ``_replication_state``
 field (and ``_replication_state_time``) with the value ``completed``, so
 the document will look like:
@@ -99,8 +121,8 @@ the document will look like:
     }
 
 When an error happens during replication, the ``_replication_state``
-field is set to ``error`` (and ``_replication_state_time`` gets updated of
-course).
+field is set to ``error`` (and ``_replication_state_reason`` and
+``_replication_state_time`` are updated).
 
 When you PUT/POST a document to the ``_replicator`` database, CouchDB
 will attempt to start the replication up to 10 times (configurable under
@@ -343,11 +365,11 @@ replicator database implementation is like a ``_changes`` feed consumer
 replicator database - in fact this feature could be implemented with an
 external script/program. This implementation detail implies that for non
 admin users, a ``user_ctx`` property, containing the user's name and a
-subset of his/her roles, must be defined in the replication document.
+subset of their roles, must be defined in the replication document.
 This is ensured by the document update validation function present in
 the default design document of the replicator database. This validation
 function also ensure that a non admin user can set a user name property
-in the ``user_ctx`` property that doesn't match his/her own name (same
+in the ``user_ctx`` property that doesn't match their own name (same
 principle applies for the roles).
 
 For admins, the ``user_ctx`` property is optional, and if it's missing

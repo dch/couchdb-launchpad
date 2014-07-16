@@ -17,6 +17,7 @@
 ==========================================
 
 .. http:get:: /{db}/_design/{ddoc}/_view/{view}
+  :synopsis: Returns results for the specified stored view
 
   Executes the specified view function from the specified design document.
 
@@ -40,8 +41,15 @@
   :query boolean group: Group the results using the reduce function to a group
     or single row. Default is ``false``
   :query number group_level: Specify the group level to be used. *Optional*
-  :query boolean include_docs: Include the full content of the documents in
-    the return. Default is ``false``
+  :query boolean include_docs: Include the associated document with each row.
+    Default is ``false``.
+  :query boolean attachments: Include the Base64-encoded content of
+    :ref:`attachments <api/doc/attachments>` in the documents that are included
+    if `include_docs` is ``true``. Ignored if `include_docs` isn't ``true``.
+    Default is ``false``.
+  :query boolean att_encoding_info: Include encoding information in attachment
+    stubs if `include_docs` is ``true`` and the particular attachment is
+    compressed. Ignored if `include_docs` isn't ``true``. Default is ``false``.
   :query boolean inclusive_end: Specifies whether the specified end key should
     be included in the result. Default is ``true``
   :query string key: Return only documents that match the specified key.
@@ -122,12 +130,22 @@
         "total_rows": 3
     }
 
+.. versionchanged:: 1.6.0 added ``attachments`` and ``att_encoding_info``
+   parameters
+
+.. warning::
+   Using the ``attachments`` parameter to include attachments in view results
+   is not recommended for large attachment sizes. Also note that the
+   Base64-encoding that is used leads to a 33% overhead (i.e. one third) in
+   transfer size for attachments.
+
 
 .. http:post:: /{db}/_design/{ddoc}/_view/{view}
+  :synopsis: Returns certain rows for the specified stored view
 
   Executes the specified view function from the specified design document.
-  Unlike the :get:`/{db}/_design/{ddoc}/_view/{view}`  method
-  for accessing views, the :method:`POST` method supports the specification
+  Unlike :get:`/{db}/_design/{ddoc}/_view/{view}` for accessing views, the
+  :method:`POST` method supports the specification
   of explicit keys to be retrieved from the view results. The remainder of the
   :method:`POST` view functionality is identical to the
   :get:`/{db}/_design/{ddoc}/_view/{view}` API.
@@ -341,107 +359,107 @@ content. The basic order of output is as follows:
   ETag: "8LA1LZPQ37B6R9U8BK9BGQH27"
   Server: CouchDB (Erlang/OTP)
   Transfer-Encoding: chunked
-  
+
   {
-      "offset": 0, 
+      "offset": 0,
       "rows": [
           {
-              "id": "dummy-doc", 
-              "key": null, 
+              "id": "dummy-doc",
+              "key": null,
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": false, 
+              "id": "dummy-doc",
+              "key": false,
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": true, 
+              "id": "dummy-doc",
+              "key": true,
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": 0, 
+              "id": "dummy-doc",
+              "key": 0,
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": 1, 
+              "id": "dummy-doc",
+              "key": 1,
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": 10, 
+              "id": "dummy-doc",
+              "key": 10,
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": 42, 
+              "id": "dummy-doc",
+              "key": 42,
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": "10", 
+              "id": "dummy-doc",
+              "key": "10",
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": "hello", 
+              "id": "dummy-doc",
+              "key": "hello",
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": "Hello", 
+              "id": "dummy-doc",
+              "key": "Hello",
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
+              "id": "dummy-doc",
               "key": "\u043f\u0440\u0438\u0432\u0435\u0442",
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": [], 
+              "id": "dummy-doc",
+              "key": [],
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
+              "id": "dummy-doc",
               "key": [
-                  1, 
-                  2, 
+                  1,
+                  2,
                   3
-              ], 
+              ],
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
+              "id": "dummy-doc",
               "key": [
-                  2, 
+                  2,
                   3
-              ], 
+              ],
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
+              "id": "dummy-doc",
               "key": [
                   3
-              ], 
+              ],
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
-              "key": {}, 
+              "id": "dummy-doc",
+              "key": {},
               "value": null
-          }, 
+          },
           {
-              "id": "dummy-doc", 
+              "id": "dummy-doc",
               "key": {
                   "foo": "bar"
-              }, 
+              },
               "value": null
           }
-      ], 
+      ],
       "total_rows": 17
   }
 
@@ -469,7 +487,7 @@ You can reverse the order of the returned view information by using the
   ETag: "Z4N468R15JBT98OM0AMNSR8U"
   Server: CouchDB (Erlang/OTP)
   Transfer-Encoding: chunked
-  
+
   {
       "offset": 0,
       "rows": [

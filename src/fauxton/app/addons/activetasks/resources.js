@@ -13,7 +13,7 @@
 define([
   "app",
   "backbone",
-  "modules/fauxton/base",
+  "addons/fauxton/base",
   "d3"
 ],
 
@@ -37,8 +37,18 @@ function (app, backbone, Fauxton) {
       "indexer": "Indexer",
       "view_compaction": "View Compaction"
     },
-    url: function () {
-      return app.host + '/_active_tasks';
+    documentation: "_active_tasks",
+    url: function (context) {
+      if (context === "apiurl"){
+        return window.location.origin + '/_active_tasks';
+      } else {
+        return app.host + '/_active_tasks';
+      }
+    },
+    fetch: function (options) {
+     var fetchoptions = options || {};
+     fetchoptions.cache = false;
+     return Backbone.Model.prototype.fetch.call(this, fetchoptions);
     },
     parse: function(resp){
       var types = this.getUniqueTypes(resp),

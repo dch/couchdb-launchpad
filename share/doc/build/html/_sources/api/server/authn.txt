@@ -12,12 +12,11 @@
 
 .. _api/auth:
 
-======================
-Authentication Methods
-======================
+==============
+Authentication
+==============
 
-The CouchDB Authentication methods provide an interface for obtaining
-session and authorization data.
+Interfaces for obtaining session and authorization data.
 
 .. note:: We're also strongly recommend you to
    :ref:`setup SSL <config/ssl>` to improve all authentication methods security.
@@ -85,10 +84,11 @@ To obtain the first token and thus authenticate a user for the first time, the
 
 .. _api/auth/session:
 
-``_session``
-------------
+``/_session``
+-------------
 
 .. http:post:: /_session
+  :synopsis: Authenticates user by Cookie-based user login
 
   Initiates new session for specified user credentials by providing `Cookie`
   value.
@@ -179,6 +179,7 @@ To obtain the first token and thus authenticate a user for the first time, the
 
 
 .. http:get:: /_session
+  :synopsis: Returns Cookie-based login user information
 
   Returns complete information about authenticated user.
   This information contains :ref:`userctx_object`, authentication method and
@@ -231,6 +232,7 @@ To obtain the first token and thus authenticate a user for the first time, the
 
 
 .. http:delete:: /_session
+  :synopsis: Logout Cookie-based user
 
   Closes user's session.
 

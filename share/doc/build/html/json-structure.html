@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>11. JSON Structure Reference &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>11. JSON Structure Reference &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,9 +42,9 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="index.html" />
     <link rel="next" title="12. Experimental Features" href="experimental.html" />
-    <link rel="prev" title="10.6. Local (non-replicating) Document Methods" href="api/local.html" /> 
+    <link rel="prev" title="10.6. Local (non-replicating) Documents" href="api/local.html" /> 
   </head>
   <body>
     <div class="related">
@@ -60,9 +60,9 @@ specific language governing permissions and limitations under the License.
           <a href="experimental.html" title="12. Experimental Features"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api/local.html" title="10.6. Local (non-replicating) Document Methods"
+          <a href="api/local.html" title="10.6. Local (non-replicating) Documents"
              accesskey="P">previous</a> |</li>
-  <li><a href="index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li> 
+  <li><a href="index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -261,14 +261,13 @@ document)</td>
 <td>The name of the database.</td>
 </tr>
 <tr class="row-odd"><td>committed_update_seq</td>
-<td>The number of committed update.</td>
+<td>The number of committed updates.</td>
 </tr>
 <tr class="row-even"><td>doc_count</td>
-<td>A count of the documents in the specified
-database.</td>
+<td>The number of documents in the database.</td>
 </tr>
 <tr class="row-odd"><td>doc_del_count</td>
-<td>Number of deleted documents</td>
+<td>The number of deleted documents.</td>
 </tr>
 <tr class="row-even"><td>compact_running</td>
 <td>Set to true if the database compaction
@@ -276,23 +275,24 @@ routine is operating on this database.</td>
 </tr>
 <tr class="row-odd"><td>disk_format_version</td>
 <td>The version of the physical format used for
-the data when it is stored on disk.</td>
+the data when it is stored on hard disk.</td>
 </tr>
 <tr class="row-even"><td>disk_size</td>
-<td>Size in bytes of the data as stored on the
-disk. Views indexes are not included in the
+<td>Size in bytes of the data as stored on disk.
+View indexes are not included in the
 calculation.</td>
 </tr>
 <tr class="row-odd"><td>instance_start_time</td>
-<td>Timestamp of when the database was opened,
-expressed in microseconds since the epoch.</td>
+<td>Timestamp indicating when the database was
+opened, expressed in microseconds since the
+epoch.</td>
 </tr>
 <tr class="row-even"><td>purge_seq</td>
 <td>The number of purge operations on the
 database.</td>
 </tr>
 <tr class="row-odd"><td>update_seq</td>
-<td>The current number of updates to the
+<td>The current number of updates made in the
 database.</td>
 </tr>
 </tbody>
@@ -437,7 +437,7 @@ document)</td>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>tasks [array]</td>
-<td>Active Task</td>
+<td>Active Tasks</td>
 </tr>
 <tr class="row-odd"><td>pid</td>
 <td>Process ID</td>
@@ -495,12 +495,19 @@ start</td>
 </tr>
 <tr class="row-even"><td>filter (optional)</td>
 <td>name of the filter function in the form of
-ddoc/myfilter</td>
+<tt class="docutils literal"><span class="pre">ddoc/myfilter</span></tt></td>
 </tr>
 <tr class="row-odd"><td>query_params (optional)</td>
-<td>query parameter that are passed to the
-filter function; value should be a document
-containing parameters as members</td>
+<td>Query parameter that are passed to the
+filter function; the value should be a
+document containing parameters as members</td>
+</tr>
+<tr class="row-even"><td>use_checkpoints (optional)</td>
+<td>Whether to use replication checkpoints
+or not</td>
+</tr>
+<tr class="row-odd"><td>checkpoint_interval (optional)</td>
+<td>Specifies the checkpoint interval in ms.</td>
 </tr>
 </tbody>
 </table>
@@ -525,7 +532,7 @@ containing parameters as members</td>
 <td>Unique session ID</td>
 </tr>
 <tr class="row-even"><td>source_last_seq</td>
-<td>Last sequence number read from source
+<td>Last sequence number read from the source
 database</td>
 </tr>
 <tr class="row-odd"><td>history [array]</td>
@@ -582,18 +589,18 @@ database</td>
 <tbody valign="top">
 <tr class="row-even"><td>body</td>
 <td>Request body data as <cite>string</cite>.
-If request method is <cite>GET</cite> method contains
-this field contains <tt class="docutils literal"><span class="pre">&quot;undefined&quot;</span></tt> value,
-while if <cite>DELETE</cite> or <cite>HEAD</cite> value is <tt class="docutils literal"><span class="pre">&quot;&quot;</span></tt>
-(empty string)</td>
+If the request method is <cite>GET</cite> this field
+contains the value <tt class="docutils literal"><span class="pre">&quot;undefined&quot;</span></tt>. If the
+method is <cite>DELETE</cite> or <cite>HEAD</cite> the value is
+<tt class="docutils literal"><span class="pre">&quot;&quot;</span></tt> (empty string).</td>
 </tr>
 <tr class="row-odd"><td>cookie</td>
 <td>Cookies <cite>object</cite>.</td>
 </tr>
 <tr class="row-even"><td>form</td>
 <td>Form data <cite>object</cite>.
-Contains decoded body as key-value pairs if
-<cite>Content-Type</cite> header was
+Contains the decoded body as key-value
+pairs if the <cite>Content-Type</cite> header was
 <tt class="docutils literal"><span class="pre">application/x-www-form-urlencoded</span></tt>.</td>
 </tr>
 <tr class="row-odd"><td>headers</td>
@@ -608,10 +615,10 @@ specified or <tt class="docutils literal"><span class="pre">null</span></tt> oth
 </tr>
 <tr class="row-even"><td>method</td>
 <td>Request method as <cite>string</cite> or <cite>array</cite>.
-String value is method is one of: <cite>HEAD</cite>,
+String value is a method as one of: <cite>HEAD</cite>,
 <cite>GET</cite>, <cite>POST</cite>, <cite>PUT</cite>, <cite>DELETE</cite>, <cite>OPTIONS</cite>,
-and <cite>TRACE</cite>, otherwise it will be
-represented as array of char codes.</td>
+and <cite>TRACE</cite>. Otherwise it will be
+represented as an array of char codes.</td>
 </tr>
 <tr class="row-odd"><td>path</td>
 <td>List of requested path sections.</td>
@@ -621,8 +628,8 @@ represented as array of char codes.</td>
 </tr>
 <tr class="row-odd"><td>query</td>
 <td>URL query parameters <cite>object</cite>.
-Note that multiple keys not supported and
-last key value suppress others.</td>
+Note that multiple keys are not supported
+and the last key value suppresses others.</td>
 </tr>
 <tr class="row-even"><td>requested_path</td>
 <td>List of actual requested path section.</td>
@@ -637,8 +644,8 @@ last key value suppress others.</td>
 <td><a class="reference internal" href="#userctx-object"><em>User Context Object</em></a>.</td>
 </tr>
 <tr class="row-even"><td>uuid</td>
-<td>Generated UUID by specified algorithm in
-config file.</td>
+<td>Generated UUID by a specified algorithm in
+the config file.</td>
 </tr>
 </tbody>
 </table>
@@ -764,16 +771,16 @@ view result rows (for list functions only)</td>
 </table>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last"><tt class="docutils literal"><span class="pre">body</span></tt>, <tt class="docutils literal"><span class="pre">base64</span></tt> and <tt class="docutils literal"><span class="pre">json</span></tt> object keys are overlaps each other and
-the last wins. Since most realizations of key-value objects doesn&#8217;t preserve
-key order mixing them may create confusing situation. Try to use only one of
-them.</p>
+<p class="last">The <tt class="docutils literal"><span class="pre">body</span></tt>, <tt class="docutils literal"><span class="pre">base64</span></tt> and <tt class="docutils literal"><span class="pre">json</span></tt> object keys are overlapping each other
+where the last one wins. Since most realizations of key-value objects do
+not preserve the key order or if they are mixed, confusing situations can
+occure. Try to use only one of them.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Any custom property makes CouchDB raise internal exception.
-Also <cite>Response object</cite> could be a simple string value which would be
-implicitly wrapped into <tt class="docutils literal"><span class="pre">{&quot;body&quot;:</span> <span class="pre">...}</span></tt> object.</p>
+<p class="last">Any custom property makes CouchDB raise an internal exception.
+Furthermore, the <cite>Response object</cite> could be a simple string value which would
+be implicitly wrapped into a <tt class="docutils literal"><span class="pre">{&quot;body&quot;:</span> <span class="pre">...}</span></tt> object.</p>
 </div>
 </div>
 <div class="section" id="returned-couchdb-document-with-detailed-revision-info">
@@ -797,7 +804,7 @@ implicitly wrapped into <tt class="docutils literal"><span class="pre">{&quot;bo
 document)</td>
 </tr>
 <tr class="row-even"><td>_revs_info [array]</td>
-<td>CouchDB Document Extended Revision Info</td>
+<td>CouchDB document extended revision info</td>
 </tr>
 <tr class="row-odd"><td>rev</td>
 <td>Full revision string</td>
@@ -829,7 +836,7 @@ document)</td>
 document)</td>
 </tr>
 <tr class="row-even"><td>_revisions</td>
-<td>CouchDB Document Revisions</td>
+<td>CouchDB document revisions</td>
 </tr>
 <tr class="row-odd"><td>ids [array]</td>
 <td>Array of valid revision IDs, in reverse
@@ -862,7 +869,7 @@ order (latest first)</td>
 document)</td>
 </tr>
 <tr class="row-even"><td>_attachments (optional)</td>
-<td>Document Attachment</td>
+<td>Document attachment</td>
 </tr>
 <tr class="row-odd"><td>filename</td>
 <td>Attachment</td>
@@ -947,8 +954,8 @@ document)</td>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>db</td>
-<td>Database name in context of provided
-operation.</td>
+<td>Database name in the context of the
+provided operation.</td>
 </tr>
 <tr class="row-odd"><td>name</td>
 <td>User name.</td>
@@ -1026,7 +1033,7 @@ specific language governing permissions and limitations under the License.
 <h3>Quick Search</h3>
 
 <form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -1067,7 +1074,7 @@ specific language governing permissions and limitations under the License.
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="api/local.html"
-                        title="previous chapter">10.6. Local (non-replicating) Document Methods</a></p>
+                        title="previous chapter">10.6. Local (non-replicating) Documents</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="experimental.html"
                         title="next chapter">12. Experimental Features</a></p><!--
@@ -1119,7 +1126,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/json-structure.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -1137,13 +1159,13 @@ specific language governing permissions and limitations under the License.
           <a href="experimental.html" title="12. Experimental Features"
              >next</a> |</li>
         <li class="right" >
-          <a href="api/local.html" title="10.6. Local (non-replicating) Document Methods"
+          <a href="api/local.html" title="10.6. Local (non-replicating) Documents"
              >previous</a> |</li>
-  <li><a href="index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li> 
+  <li><a href="index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

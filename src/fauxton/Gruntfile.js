@@ -18,7 +18,7 @@
 module.exports = function(grunt) {
   var helper = require('./tasks/helper').init(grunt),
   _ = grunt.util._,
-  path = require('path');
+  fs = require('fs');
 
   var couch_config = function () {
 
@@ -64,22 +64,26 @@ module.exports = function(grunt) {
           "dist/debug/css/fauxton.css": "assets/less/fauxton.less"
         }
       },
-      img: ["assets/img/**"]
+      img: ["assets/img/**"],
+      // used in concat:index_css to keep file ordering intact
+      // fauxton.css should load first
+      css: ["assets/css/*.css", "dist/debug/css/fauxton.css"]
     };
     helper.processAddons(function(addon){
       // Less files from addons
       var root = addon.path || "app/addons/" + addon.name;
       var lessPath = root + "/assets/less";
-      if(path.existsSync(lessPath)){
+      if(fs.existsSync(lessPath)){
         // .less files exist for this addon
         theAssets.less.paths.push(lessPath);
         theAssets.less.files["dist/debug/css/" + addon.name + ".css"] =
           lessPath + "/" + addon.name + ".less";
+        theAssets.css.push("dist/debug/css/" + addon.name + ".css");
       }
       // Images
       root = addon.path || "app/addons/" + addon.name;
       var imgPath = root + "/assets/img";
-      if(path.existsSync(imgPath)){
+      if(fs.existsSync(imgPath)){
         theAssets.img.push(imgPath + "/**");
       }
     });
@@ -112,6 +116,28 @@ module.exports = function(grunt) {
     return settings.template || defaultSettings;
   }();
 
+  var couchserver_config  = function () {
+    // add a "couchserver" key to settings.json with JSON that matches the
+    // keys and values below (plus your customizations) to have Fauxton work
+    // against a remote CouchDB-compatible server.
+    var defaults = {
+      dist: './dist/debug/',
+      port: 8000,
+      proxy: {
+        target: {
+          host: 'localhost',
+          port: 5984,
+          https: false
+        },
+        // This sets the Host header in the proxy so that you can use external
+        // CouchDB instances and not have the Host set to 'localhost'
+        changeOrigin: true
+      }
+    };
+
+    return helper.readSettingsFile().couchserver || defaults;
+  }();
+
   grunt.initConfig({
 
     // The clean task ensures all files are removed from the dist/ directory so
@@ -119,16 +145,6 @@ module.exports = function(grunt) {
     clean: {
       release:  cleanable,
       watch: cleanableAddons
-    },
-
-    // The lint task will run the build configuration and the application
-    // JavaScript through JSHint and report any errors.  You can change the
-    // options for this task, by reading this:
-    // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md
-    lint: {
-      files: [
-        "build/config.js", "app/**/*.js" 
-      ]
     },
 
     less: {
@@ -142,12 +158,13 @@ module.exports = function(grunt) {
 
     // The jshint option for scripturl is set to lax, because the anchor
     // override inside main.js needs to test for them so as to not accidentally
-    // route.
+    // route. Settings expr true so we can do `migtBeNullObject && mightBeNullObject.coolFunction()`
     jshint: {
-      all: ['app/**/*.js', 'Gruntfile.js', "test/core/*.js"],
+      all: ['app/**/*.js', 'Gruntfile.js', "!app/**/assets/js/*.js"],
       options: {
         scripturl: true,
-        evil: true
+        evil: true,
+        expr: true
       }
     },
 
@@ -159,10 +176,19 @@ module.exports = function(grunt) {
     // The concat task depends on this file to exist, so if you decide to
     // remove this, ensure concat is updated accordingly.
     jst: {
-      "dist/debug/templates.js": [
-        "app/templates/**/*.html",
-        "app/addons/**/templates/**/*.html"
-      ]
+      compile: {
+        options: {
+          processContent: function(src) {
+            return src.replace(/<!--[\s\S]*?-->/gm, '');
+          }
+        },
+        files: {
+          "dist/debug/templates.js": [
+            "app/templates/**/*.html",
+            "app/addons/**/templates/**/*.html"
+          ]
+        }
+      }
     },
 
     template: templateSettings,
@@ -178,14 +204,14 @@ module.exports = function(grunt) {
       },
 
       index_css: {
-        src: ["dist/debug/css/*.css", 'assets/css/*.css'],
+        src: assets.css,
         dest: 'dist/debug/css/index.css'
       },
 
       test_config_js: {
         src: ["dist/debug/templates.js", "test/test.config.js"],
         dest: 'test/test.config.js'
-      }
+      },
     },
 
     cssmin: {
@@ -213,20 +239,7 @@ module.exports = function(grunt) {
     },
 
     // Runs a proxy server for easier development, no need to keep deploying to couchdb
-    couchserver: {
-      dist: './dist/debug/',
-      port: 8000,
-      proxy: {
-        target: {
-          host: 'localhost',
-          port: 5984,
-          https: false
-        },
-        // This sets the Host header in the proxy so that you can use external
-        // CouchDB instances and not have the Host set to 'localhost'
-        changeOrigin: true
-      }
-    },
+    couchserver: couchserver_config,
 
     watch: {
       js: { 
@@ -265,6 +278,7 @@ module.exports = function(grunt) {
           // Do not wrap everything in an IIFE.
           wrap: false,
           optimize: "none",
+          findNestedDependencies: true
         }
       }
     },
@@ -290,6 +304,16 @@ module.exports = function(grunt) {
           {src: ["**"], dest: "../../share/www/fauxton/css/", cwd:"dist/debug/css/", expand: true}
         ]
       },
+      ace: {
+        files: [
+          {src: "assets/js/libs/ace/worker-json.js", dest: "dist/release/js/ace/worker-json.js"},
+          {src: "assets/js/libs/ace/mode-json.js", dest: "dist/release/js/ace/mode-json.js"},
+          {src: "assets/js/libs/ace/theme-crimson_editor.js", dest: "dist/release/js/ace/theme-crimson_editor.js"},
+          {src: "assets/js/libs/ace/mode-javascript.js", dest: "dist/release/js/ace/mode-javascript.js"},
+          {src: "assets/js/libs/ace/worker-javascript.js", dest: "dist/release/js/ace/worker-javascript.js"},
+        ]
+      },
+
       dist:{
         files:[
           {src: "dist/debug/index.html", dest: "dist/release/index.html"},
@@ -314,6 +338,7 @@ module.exports = function(grunt) {
         src: "settings.json"
       }
     },
+    gen_initialize: templateSettings,
 
     mkcouchdb: couch_config,
     rmcouchdb: couch_config,
@@ -321,7 +346,7 @@ module.exports = function(grunt) {
 
     mochaSetup: {
       default: {
-        files: { src: helper.watchFiles(['[Ss]pec.js'], ['./test/core/**/*[Ss]pec.js', './app/**/*[Ss]pec.js'])},
+        files: { src: helper.watchFiles(['[Ss]pec.js'], ['./app/**/*[Ss]pec.js'])},
         template: 'test/test.config.underscore',
         config: './app/config.js'
       }
@@ -340,7 +365,7 @@ module.exports = function(grunt) {
     }
 
     if (!!filepath.match(/[Ss]pec.js$/)) {
-      grunt.task.run(['mochaSetup','jst', 'concat:test_config_js', 'mocha_phantomjs']);
+      //grunt.task.run(['mochaSetup','jst', 'concat:test_config_js', 'mocha_phantomjs']);
     }
   });
 
@@ -386,7 +411,9 @@ module.exports = function(grunt) {
    */
   // clean out previous build artefactsa and lint
   grunt.registerTask('lint', ['clean', 'jshint']);
-  grunt.registerTask('test', ['lint', 'mochaSetup','jst', 'concat:test_config_js', 'mocha_phantomjs']);
+  grunt.registerTask('test', ['lint', 'dependencies', 'gen_initialize:development', 'test_inline']);
+  // lighter weight test task for use inside dev/watch
+  grunt.registerTask('test_inline', ['mochaSetup','jst', 'concat:test_config_js','mocha_phantomjs']);
   // Fetch dependencies (from git or local dir), lint them and make load_addons
   grunt.registerTask('dependencies', ['get_deps', 'gen_load_addons:default']);
   // build templates, js and css
@@ -400,12 +427,13 @@ module.exports = function(grunt) {
   // dev server
   grunt.registerTask('dev', ['debugDev', 'couchserver']);
   // build a debug release
-  grunt.registerTask('debug', ['lint', 'dependencies', 'concat:requirejs','less', 'concat:index_css', 'template:development', 'copy:debug']);
-  grunt.registerTask('debugDev', ['clean', 'dependencies','jshint','less', 'concat:index_css', 'template:development', 'copy:debug']);
+  grunt.registerTask('debug', ['lint', 'dependencies', "gen_initialize:development", 'concat:requirejs','less', 'concat:index_css', 'template:development', 'copy:debug']);
+  grunt.registerTask('debugDev', ['clean', 'dependencies', "gen_initialize:development",'jshint','less', 'concat:index_css', 'template:development', 'copy:debug']);
 
   grunt.registerTask('watchRun', ['clean:watch', 'dependencies', 'jshint']);
   // build a release
-  grunt.registerTask('release', ['clean' ,'dependencies','jshint', 'build', 'minify', 'copy:dist']);
+  grunt.registerTask('release', ['clean' ,'dependencies', "gen_initialize:release", 'jshint', 'build', 'minify', 'copy:dist', 'copy:ace']);
+  grunt.registerTask('couchapp_release', ['clean' ,'dependencies', "gen_initialize:couchapp", 'jshint', 'build', 'minify', 'copy:dist', 'copy:ace']);
 
   /*
    * Install into CouchDB in either debug, release, or couchapp mode
@@ -415,7 +443,7 @@ module.exports = function(grunt) {
   // make a minimized install that is server by mochiweb under _utils
   grunt.registerTask('couchdb', ['release', 'copy:couchdb']);
   // make an install that can be deployed as a couchapp
-  grunt.registerTask('couchapp_setup', ['release']);
+  grunt.registerTask('couchapp_setup', ['couchapp_release']);
   // install fauxton as couchapp
   grunt.registerTask('couchapp_install', ['rmcouchdb:fauxton', 'mkcouchdb:fauxton', 'couchapp:fauxton']);
   // setup and install fauxton as couchapp

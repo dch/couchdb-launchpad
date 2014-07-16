@@ -13,7 +13,7 @@
 define([
        "app",
        "api",
-       "modules/databases/base",
+       "addons/databases/base",
        "addons/permissions/views"
 ],
 function (app, FauxtonAPI, Databases, Permissions) {
@@ -51,7 +51,6 @@ function (app, FauxtonAPI, Databases, Permissions) {
 
     crumbs: function () {
       return [
-        {"name": "Databases", "link": "/_all_dbs"},
         {"name": this.database.id, "link": Databases.databaseUrl(this.database)},
         {"name": "Permissions", "link": "/permissions"}
       ];

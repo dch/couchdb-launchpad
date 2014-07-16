@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>6.2.5. Pagination Recipe &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>6.2.5. Pagination Recipe &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../../index.html" />
     <link rel="up" title="6.2. Guide to Views" href="index.html" />
     <link rel="next" title="7. CouchDB Externals API" href="../../externals.html" />
     <link rel="prev" title="6.2.4. View Cookbook for SQL Jockeys" href="nosql.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="nosql.html" title="6.2.4. View Cookbook for SQL Jockeys"
              accesskey="P">previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >6. CouchApp</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">6.2. Guide to Views</a> &raquo;</li> 
       </ul>
@@ -130,7 +130,7 @@ display band names five at a time and have a link pointing to the next five
 names that make up one page, and a link for the previous five,
 if we’re not on the first page.</p>
 <p>We learned how to use the <tt class="docutils literal"><span class="pre">startkey</span></tt>, <tt class="docutils literal"><span class="pre">limit</span></tt>, and <tt class="docutils literal"><span class="pre">skip</span></tt> parameters in
-earlier chapters. We’ll use these again here. First, let’s have a look at
+earlier documents. We’ll use these again here. First, let’s have a look at
 the full result set:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;total_rows&quot;</span><span class="o">:</span><span class="mi">11</span><span class="p">,</span><span class="s2">&quot;offset&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;rows&quot;</span><span class="o">:</span><span class="p">[</span>
   <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="s2">&quot;a0746072bba60a62b01209f467ca4fe2&quot;</span><span class="p">,</span><span class="s2">&quot;key&quot;</span><span class="o">:</span><span class="s2">&quot;Biffy Clyro&quot;</span><span class="p">,</span><span class="s2">&quot;value&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">},</span>
@@ -174,11 +174,10 @@ the full result set:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="slow-paging-do-not-use">
-<h2>Slow Paging (Do Not Use)<a class="headerlink" href="#slow-paging-do-not-use" title="Permalink to this headline">¶</a></h2>
-<p><strong>Don’t use this method!</strong> We just show it because it might seem natural to use,
-and you need to know why it is a bad idea. To get the first five rows from
-the view result, you use the <tt class="docutils literal"><span class="pre">?limit=5</span></tt> query parameter:</p>
+<div class="section" id="paging">
+<h2>Paging<a class="headerlink" href="#paging" title="Permalink to this headline">¶</a></h2>
+<p>To get the first five rows from the view result, you use the <tt class="docutils literal"><span class="pre">?limit=5</span></tt>
+query parameter:</p>
 <div class="highlight-json"><pre>curl -X GET http://127.0.0.1:5984/artists/_design/artists/_view/by-name?limit=5</pre>
 </div>
 <p>The result:</p>
@@ -231,31 +230,16 @@ straightforward:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="section" id="the-dealbreaker">
-<h3>The dealbreaker<a class="headerlink" href="#the-dealbreaker" title="Permalink to this headline">¶</a></h3>
-<p>This all looks easy and straightforward, but it has one fatal flaw. Remember
-how view results are generated from the underlying B-tree index: CouchDB
-jumps to the first row (or the first row that matches <tt class="docutils literal"><span class="pre">startkey</span></tt>,
-if provided) and reads one row after the other from the index until there are
-no more rows (or <tt class="docutils literal"><span class="pre">limit</span></tt> or <tt class="docutils literal"><span class="pre">endkey</span></tt> match, if provided).</p>
-<p>The <tt class="docutils literal"><span class="pre">skip</span></tt> argument works like this: in addition to going to the first row and
-starting to read, skip will skip as many rows as specified, but CouchDB will
-still read from the first row; it just won’t return any values for the skipped
-rows. If you specify <tt class="docutils literal"><span class="pre">skip=100</span></tt>, CouchDB will read 100 rows and not create
-output for them. This doesn’t sound too bad, but it is very bad, when you use
-1000 or even 10000 as skip values. CouchDB will have to look at a lot of rows
-unnecessarily.</p>
-<p>As a rule of thumb, skip should be used only with single digit values. While
-it’s possible that there are legitimate use cases where you specify a larger
-value, they are a good indicator for potential problems with your solution.
-Finally, for the calculations to work, you need to add a reduce function and
-make two calls to the view per page to get all the numbering right,
-and there’s still a potential for error.</p>
 </div>
-</div>
-<div class="section" id="fast-paging-do-use">
-<h2>Fast Paging (Do Use)<a class="headerlink" href="#fast-paging-do-use" title="Permalink to this headline">¶</a></h2>
-<p>The correct solution is not much harder. Instead of slicing the result set
+<div class="section" id="paging-alternate-method">
+<h2>Paging (Alternate Method)<a class="headerlink" href="#paging-alternate-method" title="Permalink to this headline">¶</a></h2>
+<p>The method described above performed poorly with large skip values until
+CouchDB 1.2. Additionally, some use cases may call for the following
+alternate method even with newer versions of CouchDB. One such case is when
+duplicate results should be prevented. Using skip alone it is possible for
+new documents to be inserted during pagination which could change the offset
+of the start of the subsequent page.</p>
+<p>A correct solution is not much harder. Instead of slicing the result set
 into equally sized pages, we look at 10 rows at a time and use <tt class="docutils literal"><span class="pre">startkey</span></tt> to
 jump to the next 10 rows. We even use skip, but only with the value 1.</p>
 <p>Here is how it works:</p>
@@ -343,8 +327,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -361,11 +345,8 @@ specific language governing permissions and limitations under the License.
 <li><a class="reference internal" href="#example-data">Example Data</a></li>
 <li><a class="reference internal" href="#a-view">A View</a></li>
 <li><a class="reference internal" href="#setup">Setup</a></li>
-<li><a class="reference internal" href="#slow-paging-do-not-use">Slow Paging (Do Not Use)</a><ul>
-<li><a class="reference internal" href="#the-dealbreaker">The dealbreaker</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#fast-paging-do-use">Fast Paging (Do Use)</a></li>
+<li><a class="reference internal" href="#paging">Paging</a></li>
+<li><a class="reference internal" href="#paging-alternate-method">Paging (Alternate Method)</a></li>
 <li><a class="reference internal" href="#jump-to-page">Jump to Page</a></li>
 </ul>
 </li>
@@ -425,7 +406,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/couchapp/views/pagination.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -445,13 +441,13 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="nosql.html" title="6.2.4. View Cookbook for SQL Jockeys"
              >previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >6. CouchApp</a> &raquo;</li>
           <li><a href="index.html" >6.2. Guide to Views</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

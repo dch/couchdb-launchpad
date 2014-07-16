@@ -102,9 +102,11 @@ snappy_nif_la_LIBADD =
 am__snappy_nif_la_SOURCES_DIST = snappy_nif.cc google-snappy/snappy.cc \
 	google-snappy/snappy-sinksource.cc \
 	google-snappy/snappy-stubs-internal.cc
-am__objects_1 = snappy_nif_la-snappy_nif.lo snappy_nif_la-snappy.lo \
-	snappy_nif_la-snappy-sinksource.lo \
-	snappy_nif_la-snappy-stubs-internal.lo
+am__dirstamp = $(am__leading_dot)dirstamp
+am__objects_1 = snappy_nif_la-snappy_nif.lo \
+	google-snappy/snappy_nif_la-snappy.lo \
+	google-snappy/snappy_nif_la-snappy-sinksource.lo \
+	google-snappy/snappy_nif_la-snappy-stubs-internal.lo
 @USE_OTP_NIFS_TRUE@am_snappy_nif_la_OBJECTS = $(am__objects_1)
 snappy_nif_la_OBJECTS = $(am_snappy_nif_la_OBJECTS)
 snappy_nif_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -315,6 +317,7 @@ version_minor = @version_minor@
 version_release = @version_release@
 version_revision = @version_revision@
 version_stage = @version_stage@
+AUTOMAKE_OPTIONS = subdir-objects
 snappyebindir = $(localerlanglibdir)/snappy-1.0.5/ebin
 snappyprivdir = $(localerlanglibdir)/snappy-1.0.5/priv
 snappy_cxx_srcs = \
@@ -426,37 +429,60 @@ clean-snappyprivLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+google-snappy/$(am__dirstamp):
+	@$(MKDIR_P) google-snappy
+	@: > google-snappy/$(am__dirstamp)
+google-snappy/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) google-snappy/$(DEPDIR)
+	@: > google-snappy/$(DEPDIR)/$(am__dirstamp)
+google-snappy/snappy_nif_la-snappy.lo: google-snappy/$(am__dirstamp) \
+	google-snappy/$(DEPDIR)/$(am__dirstamp)
+google-snappy/snappy_nif_la-snappy-sinksource.lo:  \
+	google-snappy/$(am__dirstamp) \
+	google-snappy/$(DEPDIR)/$(am__dirstamp)
+google-snappy/snappy_nif_la-snappy-stubs-internal.lo:  \
+	google-snappy/$(am__dirstamp) \
+	google-snappy/$(DEPDIR)/$(am__dirstamp)
 snappy_nif.la: $(snappy_nif_la_OBJECTS) $(snappy_nif_la_DEPENDENCIES) $(EXTRA_snappy_nif_la_DEPENDENCIES) 
 	$(snappy_nif_la_LINK) $(am_snappy_nif_la_rpath) $(snappy_nif_la_OBJECTS) $(snappy_nif_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f google-snappy/snappy_nif_la-snappy-sinksource.$(OBJEXT)
+	-rm -f google-snappy/snappy_nif_la-snappy-sinksource.lo
+	-rm -f google-snappy/snappy_nif_la-snappy-stubs-internal.$(OBJEXT)
+	-rm -f google-snappy/snappy_nif_la-snappy-stubs-internal.lo
+	-rm -f google-snappy/snappy_nif_la-snappy.$(OBJEXT)
+	-rm -f google-snappy/snappy_nif_la-snappy.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/snappy_nif_la-snappy-sinksource.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/snappy_nif_la-snappy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/snappy_nif_la-snappy_nif.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@google-snappy/$(DEPDIR)/snappy_nif_la-snappy-sinksource.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@google-snappy/$(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@google-snappy/$(DEPDIR)/snappy_nif_la-snappy.Plo@am__quote@
 
 .cc.o:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cc.lo:
-@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
@@ -468,32 +494,33 @@ snappy_nif_la-snappy_nif.lo: snappy_nif.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -c -o snappy_nif_la-snappy_nif.lo `test -f 'snappy_nif.cc' || echo '$(srcdir)/'`snappy_nif.cc
 
-snappy_nif_la-snappy.lo: google-snappy/snappy.cc
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -MT snappy_nif_la-snappy.lo -MD -MP -MF $(DEPDIR)/snappy_nif_la-snappy.Tpo -c -o snappy_nif_la-snappy.lo `test -f 'google-snappy/snappy.cc' || echo '$(srcdir)/'`google-snappy/snappy.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/snappy_nif_la-snappy.Tpo $(DEPDIR)/snappy_nif_la-snappy.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='google-snappy/snappy.cc' object='snappy_nif_la-snappy.lo' libtool=yes @AMDEPBACKSLASH@
+google-snappy/snappy_nif_la-snappy.lo: google-snappy/snappy.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -MT google-snappy/snappy_nif_la-snappy.lo -MD -MP -MF google-snappy/$(DEPDIR)/snappy_nif_la-snappy.Tpo -c -o google-snappy/snappy_nif_la-snappy.lo `test -f 'google-snappy/snappy.cc' || echo '$(srcdir)/'`google-snappy/snappy.cc
+@am__fastdepCXX_TRUE@	$(am__mv) google-snappy/$(DEPDIR)/snappy_nif_la-snappy.Tpo google-snappy/$(DEPDIR)/snappy_nif_la-snappy.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='google-snappy/snappy.cc' object='google-snappy/snappy_nif_la-snappy.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -c -o snappy_nif_la-snappy.lo `test -f 'google-snappy/snappy.cc' || echo '$(srcdir)/'`google-snappy/snappy.cc
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -c -o google-snappy/snappy_nif_la-snappy.lo `test -f 'google-snappy/snappy.cc' || echo '$(srcdir)/'`google-snappy/snappy.cc
 
-snappy_nif_la-snappy-sinksource.lo: google-snappy/snappy-sinksource.cc
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -MT snappy_nif_la-snappy-sinksource.lo -MD -MP -MF $(DEPDIR)/snappy_nif_la-snappy-sinksource.Tpo -c -o snappy_nif_la-snappy-sinksource.lo `test -f 'google-snappy/snappy-sinksource.cc' || echo '$(srcdir)/'`google-snappy/snappy-sinksource.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/snappy_nif_la-snappy-sinksource.Tpo $(DEPDIR)/snappy_nif_la-snappy-sinksource.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='google-snappy/snappy-sinksource.cc' object='snappy_nif_la-snappy-sinksource.lo' libtool=yes @AMDEPBACKSLASH@
+google-snappy/snappy_nif_la-snappy-sinksource.lo: google-snappy/snappy-sinksource.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -MT google-snappy/snappy_nif_la-snappy-sinksource.lo -MD -MP -MF google-snappy/$(DEPDIR)/snappy_nif_la-snappy-sinksource.Tpo -c -o google-snappy/snappy_nif_la-snappy-sinksource.lo `test -f 'google-snappy/snappy-sinksource.cc' || echo '$(srcdir)/'`google-snappy/snappy-sinksource.cc
+@am__fastdepCXX_TRUE@	$(am__mv) google-snappy/$(DEPDIR)/snappy_nif_la-snappy-sinksource.Tpo google-snappy/$(DEPDIR)/snappy_nif_la-snappy-sinksource.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='google-snappy/snappy-sinksource.cc' object='google-snappy/snappy_nif_la-snappy-sinksource.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -c -o snappy_nif_la-snappy-sinksource.lo `test -f 'google-snappy/snappy-sinksource.cc' || echo '$(srcdir)/'`google-snappy/snappy-sinksource.cc
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -c -o google-snappy/snappy_nif_la-snappy-sinksource.lo `test -f 'google-snappy/snappy-sinksource.cc' || echo '$(srcdir)/'`google-snappy/snappy-sinksource.cc
 
-snappy_nif_la-snappy-stubs-internal.lo: google-snappy/snappy-stubs-internal.cc
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -MT snappy_nif_la-snappy-stubs-internal.lo -MD -MP -MF $(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Tpo -c -o snappy_nif_la-snappy-stubs-internal.lo `test -f 'google-snappy/snappy-stubs-internal.cc' || echo '$(srcdir)/'`google-snappy/snappy-stubs-internal.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Tpo $(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='google-snappy/snappy-stubs-internal.cc' object='snappy_nif_la-snappy-stubs-internal.lo' libtool=yes @AMDEPBACKSLASH@
+google-snappy/snappy_nif_la-snappy-stubs-internal.lo: google-snappy/snappy-stubs-internal.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -MT google-snappy/snappy_nif_la-snappy-stubs-internal.lo -MD -MP -MF google-snappy/$(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Tpo -c -o google-snappy/snappy_nif_la-snappy-stubs-internal.lo `test -f 'google-snappy/snappy-stubs-internal.cc' || echo '$(srcdir)/'`google-snappy/snappy-stubs-internal.cc
+@am__fastdepCXX_TRUE@	$(am__mv) google-snappy/$(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Tpo google-snappy/$(DEPDIR)/snappy_nif_la-snappy-stubs-internal.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='google-snappy/snappy-stubs-internal.cc' object='google-snappy/snappy_nif_la-snappy-stubs-internal.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -c -o snappy_nif_la-snappy-stubs-internal.lo `test -f 'google-snappy/snappy-stubs-internal.cc' || echo '$(srcdir)/'`google-snappy/snappy-stubs-internal.cc
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(snappy_nif_la_CXXFLAGS) $(CXXFLAGS) -c -o google-snappy/snappy_nif_la-snappy-stubs-internal.lo `test -f 'google-snappy/snappy-stubs-internal.cc' || echo '$(srcdir)/'`google-snappy/snappy-stubs-internal.cc
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf google-snappy/.libs google-snappy/_libs
 install-snappyebinDATA: $(snappyebin_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(snappyebin_DATA)'; test -n "$(snappyebindir)" || list=; \
@@ -632,6 +659,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f google-snappy/$(DEPDIR)/$(am__dirstamp)
+	-rm -f google-snappy/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -642,7 +671,7 @@ clean-am: clean-generic clean-libtool clean-snappyprivLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) google-snappy/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -688,7 +717,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) google-snappy/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

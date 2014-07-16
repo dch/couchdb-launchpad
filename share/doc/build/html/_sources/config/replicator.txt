@@ -111,6 +111,39 @@ Replicator Database Configuration
     .. _inet: http://www.erlang.org/doc/man/inet.html#setopts-2
 
 
+  .. config:option:: checkpoint_interval
+
+    .. versionadded:: 1.6
+
+    Defines replication checkpoint interval in milliseconds. :ref:`Replicator
+    <replicator>` will :get:`requests </{db}>` from the Source database at
+    the specified interval::
+
+      [replicator]
+      checkpoint_interval = 5000
+
+    Lower intervals may be useful for frequently changing data, while higher
+    values will lower bandwidth and make fewer requests for infrequently
+    updated databases.
+
+
+  .. config:option:: use_checkpoints
+
+     .. versionadded:: 1.6
+
+     If ``use_checkpoints`` is set to ``true``, CouchDB will make checkpoints
+     during replication and at the completion of replication. CouchDB can
+     efficiently resume replication from any of these checkpoints::
+
+      [replicator]
+      use_checkpoints = true
+
+     .. note:: Checkpoints are stored in :ref:`local documents <api/local>`
+        on both the source and target databases (which requires write access).
+
+     .. warning:: Disabling checkpoints is **not recommended** as CouchDB
+        will scan the Source database's changes feed from the beginning.
+
 
   .. config:option:: cert_file
 

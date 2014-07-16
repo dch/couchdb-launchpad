@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1.2. Why CouchDB? &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>1.2. Why CouchDB? &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="1. Introduction" href="index.html" />
     <link rel="next" title="1.3. Eventual Consistency" href="consistency.html" />
     <link rel="prev" title="1.1. Technical Overview" href="overview.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="overview.html" title="1.1. Technical Overview"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">1. Introduction</a> &raquo;</li> 
       </ul>
     </div>  
@@ -76,19 +76,18 @@ specific language governing permissions and limitations under the License.
   <div class="section" id="why-couchdb">
 <span id="intro-why"></span><h1>1.2. Why CouchDB?<a class="headerlink" href="#why-couchdb" title="Permalink to this headline">¶</a></h1>
 <p>Apache CouchDB is one of a new breed of database management systems.
-This chapter explains why there&#8217;s a need for new systems as well as the
+This topic explains why there&#8217;s a need for new systems as well as the
 motivations behind building CouchDB.</p>
 <p>As CouchDB developers, we&#8217;re naturally very excited to be using CouchDB.
-In this chapter we&#8217;ll share with you the reasons for our enthusiasm.
+In this topic we&#8217;ll share with you the reasons for our enthusiasm.
 We&#8217;ll show you how CouchDB&#8217;s schema-free document model is a better fit
 for common applications, how the built-in query engine is a powerful way
 to use and process your data, and how CouchDB&#8217;s design lends itself
 to modularization and scalability.</p>
 <div class="section" id="relax">
 <h2>1.2.1. Relax<a class="headerlink" href="#relax" title="Permalink to this headline">¶</a></h2>
-<p>If there&#8217;s one word to describe CouchDB, it is <em>relax</em>. It is in the title of
-this book, it is the byline to CouchDB&#8217;s official logo,
-and when you start CouchDB, you see:</p>
+<p>If there&#8217;s one word to describe CouchDB, it is <em>relax</em>. It is the byline
+to CouchDB&#8217;s official logo and when you start CouchDB, you see:</p>
 <div class="highlight-json"><pre>Apache CouchDB has started. Time to relax.</pre>
 </div>
 <p>Why is relaxation important? Developer productivity roughly doubled in the
@@ -222,7 +221,7 @@ physically separated locations for reliability, but you&#8217;re willing to take
 performance hit, CouchDB lets you build these systems.</p>
 <p>There are a multitude of knobs you could turn to make a system work better in
 one area, but you&#8217;ll affect another area when doing so. One example would be
-the CAP theorem discussed in the next chapter. To give you an idea of other
+the CAP theorem discussed in <a class="reference internal" href="consistency.html#intro-consistency"><em>Eventual Consistency</em></a>. To give you an idea of other
 things that affect storage systems, see <a class="reference internal" href="#intro-why-figure-02"><em>Figure 2</em></a>
 and <a class="reference internal" href="#intro-why-figure-03"><em>Figure 3</em></a>.</p>
 <p>By reducing latency for a given system (and that is true not only for storage
@@ -307,8 +306,9 @@ less powerful than today&#8217;s phones.</p>
 </div>
 <div class="section" id="wrapping-up">
 <h2>1.2.7. Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this headline">¶</a></h2>
-<p>The next chapter further explores the distributed nature of CouchDB. We
-should have given you enough bites to whet your interest. Let&#8217;s go!</p>
+<p>The next document <a class="reference internal" href="consistency.html#intro-consistency"><em>Eventual Consistency</em></a> further explores the distributed nature
+of CouchDB. We should have given you enough bites to whet your interest.
+Let&#8217;s go!</p>
 </div>
 </div>
 
@@ -339,8 +339,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -423,7 +423,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/intro/why.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -443,12 +458,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="overview.html" title="1.1. Technical Overview"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >1. Introduction</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

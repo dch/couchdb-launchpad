@@ -16,67 +16,33 @@
  * Fauxton less style files
  *
  */
+@import "bootstrap/variables.less";
+@import "variables.less";
 @import "bootstrap/bootstrap.less";
 @import "bootstrap/mixins.less";
-@import "variables.less";
-@import "config.less";
-@import "logs.less";
 @import "prettyprint.less";
-@import "database.less";
 @import "icons.less";
 
+/**
+ * HTML-wide overrides
+ **/
 
-body {
-  background-color: #F2F2F2;
+*, *:before, *:after {
+  .box-sizing(border-box);
 }
 
-footer {
-  position: fixed;
-  bottom: 0;
-  font-size: 10px;
-  margin-left: @navWidth;
-  padding: 5px 10px;
-  background-color: #F2F2F2;
-  width: 100%;
-}
-
-.hide-text {
-  font: 0/0 a;
-  color: transparent;
-  text-shadow: none;
-  background-color: transparent;
-  border: 0;
-}
-
-.row {
-  margin-left: 0;
-}
-
-// globals
 body {
   font-size: 16px;
   line-height:1.3;
   padding-bottom: 0px;
   color: #333;
-  padding-top: 92px;
-  &#home{
-    padding-top: 90px;
-  }
+  padding-top: 90px;
   background-color: @sidebarBG;
-  /* OVERRIDE BOOTSTRAP BTN STYLES */
-  .btn{
-    .box-shadow(none);
-    .border-radius(0);
-    background-image: none;
-    text-shadow: none;
-    background-repeat: no-repeat;
-  }
 }
 
 h2,h3,h4 {font-weight: 600;}
 
-
-a, .btn{
+a {
   .transition(all .25s linear);
 }
 
@@ -86,8 +52,243 @@ a:active {
   color: @linkColor;
 }
 
-a:hover{
+a:hover {
   color: @red;
+}
+
+input[type=text],
+input[type=password] {
+  .border-radius(0);
+  padding: 12px;
+  border: 1px solid #ccc;
+  height: auto;
+  font-size: 16px;
+  margin-top: 0;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+input[type="file"],
+input[type="checkbox"],
+input[type="radio"],
+select {
+  margin: 0 0 1em 0;
+}
+
+
+/* bootstrap overrides */
+.page-header {
+  border-bottom: 1px solid #E3E3E3;
+  margin-bottom: 10px;
+  h3 {
+    text-transform: capitalize;
+    margin-bottom: 0;
+  }
+}
+
+.nav-tabs > li {
+  margin-right: 2px;
+  > a {
+    cursor: pointer;
+    color: #333;
+    border-color: #eeeeee #eeeeee #dddddd;
+    text-decoration: none;
+    background-color: #eeeeee;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    &:hover,
+    &:focus {
+      background-color: @linkRed;
+      border-top: 1px solid @red;
+      color: white;
+    }
+  }
+}
+
+.well {
+  select {
+    margin: 0;
+  }
+  .controls-group {
+    &:first-child,
+    &:last-child {
+      margin-top: 24px;
+    }
+    margin-bottom: 8px;
+  }
+  .controls-row {
+    margin-bottom: 8px;
+  }
+  .row-fluid {
+    margin: 0;
+  }
+  .row-fluid .row-fluid:last-child .well-item {
+    border: none;
+  }
+  .well-item {
+    color: #666;
+    font-size: 12px;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 8px 4px;
+    strong {
+        font-size: 16px;
+    }
+  }
+}
+
+/*TABLE STYLES*/
+table.table {
+  table-layout: fixed;
+}
+table tr td{
+  word-wrap: break-word;
+  &.select {
+    width: 20px;
+  }
+}
+thead {
+  border-bottom: 2px solid @redButton;
+}
+tbody {
+  padding-top: 10px;
+}
+.table-condensed td {
+  padding: 18px 5px;
+}
+.table-striped tbody > tr:nth-child(odd) > td,
+.table-striped tbody > tr:nth-child(odd) > th
+{
+  background-color: #F7F7F7;
+}
+
+/*form elements and buttons*/
+.btn-group {
+  > .btn + .dropdown-toggle,
+  > .btn:first-child,
+  > .btn:last-child,
+  > .dropdown-toggle {
+    .border-radius(0);
+    background-image: none;
+    text-shadow: none;
+  }
+}
+
+.btn {
+  .box-shadow(none);
+  .border-radius(@baseBorderRadius);
+  background-image: none;
+  text-shadow: none;
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin-top: 0px;
+  .icon {
+    margin-right: 0.2em;
+  }
+  &.btn-small {
+    padding: 5px 10px;
+    .icon {
+      margin-right: 0;
+      font-size: inherit;
+    }
+  }
+  &.btn-mini {
+    padding: 3px 8px;
+    .icon {
+      margin-right: 0;
+      font-size: inherit;
+    }
+  }
+}
+.btn-primary {
+  background: @redButton;
+}
+
+.btn-primary a:visited {
+  color: #fff;
+}
+
+.form-actions {
+  background: none;
+  border: none;
+}
+
+.input-append,
+.input-prepend {
+  .add-on {
+    font-size: 18px;
+    padding: 14px 5px 30px;
+  }
+  .btn .icon {
+    font-size: 21.5px;
+    margin-right: 0;
+  }
+}
+
+.row-fluid .input-append [class*="span"],
+.input-prepend input[class*="span"] {
+  width: auto;
+}
+
+.form-inline {
+  input[type=password],
+  input[type=text] {
+    width: auto;
+  }
+}
+.checkbox {
+  label {
+    display: inline-block;
+    padding-left:25px;
+  }
+}
+
+label {
+  margin-right: 15px;
+  padding-left:0;
+  display: block;
+  cursor: pointer;
+  position: relative;
+  font-size: 14px;
+  &.inline {
+    display: inline-block;
+  }
+}
+.help-block {
+  font-size: 12px;
+}
+
+input[type=text].error {
+  border: red 1px solid;
+}
+
+/**
+ * Fauxton-specific Bootstrap additions
+ **/
+table.databases {
+  clear: both;
+}
+.nav-tabs > li > a .fonticon:before {
+  margin-right: 6px;
+  font-size: 16px;
+}
+
+/* application specific stuff */
+#main > footer {
+  position: fixed;
+  bottom: 0;
+  font-size: 10px;
+  margin-left: @navWidth;
+  padding: 5px 10px;
+  background-color: #F2F2F2;
+  width: 100%;
+  .closeMenu & {
+    margin-left: @collapsedNavWidth;
+  }
 }
 
 /* ajax loader */
@@ -126,12 +327,6 @@ a:hover{
   }
 }
 
-/* bootstrap override */
-.container-fluid {
-  padding-right: 0px;
-  padding-left: 0px;
-}
-
 /* Fixed side navigation */
 #primary-navbar {
   height: 100%;
@@ -145,7 +340,9 @@ a:hover{
     bottom: 0;
     width: 100%;
   }
-
+  #user-create-admin{
+    font-size: 12px
+  }
   .navbar {
     .brand {
       .box-sizing(content-box);
@@ -194,8 +391,9 @@ a:hover{
         margin: 0;
         li{
           .transition(all @transitionSpeed @transitionEaseType);
-          padding: 15px 0px 15px 62px;
-          font-size: 19px;
+          padding: 0;
+          font-size: 20px;
+          line-height: 23px;
           width: @navWidth;
           font-weight: normal;
           font-family: helvetica;
@@ -209,30 +407,28 @@ a:hover{
             }
             background-color: @red;
           }
-          &:hover a.fonticon:before{
+          &:hover .fonticon:before{
             color: @white;
           }
-          &.active a.cloudant:before,
-          &.active a.fonticon:before,
-          &:hover a.cloudant:before,
-          &:hover a.fonticon:before,
+          &.active .fonticon:before,
+          &:hover .fonticon:before,
           {
             text-shadow: @boxShadow;
             color: @NavIconActive;
           }
           a{
+            padding: 17px 25px 12px 60px;
             background-color: transparent;
-            padding: 0;
             color: #fff;
             text-shadow: @textShadowOff;
             &.closeMenu{
               color: transparent;
             }
-            &.fonticon {
+            .fonticon {
               position: relative;
               &:before {
-                .transition(all @transitionSpeed @transitionEaseType);
                 position: absolute;
+                top: -5px;
                 left: -44px;
                 font-size: 28px;
                 color: @NavIcon;
@@ -294,12 +490,13 @@ a:hover{
 
 #dashboard {
   max-width: 1500px;
-  .customTransition(left, 1s, 0.805, 0.005, 0.165, 0.985); // alt 0.730, -0.425, 0.000, 0.960 or... 0.645, -0.295, 0.000, 0.960
   .box-shadow(-6px 0 rgba(0, 0, 0, 0.1));
   border-left: 1px solid #999;
   position: absolute;
   left: @navWidth;
   margin-left: 0;
+  padding-left: 0;
+  padding-right: 0;
   background-color: @sidebarBG;
   min-width: 600px;
   height: 100%;
@@ -309,6 +506,7 @@ a:hover{
   &.one-pane{
     min-width: 800px;
     margin-top: 0;
+    overflow: auto;
   }
 }
 
@@ -361,7 +559,6 @@ a:hover{
 
 .fixed-header{
   background-color: @breadcrumbBG;
-  .customTransition(left, 1s, 0.805, 0.005, 0.165, 0.985);
   position: fixed;
   top: 0;
   right: 0;
@@ -408,15 +605,10 @@ a:hover{
 }
 
 
-footer#mainFooter{
-  position: fixed;
-  bottom: 0;
-}
-
 /*SIDEBAR TEMPLATE STYLES*/
 .topmenu-defaults {
   height: 70px;
-  padding: 20px 10px 0;
+  padding: 12px 10px 0;
   border-bottom: 1px solid @darkRed;
   .box-sizing(border-box);
 }
@@ -434,6 +626,9 @@ footer#mainFooter{
 }
 
 #dashboard-upper-content{
+  .tab-content {
+    padding-top: 70px;
+  }
   .well{
     padding: 20px;
     .border-radius(0);
@@ -463,6 +658,11 @@ footer#mainFooter{
         padding: 10px 5px 10px 15px;
         color: #333333;
         border-bottom: 1px solid #989898;
+        .divider {
+          background: none;
+          color: #ccc;
+          padding: 0 2px;
+        }
       }
       .nav-header{
         background-color: #B2B2B2;
@@ -503,13 +703,6 @@ footer#mainFooter{
   margin-bottom: 10px;
 }
 
-.navbar-form.pull-right.database-search {
-  margin-right: 36px;
-    input[type=text]{
-      margin-top: -4px;
-    }
-}
-
 #db-views-tabs-nav{
   position: fixed;
   z-index: 12;
@@ -519,158 +712,11 @@ footer#mainFooter{
   padding: 0 20px;
 }
 
-.nav-tabs > li{
-  margin-right: 2px;
-  > a {
-  color: #333;
-  border-color: #eeeeee #eeeeee #dddddd;
-  text-decoration: none;
-  background-color: #eeeeee;
-  border-radius: 0;
-  border-left: none;
-  border-right: none;
-    &.fonticon:before{
-      margin-right: 6px;
-      font-size: 16px;
-    }
-  }
+.db-views-smaller {
+  max-width: 500px;
 }
 
-.nav-tabs > li > a:hover, .nav-tabs > li > a:focus {
-  background-color: @linkRed;
-  border-top: 1px solid @red;
-  color: white;
-}
-
-
-.tab-content {
-  margin-top: 70px;
-}
-
-.well { 
-  .controls-group {
-  &:first-child, &:last-child{
-    margin-top: 24px;
-  }
-  margin-bottom: 8px;
-  }
-  .controls-row {
-    margin-bottom: 8px;
-  }
-}
-
-/*TABLE STYLES*/
-table.table {
-  table-layout: fixed;
-}
-table {
-  tr{
-    td{
-      word-wrap: break-word;
-      &.select {
-        width: 20px;
-      }
-    }
-  }
-}
-table.databases {clear: both;}
-thead {border-bottom: 2px solid @redButton;}
-tbody {padding-top: 10px;}
-.table-condensed td {padding: 18px 5px;}
-.table-striped tbody > tr:nth-child(odd) > td, 
-.table-striped tbody > tr:nth-child(odd) > th
-{
-  background-color: #F7F7F7;
-}
-
-
-/*form elements and buttons*/
-.btn-group {
-  > .btn + .dropdown-toggle,
-  > .btn:first-child,
-  > .btn:last-child,
-  > .dropdown-toggle
-  {
-    .border-radius(0);
-    background-image: none;
-    text-shadow: none;
-  }
-}
-
-.btn {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  margin-top: 0px;
-}
-
-.button{
-  .button-style;
-  .transition(all @transitionSpeed @transitionEaseType);
-  border: none;
-  background-color: @redButton;
-  color: #fff;
-  padding: 10px;
-  .icon {
-    margin-right: 10px;
-    font-size: 20px;
-  }
-  &:hover {
-    color: #fff;
-    text-decoration: none;
-  }
-}
-
-
-.button-style{
-  background-color: @redButton;
-  color: #fff;
-  padding: 10px 15px;
-  &:before{
-    padding-right: 5px;
-  }
-  &.outlineGray{
-    border: 1px solid @grayLight;
-    background-color: transparent;
-    color: @grayDark;
-    &:hover{
-      border: 1px solid @orange;
-    }
-  }
-  &.green{
-    background-color: @green;
-  }
-
-  &.round-btn {
-    .border-radius(@radius);
-  }
-  .icon {
-    margin-right: 10px;
-    font-size: 20px;
-  }
-  &:hover {
-    color: #fff;
-    text-decoration: none;
-    background-color: @orange;
-  }
-  a&,
-  a&:visited,
-  a&:active{
-    color: #fff;
-  }
-  &:disabled {
-    opacity: 0.5;
-  }
-}
-
-
-
-
-a.button, 
-a.button:visited, 
-a.button:active {
-  .button-style;
-}
-
+/** table row selector thing **/
 .select{
   > a{
     display: block;
@@ -701,95 +747,6 @@ a.button:active {
   }
 }
 
-input[type=text], input[type=password],
-.navbar-form input{
-  .border-radius(0);
-  padding: 12px;
-  border: 1px solid #ccc;
-  height: auto;
-  font-size: 16px;
-  margin-top: 0;
-}
-
-
-input[type=checkbox]{
-
-}
-label.fonticon-search {
-  .box-sizing(content-box);
-  position: relative;
-  &:before {
-    .transition(all .25s linear);
-    font-size: 16px;
-    position: absolute;
-    right: -47px;
-    background-color: #E1E1E1;
-    height: 46px;
-    width: 48px;
-    border: 1px solid #cccccc;
-    padding: 14px;
-    top: -4px;
-  }
-  &:hover{
-    color:white;
-    &:before {
-      background-color: @red;
-    }
-  }
-}
-
-
-.form-inline {
-  input[type=password],
-  input[type=text]{
-    width: auto;
-  }
-}
-*, *:before, *:after {
-  .box-sizing(border-box);
-}
-
-input[type="checkbox"], input[type="radio"] {
-  box-sizing: border-box;
-  padding: 0;
-}
-
-input[type="file"], input[type="checkbox"], input[type="radio"], select {
-  margin: 0 0 1em 0;
-}
-
-.well select {
-  margin: 0;
-}
-
-form.custom .hidden-field {
-  margin-left: -99999px;
-  position: absolute;
-  visibility: hidden;
-}
-
-
-.checkbox {
-  label{
-    display: inline-block;
-    padding-left:25px;
-  }
-}
-
-label{ 
-  margin-right: 15px; 
-  padding-left:0;
-  display: block;  
-  cursor: pointer;  
-  position: relative;  
-  font-size: 14px; 
-  &.inline{
-    display: inline-block;
-  } 
-}
-.help-block{
-  font-size: 12px;
-}
 .custom-inputs{
 
   input[type=radio], 
@@ -857,50 +814,8 @@ label{
   }
 }
 
-
-.form-actions {
-  background: none;
-  border: none;
-}
-
-.input-append,
-.input-prepend {
-  .add-on {
-    font-size: 18px;
-    padding: 14px 5px 30px;
-  }
-}
-
-.input-append .btn:last-child, 
-.input-append .btn-group:last-child > .dropdown-toggle {
-  padding: 10px 5px 14px;
-}
-.input-append .btn{
-  padding: 10px 5px 14px;
-}
-.row-fluid .input-append [class*="span"],
-.input-prepend input[class*="span"]{
-  width: auto;
-}
-
-/*pretty print*/
-pre.prettyprint {
-  background: #E5E0DD;
-  border: none;
-}
-
-.prettyprint .str, .prettyprint .lit {
-  color: @red;
-}
-
-.prettyprint .pln, .prettyprint .pun, .prettyprint .typ{
-  color: #333333;
-}
-
-/*ALL DOCS TABLE*/
-tr.all-docs-item{
-  border: none;
-  background: transparent;
+form.view-query-update, form.view-query-save {
+  max-width: 100%;
 }
 
 /*logs*/
@@ -912,7 +827,6 @@ tr.all-docs-item{
 /*documents and databases */
 .view.show{
   color: @fontGrey;
-  margin-top: 56px;
 }
 
 div.spinner {
@@ -921,25 +835,15 @@ div.spinner {
   top: 50%;
 }
 
-/* Code mirror overrides */
-.CodeMirror-scroll {
-  .border-radius(2px);
-  border: solid 1px #ddd;
-}
-
-.btn-primary a:visited {
-  color: #fff;
-}
-
 #api-navbar{
   position: relative;
 }
 
-.button.api-url-btn {
+.api-url-btn {
   position: absolute;
   right: 15px;
   top: -50px;
-  span.icon {
+  .icon {
     font-size: 11px;
   }
 }
@@ -965,18 +869,3 @@ div.spinner {
     }
   }
 }
-
-#jump-to-doc {
-  width: 88%;
-  max-width: 600px;
-
-  #jump-to-doc-label {
-    width: 100%;
-  }
-
-  #jump-to-doc-id {
-    width: 100%;
-    margin-top: -4px;
-  }
-}
-

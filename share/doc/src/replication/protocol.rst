@@ -40,7 +40,7 @@ provided by the couch_replicator_ module available in Apache CouchDB.
 
 The CouchDB_ replication protocol is using the `CouchDB REST API
 <http://wiki.apache.org/couchdb/Reference>`_ and so is based on HTTP and
-the Apache CouchDB MVC Data model. The primary goal of this
+the Apache CouchDB MVCC Data model. The primary goal of this
 specification is to describe the CouchDB replication algorithm.
 
 
@@ -107,7 +107,7 @@ Algorithm
 
 5. GET each revisions from the source Database by calling the URL
    `/<source>/<docid>?revs=true&open_revs`=<revision>` . This
-   will get the document with teh parent revisions. Also don't forget to
+   will get the document with its parent revisions. Also don't forget to
    get attachments that aren't already stored at the target. As an
    optimisation you can use the HTTP multipart api to get all.
 
@@ -190,7 +190,7 @@ Pull Only
 Reference
 ---------
 
-* `TouchDB Ios wiki <https://github.com/couchbaselabs/TouchDB-iOS/wiki/Replication-Algorithm>`_
+* `TouchDB iOS wiki <https://github.com/couchbaselabs/TouchDB-iOS/wiki/Replication-Algorithm>`_
 * `CouchDB documentation
   <http://wiki.apache.org/couchdb/Replication>`_
 * CouchDB `change notifications`_

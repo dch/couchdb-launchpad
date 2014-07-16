@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1.4. Getting Started &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>1.4. Getting Started &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="1. Introduction" href="index.html" />
     <link rel="next" title="1.5. The Core API" href="api.html" />
     <link rel="prev" title="1.3. Eventual Consistency" href="consistency.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="consistency.html" title="1.3. Eventual Consistency"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">1. Introduction</a> &raquo;</li> 
       </ul>
     </div>  
@@ -75,7 +75,7 @@ specific language governing permissions and limitations under the License.
             
   <div class="section" id="getting-started">
 <span id="intro-tour"></span><h1>1.4. Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>In this chapter, we&#8217;ll take a quick tour of CouchDB&#8217;s features,
+<p>In this document, we&#8217;ll take a quick tour of CouchDB&#8217;s features,
 familiarizing ourselves with Futon, the built-in administration interface.
 We&#8217;ll create our first document and experiment with CouchDB views.</p>
 <div class="section" id="all-systems-are-go">
@@ -83,7 +83,7 @@ We&#8217;ll create our first document and experiment with CouchDB views.</p>
 <p>We&#8217;ll have a very quick look at CouchDB&#8217;s bare-bones Application Programming
 Interface (API) by using the command-line utility curl. Please note that this
 is not the only way of talking to CouchDB. We will show you plenty more
-throughout the rest of the book. What&#8217;s interesting about curl is that it
+throughout the rest of the documents. What&#8217;s interesting about curl is that it
 gives you control over raw HTTP requests, and you can see exactly what is
 going on &#8220;underneath the hood&#8221; of your database.</p>
 <p>Make sure CouchDB is still running, and then do:</p>
@@ -207,8 +207,8 @@ between databases.</p>
 <div class="highlight-json"><pre>http://127.0.0.1:5984/_utils/</pre>
 </div>
 <p>If you&#8217;re running version 0.9 or later, you should see something similar to
-<a class="reference internal" href="#intro-tour-01"><em>Figure 1. The Futon welcome screen</em></a>. In later chapters, we&#8217;ll focus on using CouchDB from
-server-side languages such as Ruby and Python. As such, this chapter is a great
+<a class="reference internal" href="#intro-tour-01"><em>Figure 1. The Futon welcome screen</em></a>. In later documents, we&#8217;ll focus on using CouchDB from
+server-side languages such as Ruby and Python. As such, this document is a great
 opportunity to showcase an example of natively serving up a dynamic web
 application using nothing more than CouchDB&#8217;s integrated web server, something
 you may wish to do with your own applications.</p>
@@ -268,7 +268,7 @@ finalize creating the hello field. Double-click the hello field&#8217;s value
 <p>You can experiment with other JSON values; e.g., <tt class="docutils literal"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">&quot;c&quot;]</span></tt> or
 <tt class="docutils literal"><span class="pre">{&quot;foo&quot;:</span> <span class="pre">&quot;bar&quot;}</span></tt>. Once you&#8217;ve entered your values into the document,
 make a note of its <tt class="docutils literal"><span class="pre">_rev</span></tt> attribute and click &#8220;Save Document.&#8221; The result
-should look like <a class="reference internal" href="#intro-tour-04"><em>Figure 4. A &#8220;hello world&#8221; document in Futon</em></a> document in Futon&#8221;.</p>
+should look like <a class="reference internal" href="#intro-tour-04"><em>Figure 4. A &#8220;hello world&#8221; document in Futon</em></a>.</p>
 <div class="figure align-center" id="intro-tour-03">
 <img alt="An empty database in Futon" src="../_images/intro-tour-03.png" />
 <p class="caption">Figure 3. An empty database in Futon</p>
@@ -278,7 +278,7 @@ should look like <a class="reference internal" href="#intro-tour-04"><em>Figure 
 <p class="caption">Figure 4. A &#8220;hello world&#8221; document in Futon</p>
 </div>
 <p>You&#8217;ll notice that the document&#8217;s _rev has changed. We&#8217;ll go into more detail
-about this in later chapters, but for now, the important thing to note is
+about this in later documents, but for now, the important thing to note is
 that _rev acts like a safety feature when saving a document. As long as you
 and CouchDB agree on the most recent _rev of a document, you can successfully
 save your changes.</p>
@@ -468,7 +468,7 @@ instead of starting from scratch.</p>
 <h2>1.4.6. Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this headline">¶</a></h2>
 <p>Now that you&#8217;ve seen most of Futon&#8217;s features, you&#8217;ll be prepared to dive in
 and inspect your data as we build our example application in the next few
-chapters. Futon&#8217;s pure JavaScript approach to managing CouchDB shows how it&#8217;s
+documents. Futon&#8217;s pure JavaScript approach to managing CouchDB shows how it&#8217;s
 possible to build a fully featured web application using only CouchDB&#8217;s HTTP
 API and integrated web server.</p>
 <p>But before we get there, we&#8217;ll have another look at CouchDB&#8217;s HTTP API &#8211; now
@@ -503,8 +503,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -582,7 +582,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/intro/tour.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -602,12 +617,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="consistency.html" title="1.3. Eventual Consistency"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >1. Introduction</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

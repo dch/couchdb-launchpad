@@ -17,6 +17,7 @@
 ===========
 
 .. http:head:: /{db}/{docid}
+  :synopsis: Returns bare information in the HTTP Headers for the document
 
   Returns the HTTP Headers containing a minimal amount of information
   about the specified document. The method supports the same query
@@ -63,6 +64,7 @@
 
 
 .. http:get:: /{db}/{docid}
+  :synopsis: Returns the document
 
   Returns document by the specified ``docid`` from the specified ``db``.
   Unless you request a specific revision, the latest revision of the
@@ -78,8 +80,8 @@
 
   :query boolean attachments: Includes attachments bodies in response.
     Default is ``false``
-  :query boolean att_encoding_info: Includes encoding information into
-    attachment's stubs for compressed ones. Default is ``false``
+  :query boolean att_encoding_info: Includes encoding information in attachment
+    stubs if the particular attachment is compressed. Default is ``false``.
   :query array atts_since: Includes attachments only since specified revisions.
     Doesn't includes attachments for specified revisions. *Optional*
   :query boolean conflicts: Includes information about conflicts in document.
@@ -165,9 +167,10 @@
     }
 
 .. http:put:: /{db}/{docid}
+  :synopsis: Creates a new document or new version of an existing document
 
   The :method:`PUT` method creates a new named document, or creates a new
-  revision of the existing document. Unlike the :post:`/{db}` method, you
+  revision of the existing document. Unlike the :post:`/{db}`, you
   must specify the document ID in the request URL.
 
   :param db: Database name
@@ -235,17 +238,22 @@
         "rev": "1-917fa2381192822767f010b95b45325b"
     }
 
-
 .. http:delete:: /{db}/{docid}
+  :synopsis: Deletes the document
 
-  Deletes the specified document from the database. You must supply the
-  current (latest) revision, either by using the ``rev`` parameter to
-  specify the revision.
+  Marks the specified document as deleted by adding a field ``_deleted`` with
+  the value ``true``. Documents with this field will not be returned within
+  requests anymore, but stay in the database. You must supply the current
+  (latest) revision, either by using the ``rev`` parameter or by using the
+  :header:`If-Match` header to specify the revision.
+
+  .. seealso::
+    :ref:`Retrieving Deleted Documents <api/doc/retrieving-deleted-documents>`
 
   .. note::
-    Note that deletion of a record increments the revision number.
-    The use of a revision for deletion of the record allows replication of
-    the database to correctly track the deletion in synchronized copies.
+    CouchDB doesn't actually delete documents. The reason is the need to track
+    them correctly during the replication process between databases to prevent
+    accidental document recovery for any previous state.
 
   :param db: Database name
   :param docid: Document ID
@@ -309,6 +317,7 @@
 
 
 .. http:copy:: /{db}/{docid}
+  :synopsis: Copies the document within the same database
 
   The :method:`COPY` (which is non-standard HTTP) copies an existing
   document to a new or existing document.
@@ -341,7 +350,7 @@
   :code 202: Request was accepted, but changes are not yet stored on disk
   :code 400: Invalid request body or parameters
   :code 401: Read or write privileges required
-  :code 404: Specified database, document ID  or his revision doesn't exists
+  :code 404: Specified database, document ID  or revision doesn't exists
   :code 409: Document with the specified ID already exists or specified
     revision is not latest for target document
 
@@ -391,16 +400,34 @@ information objects with next structure:
 
 - **content_type** (*string*): Attachment MIME type
 - **data** (*string*): Base64-encoded content. Available if attachment content
-  requested by using ``attachments=true`` or ``atts_since`` query parameters
+  is requested by using the following query parameters:
+
+    - ``attachments=true`` when querying a document
+    - ``attachments=true&include_docs=true`` when querying a
+      :ref:`changes feed <api/db/changes>` or a :ref:`view <api/ddoc/view>`
+    - ``atts_since``.
+
 - **digest** (*string*): Content hash digest.
   It starts with prefix which announce hash type (``md5-``) and continues with
   Base64-encoded hash digest
-- **encoded_length** (*number*): Compressed attachment size in bytes
-  Available when query parameter ``att_encoding_info=true`` was specified and
-  ``content_type`` is in :config:option:`list of compressiable types
-  <attachments/compressible_types>`
-- **encoding** (*string*): Compression codec. Available when query parameter
-  ``att_encoding_info=true`` was specified
+- **encoded_length** (*number*): Compressed attachment size in bytes.
+  Available if ``content_type`` is in :config:option:`list of compressible types
+  <attachments/compressible_types>` when the attachment was added and the
+  following query parameters are specified:
+
+    - ``att_encoding_info=true`` when querying a document
+    - ``att_encoding_info=true&include_docs=true`` when querying a
+      :ref:`changes feed <api/db/changes>` or a :ref:`view <api/ddoc/view>`
+
+- **encoding** (*string*): Compression codec. Available if ``content_type`` is
+  in :config:option:`list of compressible types
+  <attachments/compressible_types>` when the attachment was added and the
+  following query parameters are specified:
+
+    - ``att_encoding_info=true`` when querying a document
+    - ``att_encoding_info=true&include_docs=true`` when querying a
+      :ref:`changes feed <api/db/changes>` or a :ref:`view <api/ddoc/view>`
+
 - **length** (*number*): Real attachment size in bytes. Not available if attachment
   content requested
 - **revpos** (*number*): Revision *number* when attachment was added
@@ -466,6 +493,7 @@ Basic Attachments Info
       "name": "Spaghetti with meatballs"
   }
 
+.. _api/doc/retrieving-deleted-documents:
 
 Retrieving Attachments Content
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -842,7 +870,7 @@ The returned JSON structure includes the original document, including a
 ``_revisions`` structure that includes the revision information in next form:
 
 - **ids** (*array*): Array of valid revision IDs, in reverse order
-    (latest first)
+  (latest first)
 - **start** (*number*): Prefix number for the latest revision
 
 
@@ -918,7 +946,7 @@ document by supplying the ``revs_info`` argument to the query:
   }
 
 
-The returned document contains ``_rev_info`` field with extended revision
+The returned document contains ``_revs_info`` field with extended revision
 information, including the availability and status of each revision. This array
 field contains objects with following structure:
 

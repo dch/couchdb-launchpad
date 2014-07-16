@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>6.1. Design Functions &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>6.1. Design Functions &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="6. CouchApp" href="index.html" />
     <link rel="next" title="6.2. Guide to Views" href="views/index.html" />
     <link rel="prev" title="6. CouchApp" href="index.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="index.html" title="6. CouchApp"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">6. CouchApp</a> &raquo;</li> 
       </ul>
     </div>  
@@ -181,12 +181,12 @@ in Erlang and runs inside CouchDB, so they are much faster than the equivalent
 JavaScript functions: <tt class="docutils literal"><span class="pre">_sum</span></tt>, <tt class="docutils literal"><span class="pre">_count</span></tt> and <tt class="docutils literal"><span class="pre">_stats</span></tt>. Their equivalents in
 JavaScript below:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// could be replaced by _sum</span>
-<span class="kd">function</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">){</span>
-  <span class="nx">sum</span><span class="p">(</span><span class="nx">values</span><span class="p">);</span>
+<span class="kd">function</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">values</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="c1">// could be replaced by _count</span>
-<span class="kd">function</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">,</span> <span class="nx">rereduce</span><span class="p">){</span>
+<span class="kd">function</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">,</span> <span class="nx">rereduce</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">rereduce</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">values</span><span class="p">);</span>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -195,21 +195,31 @@ JavaScript below:</p>
 <span class="p">}</span>
 
 <span class="c1">// could be replaced by _stats</span>
-<span class="kd">function</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">,</span> <span class="nx">rereduce</span><span class="p">){</span>
-  <span class="k">return</span> <span class="p">{</span>
-    <span class="s1">&#39;sum&#39;</span><span class="o">:</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">values</span><span class="p">),</span>
-    <span class="s1">&#39;min&#39;</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">values</span><span class="p">),</span>
-    <span class="s1">&#39;max&#39;</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">values</span><span class="p">),</span>
-    <span class="s1">&#39;count&#39;</span><span class="o">:</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
-    <span class="s1">&#39;sumsqr&#39;</span><span class="o">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-      <span class="kd">var</span> <span class="nx">sumsqr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">function</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">,</span> <span class="nx">rereduce</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">rereduce</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="s1">&#39;sum&#39;</span><span class="o">:</span> <span class="nx">values</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">.</span><span class="nx">sum</span> <span class="p">},</span> <span class="mi">0</span><span class="p">),</span>
+      <span class="s1">&#39;min&#39;</span><span class="o">:</span> <span class="nx">values</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nx">min</span><span class="p">)</span> <span class="p">},</span> <span class="kc">Infinity</span><span class="p">),</span>
+      <span class="s1">&#39;max&#39;</span><span class="o">:</span> <span class="nx">values</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nx">max</span><span class="p">)</span> <span class="p">},</span> <span class="o">-</span><span class="kc">Infinity</span><span class="p">),</span>
+      <span class="s1">&#39;count&#39;</span><span class="o">:</span> <span class="nx">values</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">.</span><span class="nx">count</span> <span class="p">},</span> <span class="mi">0</span><span class="p">),</span>
+      <span class="s1">&#39;sumsqr&#39;</span><span class="o">:</span> <span class="nx">values</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">.</span><span class="nx">sumsqr</span> <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="s1">&#39;sum&#39;</span><span class="o">:</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">values</span><span class="p">),</span>
+      <span class="s1">&#39;min&#39;</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">values</span><span class="p">),</span>
+      <span class="s1">&#39;max&#39;</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">values</span><span class="p">),</span>
+      <span class="s1">&#39;count&#39;</span><span class="o">:</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+      <span class="s1">&#39;sumsqr&#39;</span><span class="o">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">sumsqr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-      <span class="nx">values</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">sumsqr</span> <span class="o">+=</span> <span class="nx">value</span> <span class="o">*</span> <span class="nx">value</span><span class="p">;</span>
-      <span class="p">});</span>
+        <span class="nx">values</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">sumsqr</span> <span class="o">+=</span> <span class="nx">value</span> <span class="o">*</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="p">});</span>
 
-      <span class="k">return</span> <span class="nx">sumsqr</span><span class="p">;</span>
-    <span class="p">})(),</span>
+        <span class="k">return</span> <span class="nx">sumsqr</span><span class="p">;</span>
+      <span class="p">})(),</span>
+    <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -496,7 +506,7 @@ You can provide any other values needed by the update handler function via the
 <p>The basic example that demonstrates all use-cases of update handlers below:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="kd">function</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">req</span><span class="p">){</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">doc</span><span class="p">){</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;id&#39;</span> <span class="k">in</span> <span class="nx">req</span><span class="p">){</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;id&#39;</span> <span class="k">in</span> <span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]){</span>
             <span class="c1">// create new document</span>
             <span class="k">return</span> <span class="p">[{</span><span class="s1">&#39;_id&#39;</span><span class="o">:</span> <span class="nx">req</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]},</span> <span class="s1">&#39;New World&#39;</span><span class="p">]</span>
         <span class="p">}</span>
@@ -536,24 +546,23 @@ You can provide any other values needed by the update handler function via the
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Boolean value: <tt class="docutils literal"><span class="pre">true</span></tt> means that <cite>doc</cite> passes the filter rules,
-<tt class="docutils literal"><span class="pre">false</span></tt> that not.</p>
+<tt class="docutils literal"><span class="pre">false</span></tt> means that it does not.</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<p>Filter functions are mostly acts like <a class="reference internal" href="#showfun"><em>Show functions</em></a> and <a class="reference internal" href="#listfun"><em>List functions</em></a>: they
-formats, but more correctly to say, they <em>filters</em> <a class="reference internal" href="../api/database/changes.html#changes"><em>changes feed</em></a>.</p>
+<p>Filter functions mostly act like <a class="reference internal" href="#showfun"><em>Show functions</em></a> and <a class="reference internal" href="#listfun"><em>List functions</em></a>: they
+format, or <em>filter</em> the <a class="reference internal" href="../api/database/changes.html#changes"><em>changes feed</em></a>.</p>
 <div class="section" id="classic-filters">
 <h3>Classic filters<a class="headerlink" href="#classic-filters" title="Permalink to this headline">¶</a></h3>
 <p>By default the changes feed emits all database documents changes. But if you&#8217;re
 waiting for some special changes, processing all documents is inefficient.</p>
-<p>Filters are special design document functions that allows changes feed to emit
+<p>Filters are special design document functions that allow the changes feed to emit
 only specific documents that pass filter rules.</p>
-<p>Lets assume that our database is a mailbox and we need to to handle only new mails
-(documents with status <cite>new</cite>) events. Assuming that, our filter function
-will looks like next one:</p>
+<p>Let&#8217;s assume that our database is a mailbox and we need to handle only new mail
+events (documents with status <cite>new</cite>). Our filter function will look like this:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="kd">function</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">req</span><span class="p">){</span>
   <span class="c1">// we need only `mail` documents</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">type</span> <span class="o">!=</span> <span class="s1">&#39;mail&#39;</span><span class="p">){</span>
@@ -567,8 +576,8 @@ will looks like next one:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Filter functions must return <tt class="docutils literal"><span class="pre">true</span></tt> in fact if document passed all defined
-rules. Now, if you apply this function to changes feed it will emit only changes
+<p>Filter functions must return <tt class="docutils literal"><span class="pre">true</span></tt> if a document passed all defined
+rules. Now, if you apply this function to the changes feed it will emit only changes
 about &#8220;new mails&#8221;:</p>
 <div class="highlight-json"><pre>GET /somedatabase/_changes?filter=mailbox/new_mail HTTP/1.1</pre>
 </div>
@@ -579,17 +588,17 @@ about &#8220;new mails&#8221;:</p>
 <span class="s2">&quot;last_seq&quot;</span><span class="o">:</span><span class="mi">27</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>Note, that <tt class="docutils literal"><span class="pre">last_seq</span></tt> number is 27, but we&#8217;d received only two records.
-Seems like any other changes was about documents that hasn&#8217;t passed our filter.</p>
-<p>Probably, we also need to filter changes feed of our mailbox not only by single
-status value: we&#8217;re also interested in statuses like &#8220;spam&#8221; to update
-spam-filter heuristic rules, &#8220;outgoing&#8221; to let mail daemon actually send mails
-and so on. Creating a lot of similar functions that actually does similar work
-isn&#8217;t good idea - so we need dynamic filter to go.</p>
-<p>If you have noted, filter functions takes second argument as
-<a class="reference internal" href="../json-structure.html#request-object"><em>request</em></a> object - it allows to create dynamic filters
+<p>Note that the value of <tt class="docutils literal"><span class="pre">last_seq</span></tt> is 27, but we&#8217;d received only two records.
+Seems like any other changes were for documents that haven&#8217;t passed our filter.</p>
+<p>We probably need to filter the changes feed of our mailbox by more than a single
+status value. We&#8217;re also interested in statuses like &#8220;spam&#8221; to update
+spam-filter heuristic rules, &#8220;outgoing&#8221; to let a mail daemon actually send mails,
+and so on. Creating a lot of similar functions that actually do similar work
+isn&#8217;t good idea - so we need a dynamic filter.</p>
+<p>You may have noticed that filter functions take a second argument named
+<a class="reference internal" href="../json-structure.html#request-object"><em>request</em></a> - it allows creating dynamic filters
 based on query parameters, <a class="reference internal" href="../json-structure.html#userctx-object"><em>user context</em></a> and more.</p>
-<p>The dynamic version of our filter now will be next:</p>
+<p>The dynamic version of our filter looks like this:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="kd">function</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">req</span><span class="p">){</span>
   <span class="c1">// we need only `mail` documents</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">type</span> <span class="o">!=</span> <span class="s1">&#39;mail&#39;</span><span class="p">){</span>
@@ -603,7 +612,7 @@ based on query parameters, <a class="reference internal" href="../json-structure
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>and now we have pass <cite>status</cite> query parameter in request to let filter match
+<p>and now we have passed the <cite>status</cite> query parameter in request to let our filter match
 only required documents:</p>
 <div class="highlight-json"><pre>GET /somedatabase/_changes?filter=mailbox/by_status&amp;status=new HTTP/1.1</pre>
 </div>
@@ -614,7 +623,7 @@ only required documents:</p>
 <span class="s2">&quot;last_seq&quot;</span><span class="o">:</span><span class="mi">27</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>and we can change filter behavior with easy:</p>
+<p>and we can easily change filter behavior with:</p>
 <div class="highlight-json"><pre>GET /somedatabase/_changes?filter=mailbox/by_status&amp;status=spam HTTP/1.1</pre>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="o">:</span><span class="p">[</span>
@@ -623,7 +632,7 @@ only required documents:</p>
 <span class="s2">&quot;last_seq&quot;</span><span class="o">:</span><span class="mi">27</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>Combining filters with <cite>continuous</cite> feed allows to create powerful event-driven
+<p>Combining filters with a <cite>continuous</cite> feed allows creating powerful event-driven
 systems.</p>
 </div>
 <div class="section" id="view-filters">
@@ -890,8 +899,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -980,7 +989,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/couchapp/ddocs.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -1000,12 +1024,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="index.html" title="6. CouchApp"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >6. CouchApp</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

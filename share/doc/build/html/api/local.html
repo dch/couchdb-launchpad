@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10.6. Local (non-replicating) Document Methods &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>10.6. Local (non-replicating) Documents &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="10. API Reference" href="index.html" />
     <link rel="next" title="11. JSON Structure Reference" href="../json-structure.html" />
     <link rel="prev" title="10.5.11. /db/_design/design-doc/_rewrite/path" href="ddoc/rewrites.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="ddoc/rewrites.html" title="10.5.11. /db/_design/design-doc/_rewrite/path"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">10. API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -73,8 +73,8 @@ specific language governing permissions and limitations under the License.
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="local-non-replicating-document-methods">
-<span id="api-local"></span><h1>10.6. Local (non-replicating) Document Methods<a class="headerlink" href="#local-non-replicating-document-methods" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="local-non-replicating-documents">
+<span id="api-local"></span><h1>10.6. Local (non-replicating) Documents<a class="headerlink" href="#local-non-replicating-documents" title="Permalink to this headline">¶</a></h1>
 <p>The Local (non-replicating) document interface allows you to create
 local documents that are not replicated to other databases. These
 documents can be used to hold configuration or other information that is
@@ -126,35 +126,35 @@ non-replicated document</td>
 <div class="section" id="db-local-id">
 <span id="api-local-doc"></span><h2>10.6.1. <tt class="docutils literal"><span class="pre">/db/_local/id</span></tt><a class="headerlink" href="#db-local-id" title="Permalink to this headline">¶</a></h2>
 <dl class="get">
-<dt id="get--{db}-_local-{docid}">
-<tt class="descname">GET </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#get--{db}-_local-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-_local-docid">
+<tt class="descname">GET </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#get--db-_local-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the specified local document. The semantics are identical to
 accessing a standard document in the specified database, except that the
-document is not replicated. See <a class="reference internal" href="document/common.html#get--{db}-{docid}" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
+document is not replicated. See <a class="reference internal" href="document/common.html#get--db-docid" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="put">
-<dt id="put--{db}-_local-{docid}">
-<tt class="descname">PUT </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#put--{db}-_local-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="put--db-_local-docid">
+<tt class="descname">PUT </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#put--db-_local-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the specified local document. The semantics are identical to
 storing a standard document in the specified database, except that the
-document is not replicated. See <a class="reference internal" href="document/common.html#put--{db}-{docid}" title="PUT /{db}/{docid}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
+document is not replicated. See <a class="reference internal" href="document/common.html#put--db-docid" title="PUT /{db}/{docid}"><tt class="xref http http-put docutils literal"><span class="pre">PUT</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="delete">
-<dt id="delete--{db}-_local-{docid}">
-<tt class="descname">DELETE </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#delete--{db}-_local-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="delete--db-_local-docid">
+<tt class="descname">DELETE </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#delete--db-_local-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes the specified local document. The semantics are identical to
 deleting a standard document in the specified database, except that the
-document is not replicated. See <a class="reference internal" href="document/common.html#delete--{db}-{docid}" title="DELETE /{db}/{docid}"><tt class="xref http http-delete docutils literal"><span class="pre">DELETE</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
+document is not replicated. See <a class="reference internal" href="document/common.html#delete--db-docid" title="DELETE /{db}/{docid}"><tt class="xref http http-delete docutils literal"><span class="pre">DELETE</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="copy">
-<dt id="copy--{db}-_local-{docid}">
-<tt class="descname">COPY </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#copy--{db}-_local-{docid}" title="Permalink to this definition">¶</a></dt>
+<dt id="copy--db-_local-docid">
+<tt class="descname">COPY </tt><tt class="descname">/{db}/_local/{docid}</tt><a class="headerlink" href="#copy--db-_local-docid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copies the specified local document. The semantics are identical to
 copying a standard document in the specified database, except that the
-document is not replicated. See <a class="reference internal" href="document/common.html#copy--{db}-{docid}" title="COPY /{db}/{docid}"><tt class="xref http http-copy docutils literal"><span class="pre">COPY</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
+document is not replicated. See <a class="reference internal" href="document/common.html#copy--db-docid" title="COPY /{db}/{docid}"><tt class="xref http http-copy docutils literal"><span class="pre">COPY</span> <span class="pre">/{db}/{docid}</span></tt></a>.</p>
 </dd></dl>
 
 </div>
@@ -187,8 +187,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -201,7 +201,7 @@ specific language governing permissions and limitations under the License.
 <script type="text/javascript">$('#searchbox').show(0);</script>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">10.6. Local (non-replicating) Document Methods</a><ul>
+<li><a class="reference internal" href="#">10.6. Local (non-replicating) Documents</a><ul>
 <li><a class="reference internal" href="#db-local-id">10.6.1. <tt class="docutils literal"><span class="pre">/db/_local/id</span></tt></a></li>
 </ul>
 </li>
@@ -261,7 +261,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/api/local.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -281,12 +296,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="ddoc/rewrites.html" title="10.5.11. /db/_design/design-doc/_rewrite/path"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >10. API Reference</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

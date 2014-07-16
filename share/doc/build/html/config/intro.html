@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.1. Introduction Into Configuring &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>3.1. Introduction Into Configuring &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="3. Configuring CouchDB" href="index.html" />
     <link rel="next" title="3.2. Base Configuration" href="couchdb.html" />
     <link rel="prev" title="3. Configuring CouchDB" href="index.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="index.html" title="3. Configuring CouchDB"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">3. Configuring CouchDB</a> &raquo;</li> 
       </ul>
     </div>  
@@ -77,6 +77,15 @@ specific language governing permissions and limitations under the License.
 <span id="config-intro"></span><h1>3.1. Introduction Into Configuring<a class="headerlink" href="#introduction-into-configuring" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="configuration-files">
 <h2>3.1.1. Configuration files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The following section covering load order of config files
+applies only to UNIX-ish systems.
+For Windows, only the provided <tt class="docutils literal"><span class="pre">default.ini</span></tt> and <tt class="docutils literal"><span class="pre">local.ini</span></tt>
+files are relevant. These can of course have content
+appended, which achieves the same type of functionality
+as outlined for UNIX-ish systems below.</p>
+</div>
 <p>By default, CouchDB reads configuration files from the following locations,
 in the following order:</p>
 <ol class="arabic simple">
@@ -161,7 +170,7 @@ improve configuration readability.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>In case when you&#8217;d like to remove some parameter from the <cite>default.ini</cite>
-without his modification, you may specify him within the <cite>local.ini</cite>, but
+without modifying that file, you may override in <cite>local.ini</cite>, but
 without any value:</p>
 <div class="highlight-ini"><div class="highlight"><pre><span class="k">[httpd_global_handlers]</span>
 <span class="na">_all_dbs</span> <span class="o">=</span>
@@ -179,25 +188,26 @@ to apply these changes.</p>
 <h2>3.1.4. Setting parameters via the HTTP API<a class="headerlink" href="#setting-parameters-via-the-http-api" title="Permalink to this headline">¶</a></h2>
 <p>Alternatively, configuration parameters could be set via the
 <a class="reference internal" href="../api/server/configuration.html#api-config"><em>HTTP API</em></a>. This API allows to change CouchDB configuration
-on-fly without need for server restart:</p>
+on-the-fly without requiring a server restart:</p>
 <div class="highlight-ini"><pre>curl -X PUT http://localhost:5984/_config/uuids/algorithm -d '"random"'</pre>
 </div>
 <p>In the response the old parameter&#8217;s value returns:</p>
 <div class="highlight-ini"><pre>"sequential"</pre>
 </div>
 <p>You should be careful with changing configuration via the HTTP API since it&#8217;s
-easy to make CouchDB unavailable. For instance, you&#8217;d like to change the
-<a class="reference internal" href="http.html#httpd/bind_address" title="bind_address"><tt class="xref config config-option docutils literal"><span class="pre">httpd/bind_address</span></tt></a> for new one:</p>
+easy to make CouchDB unavailable. For instance, if you&#8217;d like to change the
+<a class="reference internal" href="http.html#httpd/bind_address" title="bind_address"><tt class="xref config config-option docutils literal"><span class="pre">httpd/bind_address</span></tt></a> for a new one:</p>
 <div class="highlight-ini"><pre>curl -X PUT http://localhost:5984/_config/httpd/bind_address -d '"10.10.0.128"'</pre>
 </div>
-<p>However, if you would made a typo or the specified IP address is not available
-from your network, you&#8217;ll make CouchDB unavailable for you in both cases and
-you will have the only way to fix the problem by edit the configuration file
-and restart the server. To protect yourself against such accidents you may
-setup the <a class="reference internal" href="http.html#httpd/config_whitelist" title="config_whitelist"><tt class="xref config config-option docutils literal"><span class="pre">httpd/config_whitelist</span></tt></a> of configuration parameters that
-are allowed to edit via the HTTP API. For others you&#8217;ll need to directly edit
-the configuration file so you may quick fix any problems that had occurred due
-to misconfiguring.</p>
+<p>However, if you make a typo, or the specified IP address is not available
+from your network, CouchDB will be unavailable for you in both cases and
+the only way to resolve this will be by remoting into the server, correcting
+the errant file, and restarting CouchDB. To protect yourself against such
+accidents you may set the <a class="reference internal" href="http.html#httpd/config_whitelist" title="config_whitelist"><tt class="xref config config-option docutils literal"><span class="pre">httpd/config_whitelist</span></tt></a> of permitted
+configuration parameters for updates via the HTTP API. Once this option is set,
+further changes to non-whitelisted parameters must take place via the
+configuration file, and in most cases, also requires a server restart before
+hand-edited options take effect.</p>
 </div>
 </div>
 
@@ -228,8 +238,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -305,7 +315,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/config/intro.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -325,12 +350,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="index.html" title="3. Configuring CouchDB"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >3. Configuring CouchDB</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

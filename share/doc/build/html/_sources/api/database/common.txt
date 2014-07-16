@@ -16,10 +16,12 @@
 =======
 
 .. http:head:: /{db}
+  :synopsis: Checks the database existence
 
   Returns the HTTP Headers containing a minimal amount of information
-  about the specified database. Since the response body is empty this method
-  is a lightweight way to check if the database exists already or not.
+  about the specified database. Since the response body is empty, using the
+  HEAD method is a lightweight way to check if the database exists already or
+  not.
 
   :param db: Database name
   :code 200: Database exists
@@ -44,6 +46,7 @@
 
 
 .. http:get:: /{db}
+  :synopsis: Returns the database information
 
   Gets information about the specified database.
 
@@ -58,6 +61,7 @@
   :>json string db_name: The name of the database.
   :>json number disk_format_version: The version of the physical format used
     for the data when it is stored on disk.
+  :>json number data_size: Actual data size in bytes of the database data.
   :>json number disk_size: Size in bytes of the data as stored on the disk.
     Views indexes are not included in the calculation.
   :>json number doc_count: A count of the documents in the specified database.
@@ -104,6 +108,7 @@
 
 
 .. http:put:: /{db}
+  :synopsis: Creates a new database
 
   Creates a new database. The database name ``{db}`` must be composed by
   following next rules:
@@ -213,9 +218,16 @@
 
 
 .. http:delete:: /{db}
+  :synopsis: Deletes an existing database
 
   Deletes the specified database, and all the documents and attachments
   contained within it.
+
+  .. note::
+
+    To avoid deleting a database, CouchDB will respond with the HTTP status code 400
+    when the request URL includes a ?rev= parameter. This suggests that one wants to delete
+    a document but forgot to add the document id to the URL.
 
   :param db: Database name
   :<header Accept: - :mimetype:`application/json`
@@ -224,7 +236,7 @@
                          - :mimetype:`text/plain; charset=utf-8`
   :>json boolean ok: Operation status
   :code 200: Database removed successfully
-  :code 400: Invalid database name
+  :code 400: Invalid database name or forgotten document id by accident
   :code 401: CouchDB Server Administrator privileges required
   :code 404: Database doesn't exist
 
@@ -253,6 +265,7 @@
 
 
 .. http:post:: /{db}
+  :synopsis: Creates a new document with generated ID if _id is not specified
 
   Creates a new document in the specified database, using the supplied JSON
   document structure.

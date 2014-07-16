@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>6.2.2. Views Collation &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>6.2.2. Views Collation &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../../index.html" />
     <link rel="up" title="6.2. Guide to Views" href="index.html" />
     <link rel="next" title="6.2.3. Joins With Views" href="joins.html" />
     <link rel="prev" title="6.2.1. Introduction Into The Views" href="intro.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="intro.html" title="6.2.1. Introduction Into The Views"
              accesskey="P">previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >6. CouchApp</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">6.2. Guide to Views</a> &raquo;</li> 
       </ul>
@@ -88,8 +88,8 @@ property serves as the key, thus the result will be sorted by <tt class="docutil
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>CouchDB allows arbitrary JSON structures to be used as keys. You can use complex
-keys for fine-grained control over sorting and grouping.</p>
+<p>CouchDB allows arbitrary JSON structures to be used as keys. You can use JSON
+arrays as keys for fine-grained control over sorting and grouping.</p>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
@@ -101,13 +101,17 @@ lower than the token for orders, the customer document will come before the
 associated orders. The values 0 and 1 for the sorting token are arbitrary.</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="kd">function</span><span class="p">(</span><span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="s2">&quot;customer&quot;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">emit</span><span class="p">([</span><span class="nx">doc</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="nx">doc</span><span class="p">);</span>
+    <span class="nx">emit</span><span class="p">([</span><span class="nx">doc</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="kc">null</span><span class="p">);</span>
   <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="s2">&quot;order&quot;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">emit</span><span class="p">([</span><span class="nx">doc</span><span class="p">.</span><span class="nx">customer_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="nx">doc</span><span class="p">);</span>
+    <span class="nx">emit</span><span class="p">([</span><span class="nx">doc</span><span class="p">.</span><span class="nx">customer_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="kc">null</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
+<p>To list a specific customer with <tt class="docutils literal"><span class="pre">_id</span></tt> XYZ, and all of that customer&#8217;s orders, limit the startkey and endkey ranges to cover only documents for that customer&#8217;s <tt class="docutils literal"><span class="pre">_id</span></tt>:</p>
+<div class="highlight-json"><pre>startkey=["XYZ"]&amp;endkey=["XYZ", {}]</pre>
+</div>
+<p>It is not recommended to emit the document itself in the view. Instead, to include the bodies of the documents when requesting the view, request the view with <tt class="docutils literal"><span class="pre">?include_docs=true</span></tt>.</p>
 </div>
 <div class="section" id="sorting-by-dates">
 <h2>Sorting by Dates<a class="headerlink" href="#sorting-by-dates" title="Permalink to this headline">¶</a></h2>
@@ -116,12 +120,12 @@ associated orders. The values 0 and 1 for the sorting token are arbitrary.</p>
 the date to a <cite>number</cite> in the <a class="reference internal" href="../../query-server/javascript.html#emit" title="emit"><tt class="xref js js-func docutils literal"><span class="pre">emit()</span></tt></a> function. For example, given
 a document with a created_at attribute of <tt class="docutils literal"><span class="pre">'Wed</span> <span class="pre">Jul</span> <span class="pre">23</span> <span class="pre">16:29:21</span> <span class="pre">+0100</span> <span class="pre">2013'</span></tt>,
 the following emit function would sort by date:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">emit</span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">created_at</span><span class="p">).</span><span class="nx">getTime</span><span class="p">(),</span> <span class="nx">doc</span><span class="p">);</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">emit</span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">created_at</span><span class="p">).</span><span class="nx">getTime</span><span class="p">(),</span> <span class="kc">null</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Alternatively, if you use a date format which sorts lexicographically,
 such as <tt class="docutils literal"><span class="pre">&quot;2013/06/09</span> <span class="pre">13:52:11</span> <span class="pre">+0000&quot;</span></tt> you can just</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">emit</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">created_at</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">emit</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">created_at</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>and avoid the conversion. As a bonus, this date format is compatible with the
@@ -307,8 +311,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -391,7 +395,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/couchapp/views/collation.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -411,13 +430,13 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="intro.html" title="6.2.1. Introduction Into The Views"
              >previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >6. CouchApp</a> &raquo;</li>
           <li><a href="index.html" >6.2. Guide to Views</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

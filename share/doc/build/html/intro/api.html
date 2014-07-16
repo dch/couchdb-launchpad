@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1.5. The Core API &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>1.5. The Core API &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="up" title="1. Introduction" href="index.html" />
     <link rel="next" title="1.6. Security" href="security.html" />
     <link rel="prev" title="1.4. Getting Started" href="tour.html" /> 
@@ -63,7 +63,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="tour.html" title="1.4. Getting Started"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">1. Introduction</a> &raquo;</li> 
       </ul>
     </div>  
@@ -75,16 +75,16 @@ specific language governing permissions and limitations under the License.
             
   <div class="section" id="the-core-api">
 <span id="intro-api"></span><h1>1.5. The Core API<a class="headerlink" href="#the-core-api" title="Permalink to this headline">¶</a></h1>
-<p>This chapter explores the CouchDB in minute detail. It shows all the
+<p>This document explores the CouchDB in minute detail. It shows all the
 nitty-gritty and clever bits. We show you best practices and guide you around
 common pitfalls.</p>
-<p>We start out by revisiting the basic operations we ran in the last chapter,
-looking behind the scenes. We also show what Futon needs to do behind its
-user interface to give us the nice features we saw earlier.</p>
-<p>This chapter is both an introduction to the core CouchDB API as well as a
+<p>We start out by revisiting the basic operations we ran in the previous document
+<a class="reference internal" href="tour.html#intro-tour"><em>Getting Started</em></a>, looking behind the scenes. We also show what Futon needs to
+do behind its user interface to give us the nice features we saw earlier.</p>
+<p>This document is both an introduction to the core CouchDB API as well as a
 reference. If you can&#8217;t remember how to run a particular request or why some
 parameters are needed, you can always come back here and look things up (we
-are probably the heaviest users of this chapter).</p>
+are probably the heaviest users of this document).</p>
 <p>While explaining the API bits and pieces, we sometimes need to take a larger
 detour to explain the reasoning for a particular request. This is a good
 opportunity for us to tell you why CouchDB works the way it does.</p>
@@ -306,7 +306,7 @@ follows now is the response body.</p>
 <p>The last two lines are curl telling us that it kept the TCP connection it
 opened in the beginning open for a moment, but then closed it after it
 received the entire response.</p>
-<p>Throughout the book, we&#8217;ll show more requests with the <tt class="docutils literal"><span class="pre">-v</span></tt> option,
+<p>Throughout the documents, we&#8217;ll show more requests with the <tt class="docutils literal"><span class="pre">-v</span></tt> option,
 but we&#8217;ll omit some of the headers we&#8217;ve seen here and include only those
 that are important for the particular request.</p>
 <p>Creating databases is all fine, but how do we get rid of one? Easy &#8211; just
@@ -444,11 +444,11 @@ and, as a consequence, easier to program. CouchDB uses less code to make this
 work, and less code is always good because the ratio of defects per lines of
 code is static.</p>
 <p>The revision system also has positive effects on replication and storage
-mechanisms, but we&#8217;ll explore these later in the book.</p>
+mechanisms, but we&#8217;ll explore these later in the documents.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">The terms <em>version</em> and <em>revision</em> might sound familiar (if you are
-programming without version control, drop this book right now and start
+programming without version control, stop reading this guide right now and start
 learning one of the popular systems). Using new versions for document changes
 works a lot like version control, but there&#8217;s an important difference:
 <strong>CouchDB does not guarantee that older versions are kept around</strong>.</p>
@@ -505,7 +505,7 @@ documents, music, or movie files. Let&#8217;s make one.</p>
 <p>Attachments get their own URL where you can upload data. Say we want to add
 the album artwork to the <tt class="docutils literal"><span class="pre">6e1295ed6c29495e54cc05947f18c8af</span></tt> document
 (<em>&#8220;There is Nothing Left to Lose&#8221;</em>), and let&#8217;s also say the artwork is in a file
-artwork <cite>.jpg</cite> in the current directory:</p>
+<cite>artwork.jpg</cite> in the current directory:</p>
 <div class="highlight-json"><pre>curl -vX PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af/artwork.jpg?rev=2-2739352689 \
      --data-binary @artwork.jpg -H "Content-Type:image/jpg"</pre>
 </div>
@@ -561,8 +561,8 @@ two databases locally or remotely.</p>
 <em>target</em> of a replication and CouchDB will figure out which documents and new
 document revisions are on <em>source</em> that are not yet on <em>target</em>, and will
 proceed  to move the missing documents and revisions over.</p>
-<p>We&#8217;ll take an in-depth look at replication later in the book; in this
-chapter, we&#8217;ll just show you how to use it.</p>
+<p>We&#8217;ll take an in-depth look at replication in the document <a class="reference internal" href="../replication/intro.html#replication-intro"><em>Introduction Into Replications</em></a>;
+in this document, we&#8217;ll just show you how to use it.</p>
 <p>First, we&#8217;ll create a target database. Note that CouchDB won&#8217;t automatically
 create a target database for you, and will return a replication failure if
 the target doesn&#8217;t exist (likewise for the source, but that mistake isn&#8217;t as
@@ -658,7 +658,7 @@ operations:</p>
 requests don&#8217;t look very RESTy to the trained eye. What&#8217;s up with that?
 While CouchDB&#8217;s core database, document, and attachment API are RESTful,
 not all of CouchDB&#8217;s API is. The replication API is one example. There are
-more, as we&#8217;ll see later in the book.</p>
+more, as we&#8217;ll see later in the documents.</p>
 <p>Why are there RESTful and non-RESTful APIs mixed up here? Have the developers
 been too lazy to go REST all the way? Remember, REST is an architectural
 style that lends itself to certain architectures (such as the CouchDB
@@ -717,8 +717,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -800,7 +800,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/intro/api.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -820,12 +835,12 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="tour.html" title="1.4. Getting Started"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="index.html" >1. Introduction</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

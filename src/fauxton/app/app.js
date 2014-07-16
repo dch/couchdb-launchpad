@@ -1,44 +1,58 @@
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License. You may obtain a copy of
+// the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations under
+// the License.
+
 define([
-  // Libraries.
+  // Application.
+  "initialize",
+
+  // Libraries
   "jquery",
   "lodash",
   "backbone",
+  "bootstrap",
 
   "helpers",
-  "mixins",
-
+  "core/utils",
+  // Modules
+  "core/api",
+  "core/couchdbSession",
   // Plugins.
   "plugins/backbone.layoutmanager",
   "plugins/jquery.form"
+
 ],
 
-function($, _, Backbone, Helpers, Mixins) {
-
+function(app, $, _, Backbone, Bootstrap, Helpers, Utils, FauxtonAPI, Couchdb) {
   // Make sure we have a console.log
   if (typeof console == "undefined") {
     console = {
-      log: function(){}
+      log: function(){},
+      trace: function(){},
+      debug: function(){}
     };
   }
 
   // Provide a global location to place configuration settings and module
-  // creation.
-  var app = {
-    // The root path to run the application.
-    root: "/",
-    version: "0.0.1",
-    mixins: Mixins,
-    // move this to here otherwise every once in a while,
-    // the footer fails to configure as the url for it is not configured.
-    // Having the host declared here fixes it
-    host: window.location.protocol + "//" + window.location.host,
-  };
+  // creation also mix in Backbone.Events
+  _.extend(app, {
+    utils: Utils,
+    getParams: FauxtonAPI.utils.getParams
+  });
 
   // Localize or create a new JavaScript Template object.
   var JST = window.JST = window.JST || {};
 
   // Configure LayoutManager with Backbone Boilerplate defaults.
-  Backbone.Layout.configure({
+  FauxtonAPI.Layout.configure({
     // Allow LayoutManager to augment Backbone.View.prototype.
     manage: true,
 
@@ -70,12 +84,28 @@ function($, _, Backbone, Helpers, Mixins) {
     }
   });
 
-  // Mix Backbone.Events, and modules into the app object.
-  return _.extend(app, {
-    // Create a custom object with a nested Views object.
-    module: function(additionalProps) {
-      return _.extend({ Views: {} }, additionalProps);
-    }
-  }, Backbone.Events);
+  FauxtonAPI.setSession(new Couchdb.Session());
 
+  // Define your master router on the application namespace and trigger all
+  // navigation from this instance.
+  FauxtonAPI.config({
+    el: "#app-container",
+    masterLayout: new FauxtonAPI.Layout(),
+    
+    addHeaderLink: function(link) {
+      FauxtonAPI.registerExtension('navbar:addHeaderLink', link);
+    },
+
+    removeHeaderLink: function(link) {
+      FauxtonAPI.removeExtensionItem('navbar:addHeaderLink', link, function (item) {
+        if (item.title === link.title) {
+          return true;
+        }
+
+        return false;
+      });
+    }
+  });
+
+  return app;
 });

@@ -126,12 +126,12 @@ JavaScript below:
 .. code-block:: javascript
 
     // could be replaced by _sum
-    function(keys, values){
-      sum(values);
+    function(keys, values) {
+      return sum(values);
     }
 
     // could be replaced by _count
-    function(keys, values, rereduce){
+    function(keys, values, rereduce) {
       if (rereduce) {
         return sum(values);
       } else {
@@ -140,21 +140,31 @@ JavaScript below:
     }
 
     // could be replaced by _stats
-    function(keys, values, rereduce){
-      return {
-        'sum': sum(values),
-        'min': Math.min.apply(null, values),
-        'max': Math.max.apply(null, values),
-        'count': values.length,
-        'sumsqr': (function(){
-          var sumsqr = 0;
+    function(keys, values, rereduce) {
+      if (rereduce) {
+        return {
+          'sum': values.reduce(function(a, b) { return a + b.sum }, 0),
+          'min': values.reduce(function(a, b) { return Math.min(a, b.min) }, Infinity),
+          'max': values.reduce(function(a, b) { return Math.max(a, b.max) }, -Infinity),
+          'count': values.reduce(function(a, b) { return a + b.count }, 0),
+          'sumsqr': values.reduce(function(a, b) { return a + b.sumsqr }, 0)
+        }
+      } else {
+        return {
+          'sum': sum(values),
+          'min': Math.min.apply(null, values),
+          'max': Math.max.apply(null, values),
+          'count': values.length,
+          'sumsqr': (function() {
+            var sumsqr = 0;
 
-          values.forEach(function (value) {
-            sumsqr += value * value;
-          });
+            values.forEach(function (value) {
+              sumsqr += value * value;
+            });
 
-          return sumsqr;
-        })(),
+            return sumsqr;
+          })(),
+        }
       }
     }
 
@@ -409,7 +419,7 @@ The basic example that demonstrates all use-cases of update handlers below:
 
     function(doc, req){
         if (!doc){
-            if ('id' in req){
+            if ('id' in req && req['id']){
                 // create new document
                 return [{'_id': req['id']}, 'New World']
             }
@@ -437,10 +447,10 @@ Filter functions
    :param doc: Processed document object.
    :param req: :ref:`request_object`
    :return: Boolean value: ``true`` means that `doc` passes the filter rules,
-            ``false`` that not.
+            ``false`` means that it does not.
 
-Filter functions are mostly acts like :ref:`showfun` and :ref:`listfun`: they
-formats, but more correctly to say, they *filters* :ref:`changes feed<changes>`.
+Filter functions mostly act like :ref:`showfun` and :ref:`listfun`: they
+format, or *filter* the :ref:`changes feed<changes>`.
 
 Classic filters
 ---------------
@@ -448,12 +458,11 @@ Classic filters
 By default the changes feed emits all database documents changes. But if you're
 waiting for some special changes, processing all documents is inefficient.
 
-Filters are special design document functions that allows changes feed to emit
+Filters are special design document functions that allow the changes feed to emit
 only specific documents that pass filter rules.
 
-Lets assume that our database is a mailbox and we need to to handle only new mails
-(documents with status `new`) events. Assuming that, our filter function
-will looks like next one:
+Let's assume that our database is a mailbox and we need to handle only new mail
+events (documents with status `new`). Our filter function will look like this:
 
 .. code-block:: javascript
 
@@ -469,8 +478,8 @@ will looks like next one:
     return true; // passed!
   }
  
-Filter functions must return ``true`` in fact if document passed all defined
-rules. Now, if you apply this function to changes feed it will emit only changes
+Filter functions must return ``true`` if a document passed all defined
+rules. Now, if you apply this function to the changes feed it will emit only changes
 about "new mails"::
 
     GET /somedatabase/_changes?filter=mailbox/new_mail HTTP/1.1
@@ -483,20 +492,20 @@ about "new mails"::
     ],
     "last_seq":27}
 
-Note, that ``last_seq`` number is 27, but we'd received only two records.
-Seems like any other changes was about documents that hasn't passed our filter.
+Note that the value of ``last_seq`` is 27, but we'd received only two records.
+Seems like any other changes were for documents that haven't passed our filter.
 
-Probably, we also need to filter changes feed of our mailbox not only by single
-status value: we're also interested in statuses like "spam" to update
-spam-filter heuristic rules, "outgoing" to let mail daemon actually send mails
-and so on. Creating a lot of similar functions that actually does similar work
-isn't good idea - so we need dynamic filter to go.
+We probably need to filter the changes feed of our mailbox by more than a single
+status value. We're also interested in statuses like "spam" to update
+spam-filter heuristic rules, "outgoing" to let a mail daemon actually send mails,
+and so on. Creating a lot of similar functions that actually do similar work
+isn't good idea - so we need a dynamic filter.
 
-If you have noted, filter functions takes second argument as
-:ref:`request <request_object>` object - it allows to create dynamic filters
+You may have noticed that filter functions take a second argument named
+:ref:`request <request_object>` - it allows creating dynamic filters
 based on query parameters, :ref:`user context <userctx_object>` and more.
 
-The dynamic version of our filter now will be next:
+The dynamic version of our filter looks like this:
 
 .. code-block:: javascript
 
@@ -512,7 +521,7 @@ The dynamic version of our filter now will be next:
     return true; // passed!
   }
 
-and now we have pass `status` query parameter in request to let filter match
+and now we have passed the `status` query parameter in request to let our filter match
 only required documents::
 
     GET /somedatabase/_changes?filter=mailbox/by_status&status=new HTTP/1.1
@@ -525,7 +534,7 @@ only required documents::
     ],
     "last_seq":27}
 
-and we can change filter behavior with easy::
+and we can easily change filter behavior with::
 
     GET /somedatabase/_changes?filter=mailbox/by_status&status=spam HTTP/1.1
 
@@ -537,7 +546,7 @@ and we can change filter behavior with easy::
     "last_seq":27}
 
 
-Combining filters with `continuous` feed allows to create powerful event-driven
+Combining filters with a `continuous` feed allows creating powerful event-driven
 systems.
 
 .. _viewfilter:

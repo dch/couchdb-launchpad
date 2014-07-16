@@ -19,7 +19,8 @@ module.exports = function (grunt) {
         http = require("http"),
         httpProxy = require('http-proxy'),
         send = require('send'),
-        options = grunt.config('couchserver');
+        options = grunt.config('couchserver'),
+        _ = grunt.util._;
 
     // Options
     var dist_dir = options.dist || './dist/debug/',
@@ -46,8 +47,11 @@ module.exports = function (grunt) {
           accept = req.headers.accept.split(','),
           filePath;
 
-      if (!!url.match(/assets/)) {
+      if (!!url.match(/^\/addons\/.*\/assets\/js/)) {
+        filePath = path.join(app_dir, url.replace('/_utils/fauxton/',''));
+      } else if (!!url.match(/assets/)) {
         // serve any javascript or css files from here assets dir
+        url = url.replace(/\?.*/, '');
         filePath = path.join('./',url);
       } else if (!!url.match(/mocha|\/test\/core\/|test\.config/)) {
         filePath = path.join('./test', url.replace('/test/',''));
@@ -60,7 +64,7 @@ module.exports = function (grunt) {
         // server js from app directory
         filePath = path.join(app_dir, url.replace('/_utils/fauxton/',''));
       } else if (!!url.match(/testrunner/)) {
-        var testSetup = grunt.util.spawn({cmd: 'grunt', grunt: true, args: ['mochaSetup']}, function (error, result, code) {/* log.writeln(String(result));*/ });
+        var testSetup = grunt.util.spawn({cmd: 'grunt', grunt: true, args: ['test_inline']}, function (error, result, code) {/* log.writeln(String(result));*/ });
         testSetup.stdout.pipe(process.stdout);
         testSetup.stderr.pipe(process.stderr);
         filePath = path.join('./test/runner.html');
@@ -78,7 +82,9 @@ module.exports = function (grunt) {
               log.writeln('ERROR', filePath, err);
             }
 
-            res.end(err.message);
+            res.setHeader("Content-Type", "text/javascript");
+            res.statusCode = 404;
+            res.end(JSON.stringify({error: err.message}));
           })
           .pipe(res);
       } 
@@ -95,6 +101,21 @@ module.exports = function (grunt) {
 
     watch.stdout.pipe(process.stdout);
     watch.stderr.pipe(process.stderr);
+
+    var logo = [
+      [""],
+      [" ______                        _                   "],
+      ["|  ____|                      | |                  "],
+      ["| |__    __ _   _   _  __  __ | |_    ___    _ __  "],
+      ["|  __|  / _` | | | | | \\ \\/ / | __|  / _ \\  | '_ \\ "],
+      ["| |    | (_| | | |_| |  >  <  | |_  | (_) | | | | |"],
+      ["|_|     \\__,_|  \\__,_| /_/\\_\\  \\__|  \\___/  |_| |_|"],
+      [""]
+   ];
+
+    _.each(logo, function (line) {
+      console.log(line.toString());
+    });
 
     log.writeln('Listening on ' + port);
   });

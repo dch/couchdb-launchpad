@@ -58,8 +58,8 @@ function (app, FauxtonAPI, activetasks) {
     },
 
     requestByType: function(e){
-      var currentTarget = e.currentTarget;
-      datatype = this.$(currentTarget).attr("data-type");
+      var currentTarget = e.currentTarget,
+          datatype = this.$(currentTarget).attr("data-type");
 
       this.$('.task-tabs').find('li').removeClass('active');
       this.$(currentTarget).addClass('active');
@@ -119,8 +119,9 @@ function (app, FauxtonAPI, activetasks) {
       currentView = this.options.currentView;
     },
     sortByType:  function(e){
-      var currentTarget = e.currentTarget;
-      datatype = $(currentTarget).attr("data-type");
+      var currentTarget = e.currentTarget,
+          datatype = $(currentTarget).attr("data-type");
+
       this.collection.sortByColumn(datatype);
       this.render();
     },
@@ -162,8 +163,23 @@ function (app, FauxtonAPI, activetasks) {
     getProgress:  function(){
       var progress = "";
       if (this.type === "indexer"){
-        progress = "Processed " +this.model.get('changes_done')+ " of "+this.model.get('total_changes')+ ' changes';
+        progress = "Processed " +this.model.get('changes_done')+ " of "+this.model.get('total_changes')+ ' changes.';
+      } else if (this.type === "replication"){
+        progress = this.model.get('docs_written')+ " docs written. ";
+        if (this.model.get('changes_pending') !== undefined) {
+          progress += this.model.get('changes_pending') + ' pending changes. ';
+        }
       }
+      if (this.model.get('source_seq') !== undefined) {
+        progress += "Current source sequence: " + this.model.get('source_seq') + ". ";
+      }
+      if (this.model.get('changes_done') !== undefined) {
+        progress += this.model.get('changes_done') + " Changes done. ";
+      }
+      if (this.model.get('progress') !== undefined) {
+        progress += "Progress: " + this.model.get('progress') + "% ";
+      }
+
       return progress;
     },
     serialize: function(){

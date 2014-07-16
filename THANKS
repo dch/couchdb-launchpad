@@ -64,10 +64,8 @@ suggesting improvements or submitting changes. Some of these people are:
  * David Rose <doppler@gmail.com>
  * Lim Yue Chuan <shasderias@gmail.com>
  * David Davis <xantus@xantus.org>
- * Klaus Trainer <klaus.trainer@web.de>
  * Juuso Väänänen <juuso@vaananen.org>
  * Jeff Zellner <jeff.zellner@gmail.com>
- * Benjamin Young <byoung@bigbluehat.com>
  * Gabriel Farrell <gsf747@gmail.com>
  * Mike Leddy <mike@loop.com.br>
  * Wayne Conrad <wayne@databill.com>
@@ -98,45 +96,59 @@ suggesting improvements or submitting changes. Some of these people are:
  * Alexander Dorofeev <aka.spin@gmail.com>
  * Alexander Shorin <kxepal@gmail.com>
  * Andrey Somov <trophybase@gmail.com>
+ * Andy Wenk <andy@nms.de>
+ * Anthony Ananich <anton.ananich@inpun.com>
  * Anthony S Baker <anthony.s.baker@gmail.com>
  * Ben Reser <ben@reser.org>
+ * Ben Russell <ben@benru.co.uk>
  * Benjamin Nortier <bjnortier@gmail.com>
+    27	BigBlueHat <byoung@bigbluehat.com>
  * Bob Dionne <bob@cloudant.com>
  * Bob Ippolito <bob@redivi.com>
  * Caleb Case <calebcase@gmail.com>
+ * Christian Hogan <github@infliction.org>
  * Christopher Bonhage <queezey@me.com>
  * Dale Harvey <dale@arandomurl.com>
  * Damjan Georgievski <gdamjan@gmail.com>
- * Dirkjan Ochtman <dirkjan@ochtman.nl>
+    23	Dirkjan Ochtman <dirkjan@ochtman.nl>
  * Dustin Sallings <dustin@spy.net>
  * Ewan McDougall <mrloop@mrloop.com>
  * Fedor Indutny <fedor.indutny@gmail.com>
  * Filippo Fadda <filippo.fadda@gmail.com>
-   107	Garren Smith <garren.smith@gmail.com>
+   185	Garren Smith <garren.smith@gmail.com>
  * Jakub <jakub.oboza@gmail.com>
  * Jason Smith (work) <jason.h.smith@gmail.com>
  * Jason Smith (work) <jhs@iriscouch.com>
  * Jason Smith (work) <jhs@nodejitsu.com>
+ * Jens Rantil <jens.rantil@gmail.com>
  * Joel Reed <joelwreed@gmail.com>
  * Johannes J. Schmidt <schmidt@netzmerk.com>
+ * Julian Duque <julianduquej@gmail.com>
+ * Keith Gable <kgable@decisionpt.com>
  * Keks Keksov <keksov@gmail.com>
  * Klaus Trainer <klaus_trainer@posteo.de>
+ * Kyle Snavely <ksnavely@cloudant.com>
  * Magnus Hoff <maghoff@gmail.com>
+ * Mariano Guerra <luismarianoguerra@gmail.com>
  * Martin Higham <martin@ocastalabs.com>
  * Michael Jackson <mjijackson@gmail.com>
  * Michael Rhodes <mike.rhodes@gmail.com>
  * Michael Wallace <mikewallace1979@googlemail.com>
+ * Michael Wheeler <mpwheeler@gmail.com>
  * Mike McKay <mike@vdomck.org>
  * Mike Wallace <mikewallace1979@googlemail.com>
  * NickNorth <North.N@gmail.com>
+ * Noah Slater <nslater@tumbolia.org>
  * Paul J. Davis <paul.joseph.davis@gmail.com>
  * Paul Mietz Egli <paul@obscure.com>
  * Peter Lemenkov <lemenkov@gmail.com>
+    34	Robert Kowalski <rok@kowalski.gd>
+ * Robert Newson <robert.newson@cloudant.com>
  * Robin Berjon <robin@berjon.com>
  * Ronny Pfannschmidt <Ronny.Pfannschmidt@gmx.de>
-    91	Russell Branca <chewbranca@gmail.com>
+    94	Russell Branca <chewbranca@gmail.com>
  * Ryan Ramage <ryan.ramage@gmail.com>
-    74	Simon Metson <simon+github@cloudant.com>
+    78	Simon Metson <simon+github@cloudant.com>
     10	Simon Metson <simonmetson+github@googlemail.com>
  * Sriram Melkote <siri@couchbase.com>
  * Stefan Kögl <stefan@skoegl.net>
@@ -144,8 +156,12 @@ suggesting improvements or submitting changes. Some of these people are:
  * Volker Mische <volker.mische@gmail.com>
  * Wei Cao <cyg.cao@gmail.com>
  * Wendall Cada <wendallc@83864.com>
+ * Will Holley <willholley@gmail.com>
+ * dileepbapat <dileepbapat@gmail.com>
+ * karlin <karlin@atomicobject.com>
  * nvdev <modestdev@gmail.com>
  * sean barclay <fudd1011@hotmail.com>
-    54	suelockwood <deathbearbrown@gmail.com>
+    76	suelockwood <deathbearbrown@gmail.com>
+ * telis94 <dossas07@hotmail.com>
 
 For a list of authors see the `AUTHORS` file.

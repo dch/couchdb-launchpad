@@ -499,14 +499,14 @@ AC_DEFUN([AX_PATH_GENERIC],[
 #
 # LICENSE
 #
-#   Copyright (c) 2008 Andrew Collier <colliera@ukzn.ac.za>
+#   Copyright (c) 2008 Andrew Collier
 #
 #   Copying and distribution of this file, with or without modification, are
 #   permitted in any medium without royalty provided the copyright notice
 #   and this notice are preserved. This file is offered as-is, without any
 #   warranty.
 
-#serial 5
+#serial 6
 
 AU_ALIAS([AC_PYTHON_MODULE], [AX_PYTHON_MODULE])
 AC_DEFUN([AX_PYTHON_MODULE],[
@@ -1485,6 +1485,25 @@ AC_DEFUN([_AM_SET_OPTIONS],
 # Execute IF-SET if OPTION is set, IF-NOT-SET otherwise.
 AC_DEFUN([_AM_IF_OPTION],
 [m4_ifset(_AM_MANGLE_OPTION([$1]), [$2], [$3])])
+
+# Copyright (C) 2001, 2003, 2005, 2011 Free Software Foundation, Inc.
+#
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# serial 1
+
+# AM_RUN_LOG(COMMAND)
+# -------------------
+# Run COMMAND, save the exit status in ac_status, and log it.
+# (This has been adapted from Autoconf's _AC_RUN_LOG macro.)
+AC_DEFUN([AM_RUN_LOG],
+[{ echo "$as_me:$LINENO: $1" >&AS_MESSAGE_LOG_FD
+   ($1) >&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&AS_MESSAGE_LOG_FD
+   (exit $ac_status); }])
 
 # Check to make sure that the build environment is sane.    -*- Autoconf -*-
 

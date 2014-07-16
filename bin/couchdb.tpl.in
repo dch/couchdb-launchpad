@@ -270,6 +270,9 @@ start_couchdb () {
         echo "Apache CouchDB has started, time to relax."
     else
         if test "$RECURSED" = "true"; then
+            # close stdout / stderr
+            exec 1>&-
+            exec 2>&-
             while true; do
                 export HEART_COMMAND
                 export HEART_BEAT_TIMEOUT
@@ -304,6 +307,10 @@ stop_couchdb () {
     PID=`_get_pid`
     STOP_TIMEOUT=60
     if test -n "$PID"; then
+        if test "$1" = "false"; then
+            echo > $PID_FILE
+        fi
+
         if kill -0 $PID 2> /dev/null; then
             if kill -TERM $PID 2> /dev/null; then
                 count=0

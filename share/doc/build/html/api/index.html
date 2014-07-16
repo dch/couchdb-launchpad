@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10. API Reference &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>10. API Reference &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../index.html" />
     <link rel="next" title="10.1. API Basics" href="basics.html" />
     <link rel="prev" title="9.2. Writting Addons" href="../fauxton/addons.html" /> 
   </head>
@@ -62,7 +62,7 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="../fauxton/addons.html" title="9.2. Writting Addons"
              accesskey="P">previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li> 
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -93,7 +93,7 @@ within the server or returned object. For example, the URL fragment
 <li class="toctree-l2"><a class="reference internal" href="basics.html#http-status-codes">10.1.4. HTTP Status Codes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="server/index.html">10.2. Server Methods</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="server/index.html">10.2. Server</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="server/common.html">10.2.1. <tt class="docutils literal"><span class="pre">/</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="server/common.html#active-tasks">10.2.2. <tt class="docutils literal"><span class="pre">/_active_tasks</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="server/common.html#all-dbs">10.2.3. <tt class="docutils literal"><span class="pre">/_all_dbs</span></tt></a></li>
@@ -105,11 +105,11 @@ within the server or returned object. For example, the URL fragment
 <li class="toctree-l2"><a class="reference internal" href="server/common.html#utils">10.2.9. <tt class="docutils literal"><span class="pre">/_utils</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="server/common.html#uuids">10.2.10. <tt class="docutils literal"><span class="pre">/_uuids</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="server/common.html#favicon-ico">10.2.11. <tt class="docutils literal"><span class="pre">/favicon.ico</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="server/authn.html">10.2.12. Authentication Methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="server/configuration.html">10.2.13. Configuration Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server/authn.html">10.2.12. Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server/configuration.html">10.2.13. Configuration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="database/index.html">10.3. Database Methods</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="database/index.html">10.3. Databases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="database/common.html">10.3.1. <tt class="docutils literal"><span class="pre">/db</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="database/bulk-api.html">10.3.2. <tt class="docutils literal"><span class="pre">/db/_all_docs</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="database/bulk-api.html#db-bulk-docs">10.3.3. <tt class="docutils literal"><span class="pre">/db/_bulk_docs</span></tt></a></li>
@@ -126,12 +126,12 @@ within the server or returned object. For example, the URL fragment
 <li class="toctree-l2"><a class="reference internal" href="database/misc.html#db-revs-limit">10.3.14. <tt class="docutils literal"><span class="pre">/db/_revs_limit</span></tt></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="document/index.html">10.4. Document Methods</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="document/index.html">10.4. Documents</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="document/common.html">10.4.1. <tt class="docutils literal"><span class="pre">/db/doc</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="document/attachments.html">10.4.2. <tt class="docutils literal"><span class="pre">/db/doc/attachment</span></tt></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="ddoc/index.html">10.5. Design Document Methods</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="ddoc/index.html">10.5. Design Documents</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ddoc/common.html">10.5.1. <tt class="docutils literal"><span class="pre">/db/_design/design-doc</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="ddoc/common.html#db-design-design-doc-attachment">10.5.2. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/attachment</span></tt></a></li>
 <li class="toctree-l2"><a class="reference internal" href="ddoc/common.html#db-design-design-doc-info">10.5.3. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_info</span></tt></a></li>
@@ -145,7 +145,7 @@ within the server or returned object. For example, the URL fragment
 <li class="toctree-l2"><a class="reference internal" href="ddoc/rewrites.html">10.5.11. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_rewrite/path</span></tt></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="local.html">10.6. Local (non-replicating) Document Methods</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="local.html">10.6. Local (non-replicating) Documents</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="local.html#db-local-id">10.6.1. <tt class="docutils literal"><span class="pre">/db/_local/id</span></tt></a></li>
 </ul>
 </li>
@@ -180,8 +180,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -246,7 +246,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/api/index.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -266,11 +281,11 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="../fauxton/addons.html" title="9.2. Writting Addons"
              >previous</a> |</li>
-  <li><a href="../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li> 
+  <li><a href="../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

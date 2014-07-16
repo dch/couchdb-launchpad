@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10.3.2. /db/_all_docs &mdash; Apache CouchDB 1.5 Documentation</title>
+    <title>10.3.2. /db/_all_docs &mdash; Apache CouchDB 1.6 Documentation</title>
     
     <link rel="stylesheet" href="../../_static/rtd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -42,8 +42,8 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="author" title="About these documents" href="../../about.html" />
-    <link rel="top" title="Apache CouchDB 1.5 Documentation" href="../../index.html" />
-    <link rel="up" title="10.3. Database Methods" href="index.html" />
+    <link rel="top" title="Apache CouchDB 1.6 Documentation" href="../../index.html" />
+    <link rel="up" title="10.3. Databases" href="index.html" />
     <link rel="next" title="10.3.4. /db/_changes" href="changes.html" />
     <link rel="prev" title="10.3.1. /db" href="common.html" /> 
   </head>
@@ -63,9 +63,9 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="common.html" title="10.3.1. /db"
              accesskey="P">previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">10.3. Database Methods</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">10.3. Databases</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -77,8 +77,8 @@ specific language governing permissions and limitations under the License.
   <div class="section" id="db-all-docs">
 <span id="api-db-all-docs"></span><h1>10.3.2. <tt class="docutils literal"><span class="pre">/db/_all_docs</span></tt><a class="headerlink" href="#db-all-docs" title="Permalink to this headline">¶</a></h1>
 <dl class="get">
-<dt id="get--{db}-_all_docs">
-<tt class="descname">GET </tt><tt class="descname">/{db}/_all_docs</tt><a class="headerlink" href="#get--{db}-_all_docs" title="Permalink to this definition">¶</a></dt>
+<dt id="get--db-_all_docs">
+<tt class="descname">GET </tt><tt class="descname">/{db}/_all_docs</tt><a class="headerlink" href="#get--db-_all_docs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a JSON structure of all of the documents in a given database.
 The information is returned as a JSON structure containing meta
 information about the return structure, including a list of all documents
@@ -230,11 +230,11 @@ this is not the number of rows returned in the actual query.</li>
 </dd></dl>
 
 <dl class="post">
-<dt id="post--{db}-_all_docs">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_all_docs</tt><a class="headerlink" href="#post--{db}-_all_docs" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_all_docs">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_all_docs</tt><a class="headerlink" href="#post--db-_all_docs" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <tt class="docutils literal"><span class="pre">POST</span></tt> to <tt class="docutils literal"><span class="pre">_all_docs</span></tt> allows to specify multiple keys to be
 selected from the database. This enables you to request multiple
-documents in a single request, in place of multiple <a class="reference internal" href="../document/common.html#get--{db}-{docid}" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a>
+documents in a single request, in place of multiple <a class="reference internal" href="../document/common.html#get--db-docid" title="GET /{db}/{docid}"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/{db}/{docid}</span></tt></a>
 requests.</p>
 <p>The request body should contain a list of the keys to be returned as an
 array to a <tt class="docutils literal"><span class="pre">keys</span></tt> object. For example:</p>
@@ -282,8 +282,8 @@ selected keys in the output:</p>
 <div class="section" id="db-bulk-docs">
 <span id="api-db-bulk-docs"></span><h1>10.3.3. <tt class="docutils literal"><span class="pre">/db/_bulk_docs</span></tt><a class="headerlink" href="#db-bulk-docs" title="Permalink to this headline">¶</a></h1>
 <dl class="post">
-<dt id="post--{db}-_bulk_docs">
-<tt class="descname">POST </tt><tt class="descname">/{db}/_bulk_docs</tt><a class="headerlink" href="#post--{db}-_bulk_docs" title="Permalink to this definition">¶</a></dt>
+<dt id="post--db-_bulk_docs">
+<tt class="descname">POST </tt><tt class="descname">/{db}/_bulk_docs</tt><a class="headerlink" href="#post--db-_bulk_docs" title="Permalink to this definition">¶</a></dt>
 <dd><p>The bulk document API allows you to create and update multiple documents
 at the same time within a single request. The basic operation is similar
 to creating or updating a single document, except that you batch the
@@ -312,17 +312,18 @@ information and deletion status (<tt class="docutils literal"><span class="pre">
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> &#8211; <em class="mimetype">application/json</em></li>
 <li><strong>X-Couch-Full-Commit</strong> &#8211; Overrides server&#8217;s
 <a class="reference internal" href="../../config/couchdb.html#couchdb/delayed_commits" title="delayed_commits"><tt class="xref config config-option docutils literal"><span class="pre">commit</span> <span class="pre">policy</span></tt></a>. Possible values
-are: <tt class="docutils literal"><span class="pre">false</span></tt> and <tt class="docutils literal"><span class="pre">true</span></tt>. <em>Optional</em>.</li>
+are: <tt class="docutils literal"><span class="pre">false</span></tt> and <tt class="docutils literal"><span class="pre">true</span></tt>. <em>Optional</em></li>
 </ul>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Request JSON Object:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
 <li><strong>all_or_nothing</strong> (<em>boolean</em>) &#8211; Sets the database commit mode to use
-<cite>all-or-nothing</cite> semantics. Default is <tt class="docutils literal"><span class="pre">false</span></tt>. <em>Optional</em>.</li>
+<a class="reference internal" href="#api-db-bulk-docs-semantics"><em>all-or-nothing</em></a> semantics.
+Default is <tt class="docutils literal"><span class="pre">false</span></tt>. <em>Optional</em></li>
 <li><strong>docs</strong> (<em>array</em>) &#8211; List of documents objects</li>
 <li><strong>new_edits</strong> (<em>boolean</em>) &#8211; If <tt class="docutils literal"><span class="pre">false</span></tt>, prevents the database from assigning
-them new revision IDs. Default is <tt class="docutils literal"><span class="pre">true</span></tt>. <em>Optional</em>.</li>
+them new revision IDs. Default is <tt class="docutils literal"><span class="pre">true</span></tt>. <em>Optional</em></li>
 </ul>
 </td>
 </tr>
@@ -339,20 +340,19 @@ them new revision IDs. Default is <tt class="docutils literal"><span class="pre"
 <tr class="field-odd field"><th class="field-name" colspan="2">Response JSON Array of Objects:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
 <li><strong>id</strong> (<em>string</em>) &#8211; Document ID</li>
-<li><strong>rev</strong> (<em>string</em>) &#8211; New document revision token. <em>Optional</em>. Available
-if document have saved without errors.</li>
-<li><strong>error</strong> (<em>string</em>) &#8211; Error type. <em>Optional</em>.</li>
-<li><strong>reason</strong> (<em>string</em>) &#8211; Error reason. <em>Optional</em>.</li>
+<li><strong>rev</strong> (<em>string</em>) &#8211; New document revision token. Available
+if document have saved without errors. <em>Optional</em></li>
+<li><strong>error</strong> (<em>string</em>) &#8211; Error type. <em>Optional</em></li>
+<li><strong>reason</strong> (<em>string</em>) &#8211; Error reason. <em>Optional</em></li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first last simple">
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.2">201 Created</a> &#8211; Document(s) have been created or updated</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">400 Bad Request</a> &#8211; The request provided invalid JSON data. Check that your data
-is both <tt class="docutils literal"><span class="pre">utf-8</span></tt> and complies to the <a class="reference external" href="http://json.org/">JSON specification</a>. Tools such as
-<a class="reference external" href="http://lloyd.github.io/yajl/">yajl</a> are available on all platforms that CouchDB runs on to assist with
-validation and pretty printing.</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> &#8211; Malformed data provided</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">400 Bad Request</a> &#8211; The request provided invalid JSON data</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.18">417 Expectation Failed</a> &#8211; Occurs when <tt class="docutils literal"><span class="pre">all_or_nothing</span></tt> option set as <tt class="docutils literal"><span class="pre">true</span></tt> and
+at least one document was rejected by <a class="reference internal" href="../../couchapp/ddocs.html#vdufun"><em>validation function</em></a></li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> &#8211; Malformed data provided, while it&#8217;s still valid JSON</li>
 </ul>
 </td>
 </tr>
@@ -412,56 +412,71 @@ and time, by consolidating many of the updates to intermediate B-tree nodes.</p>
 the only transaction boundary within CouchDB is a single update to a single
 database. The constraints are detailed in <a class="reference internal" href="#api-db-bulk-docs-semantics"><em>Bulk Documents Transaction Semantics</em></a>.</p>
 <p>To insert documents in bulk into a database you need to supply a JSON
-structure with the array of documents that you want to add to the
-database. Using this method you can either include a document ID, or
-allow the document ID to be automatically generated.</p>
+structure with the array of documents that you want to add to the database.
+You can either include a document ID, or allow the document ID to be
+automatically generated.</p>
 <p>For example, the following update inserts three new documents, two with the
 supplied document IDs, and one which will have a document ID generated:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
-   <span class="s2">&quot;docs&quot;</span> <span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span>
-         <span class="s2">&quot;_id&quot;</span> <span class="o">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;servings&quot;</span> <span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
-         <span class="s2">&quot;subtitle&quot;</span> <span class="o">:</span> <span class="s2">&quot;Delicious with fresh bread&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Fish Stew&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-         <span class="s2">&quot;_id&quot;</span> <span class="o">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;servings&quot;</span> <span class="o">:</span> <span class="mi">6</span><span class="p">,</span>
-         <span class="s2">&quot;subtitle&quot;</span> <span class="o">:</span> <span class="s2">&quot;Delicious with scone topping&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Lamb Stew&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-         <span class="s2">&quot;servings&quot;</span> <span class="o">:</span> <span class="mi">8</span><span class="p">,</span>
-         <span class="s2">&quot;subtitle&quot;</span> <span class="o">:</span> <span class="s2">&quot;Delicious with suet dumplings&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Beef Stew&quot;</span>
-      <span class="p">},</span>
-   <span class="p">]</span>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/source/_bulk_docs</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">323</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">localhost:5984</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;docs&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;servings&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;subtitle&quot;</span><span class="p">:</span> <span class="s2">&quot;Delicious with freshly baked bread&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;FishStew&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;servings&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="nt">&quot;subtitle&quot;</span><span class="p">:</span> <span class="s2">&quot;Serve with a whole meal scone topping&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;BeefStew&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;servings&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="nt">&quot;subtitle&quot;</span><span class="p">:</span> <span class="s2">&quot;Hand-made dumplings make a great accompaniment&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;BeefStew&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The return type from a bulk insertion will be 201, with the content of
-the returned structure indicating specific success or otherwise messages
-on a per-document basis.</p>
+<p>The return type from a bulk insertion will be <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.2">201 Created</a>,
+with the content of the returned structure indicating specific success
+or otherwise messages on a per-document basis.</p>
 <p>The return structure from the example above contains a list of the
 documents created, here with the combination and their revision IDs:</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/recipes/_bulk_docs
-Content-Type: application/json
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">Created</span>
+<span class="na">Cache-Control</span><span class="o">:</span> <span class="l">must-revalidate</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">215</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Sat, 26 Oct 2013 00:10:39 GMT</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">CouchDB (Erlang OTP)</span>
 
-[
-   {
-      "id" : "FishStew",
-      "rev" : "1-9c65296036141e575d32ba9c034dd3ee",
-   },
-   {
-      "id" : "LambStew",
-      "rev" : "1-34c318924a8f327223eed702ddfdc66d",
-   },
-   {
-      "id" : "7f7638c86173eb440b8890839ff35433",
-      "rev" : "1-857c7cbeb6c8dd1dd34a0c73e8da3c44",
-   }
-]</pre>
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-6a466d5dfda05e613ba97bd737829d67&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-648f1b989d52b8e43f05aa877092cc7c&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;BeefStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-e4602845fc4c99674f50b1d5a804fdfa&quot;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
 </div>
 <p>The content and structure of the returned JSON will depend on the transaction
 semantics being used for the bulk update; see <a class="reference internal" href="#api-db-bulk-docs-semantics"><em>Bulk Documents Transaction Semantics</em></a>
@@ -474,59 +489,73 @@ bulk must be handled separately; see <a class="reference internal" href="#api-db
 procedure, except that you must specify the document ID and current
 revision for every document in the bulk update JSON string.</p>
 <p>For example, you could send the following request:</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/recipes/_bulk_docs
-Content-Type: application/json
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/recipes/_bulk_docs</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">464</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">localhost:5984</span>
 
-{
-   "docs" : [
-      {
-         "_id" : "FishStew",
-         "_rev" : "1-9c65296036141e575d32ba9c034dd3ee",
-         "servings" : 4,
-         "subtitle" : "Delicious with freshly baked bread",
-         "title" : "Fish Stew"
-      },
-      {
-         "_id" : "LambStew",
-         "_rev" : "1-34c318924a8f327223eed702ddfdc66d",
-         "servings" : 6,
-         "subtitle" : "Serve with a wholemeal scone topping",
-         "title" : "Lamb Stew"
-      },
-      {
-         "_id" : "7f7638c86173eb440b8890839ff35433"
-         "_rev" : "1-857c7cbeb6c8dd1dd34a0c73e8da3c44",
-         "servings" : 8,
-         "subtitle" : "Hand-made dumplings make a great accompaniment",
-         "title" : "Beef Stew"
-      }
-   ]
-}</pre>
+<span class="p">{</span>
+    <span class="nt">&quot;docs&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;_rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-6a466d5dfda05e613ba97bd737829d67&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;servings&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;subtitle&quot;</span><span class="p">:</span> <span class="s2">&quot;Delicious with freshly baked bread&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;FishStew&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;_rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-648f1b989d52b8e43f05aa877092cc7c&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;servings&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="nt">&quot;subtitle&quot;</span><span class="p">:</span> <span class="s2">&quot;Serve with a whole meal scone topping&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;BeefStew&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;_rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-e4602845fc4c99674f50b1d5a804fdfa&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;servings&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="nt">&quot;subtitle&quot;</span><span class="p">:</span> <span class="s2">&quot;Hand-made dumplings make a great accompaniment&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;BeefStew&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 <p>The return structure is the JSON of the updated documents, with the new
 revision and ID information:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">[</span>
-   <span class="p">{</span>
-      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;rev&quot;</span> <span class="o">:</span> <span class="s2">&quot;2-e7af4c4e9981d960ecf78605d79b06d1&quot;</span>
-   <span class="p">},</span>
-   <span class="p">{</span>
-      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;rev&quot;</span> <span class="o">:</span> <span class="s2">&quot;2-0786321986194c92dd3b57dfbfc741ce&quot;</span>
-   <span class="p">},</span>
-   <span class="p">{</span>
-      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;7f7638c86173eb440b8890839ff35433&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;rev&quot;</span> <span class="o">:</span> <span class="s2">&quot;2-bdd3bf3563bee516b96885a66c743f8e&quot;</span>
-   <span class="p">}</span>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">Created</span>
+<span class="na">Cache-Control</span><span class="o">:</span> <span class="l">must-revalidate</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">215</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Sat, 26 Oct 2013 00:10:39 GMT</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">CouchDB (Erlang OTP)</span>
+
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;2-2bff94179917f1dec7cd7f0209066fb8&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;2-6a7aae7ac481aa98a2042718d09843c4&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;BeefStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;2-9801936a42f06a16f16c30027980d96f&quot;</span>
+    <span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
 </div>
 <p>You can optionally delete documents during a bulk update by adding the
 <tt class="docutils literal"><span class="pre">_deleted</span></tt> field with a value of <tt class="docutils literal"><span class="pre">true</span></tt> to each document ID/revision
 combination within the submitted JSON structure.</p>
-<p>The return type from a bulk insertion will be <tt class="code docutils literal"><span class="pre">201</span></tt>, with the content of
-the returned structure indicating specific success or otherwise messages
-on a per-document basis.</p>
+<p>The return type from a bulk insertion will be <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.2">201 Created</a>, with the
+content of the returned structure indicating specific success or otherwise
+messages on a per-document basis.</p>
 <p>The content and structure of the returned JSON will depend on the transaction
 semantics being used for the bulk update; see <a class="reference internal" href="#api-db-bulk-docs-semantics"><em>Bulk Documents Transaction Semantics</em></a>
 for more information. Conflicts and validation errors when updating documents in
@@ -539,8 +568,8 @@ documents using the bulk documentation system. Each mode affects both
 the state of the documents in the event of system failure, and the level
 of conflict checking performed on each document. The two modes are:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">non-atomic</span></tt></p>
-<p>The default mode is non-atomic, that is, CouchDB will only guarantee
+<li><p class="first"><strong>non-atomic</strong></p>
+<p>The default mode is <cite>non-atomic</cite>, that is, CouchDB will only guarantee
 that some of the documents will be saved when you send the request.
 The response will contain the list of documents successfully inserted
 or updated during the process. In the event of a crash, some of the
@@ -562,7 +591,7 @@ then you will get an <tt class="docutils literal"><span class="pre">error</span>
       <span class="s2">&quot;reason&quot;</span> <span class="o">:</span> <span class="s2">&quot;Document update conflict.&quot;</span>
    <span class="p">},</span>
    <span class="p">{</span>
-      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;7f7638c86173eb440b8890839ff35433&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;BeefStew&quot;</span><span class="p">,</span>
       <span class="s2">&quot;error&quot;</span> <span class="o">:</span> <span class="s2">&quot;conflict&quot;</span><span class="p">,</span>
       <span class="s2">&quot;reason&quot;</span> <span class="o">:</span> <span class="s2">&quot;Document update conflict.&quot;</span>
    <span class="p">}</span>
@@ -573,8 +602,8 @@ then you will get an <tt class="docutils literal"><span class="pre">error</span>
 submit the document update, with the correct revision tag, to update
 the document.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">all-or-nothing</span></tt></p>
-<p>In all-or-nothing mode, either all documents are written to the
+<li><p class="first"><strong>all-or-nothing</strong></p>
+<p>In <cite>all-or-nothing</cite> mode, either all documents are written to the
 database, or no documents are written to the database, in the event
 of a system failure during commit.</p>
 <p>In addition, the per-document conflict checking is not performed.
@@ -582,19 +611,29 @@ Instead a new revision of the document is created, even if the new
 revision is in conflict with the current revision in the database.
 The returned structure contains the list of documents with new
 revisions:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">[</span>
-   <span class="p">{</span>
-      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;rev&quot;</span> <span class="o">:</span> <span class="s2">&quot;2-e7af4c4e9981d960ecf78605d79b06d1&quot;</span>
-   <span class="p">},</span>
-   <span class="p">{</span>
-      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;rev&quot;</span> <span class="o">:</span> <span class="s2">&quot;2-0786321986194c92dd3b57dfbfc741ce&quot;</span>
-   <span class="p">},</span>
-   <span class="p">{</span>
-      <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;7f7638c86173eb440b8890839ff35433&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;rev&quot;</span> <span class="o">:</span> <span class="s2">&quot;2-bdd3bf3563bee516b96885a66c743f8e&quot;</span>
-   <span class="p">}</span>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">Created</span>
+<span class="na">Cache-Control</span><span class="o">:</span> <span class="l">must-revalidate</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">215</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Sat, 26 Oct 2013 00:13:33 GMT</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">CouchDB (Erlang OTP)</span>
+
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;FishStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-6a466d5dfda05e613ba97bd737829d67&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-648f1b989d52b8e43f05aa877092cc7c&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;BeefStew&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-e4602845fc4c99674f50b1d5a804fdfa&quot;</span>
+    <span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -636,7 +675,7 @@ existing document</li>
 <p>Replication of documents is independent of the type of insert or update.
 The documents and revisions created during a bulk insert or update are
 replicated in the same way as any other document. This can mean that if
-you make use of the all-or-nothing mode the exact list of documents,
+you make use of the <cite>all-or-nothing</cite> mode the exact list of documents,
 revisions (and their conflict state) may or may not be replicated to
 other databases correctly.</p>
 </div>
@@ -652,7 +691,7 @@ database because of an error, you should check the <tt class="docutils literal">
 determine error type and course of action. Errors will be one of the
 following type:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">conflict</span></tt></p>
+<li><p class="first"><strong>conflict</strong></p>
 <p>The document as submitted is in conflict. If you used the default
 bulk transaction mode then the new revision will not have been
 created and you will need to re-submit the document to the database.
@@ -662,18 +701,27 @@ resolve the conflicted revisions of the document.</p>
 is identical to the resolution procedures used when resolving
 conflict errors during replication.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">forbidden</span></tt></p>
+<li><p class="first"><strong>forbidden</strong></p>
 <p>Entries with this error type indicate that the validation routine
 applied to the document during submission has returned an error.</p>
-<p>For example, if your validation routine includes the following:</p>
+<p>For example, if your <a class="reference internal" href="../../couchapp/ddocs.html#vdufun"><em>validation routine</em></a> includes
+the following:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="k">throw</span><span class="p">({</span><span class="nx">forbidden</span><span class="o">:</span> <span class="s1">&#39;invalid recipe ingredient&#39;</span><span class="p">});</span>
 </pre></div>
 </div>
-<p>The error returned will be:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
-   <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;7f7638c86173eb440b8890839ff35433&quot;</span><span class="p">,</span>
-   <span class="s2">&quot;error&quot;</span> <span class="o">:</span> <span class="s2">&quot;forbidden&quot;</span><span class="p">,</span>
-   <span class="s2">&quot;reason&quot;</span> <span class="o">:</span> <span class="s2">&quot;invalid recipe ingredient&quot;</span>
+<p>The error response returned will be:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">417</span> <span class="ne">Expectation Failed</span>
+<span class="na">Cache-Control</span><span class="o">:</span> <span class="l">must-revalidate</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">120</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Sat, 26 Oct 2013 00:05:17 GMT</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">CouchDB (Erlang OTP)</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;forbidden&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;LambStew&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid recipe ingredient&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;rev&quot;</span><span class="p">:</span> <span class="s2">&quot;1-34c318924a8f327223eed702ddfdc66d&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -709,8 +757,8 @@ specific language governing permissions and limitations under the License.
 
 <h3>Quick Search</h3>
 
-<form class="search" action="search.html" method="get">
-<input type="text" name="q">
+<form class="search" action="../../search.html" method="get">
+<input type="text" name="q" style="width:115px">
 <input type="submit" value="Go">
 <input type="hidden" name="check_keywords" value="yes">
 <input type="hidden" name="area" value="default">
@@ -787,7 +835,22 @@ specific language governing permissions and limitations under the License.
        rel="nofollow">Show on GitHub</a></li>
 <li><a href="https://github.com/apache/couchdb/edit/master/share/doc/src/api/database/bulk-api.rst"
        rel="nofollow">Edit on GitHub</a></li>
-</ul>
+</ul><!--
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-->
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -807,13 +870,13 @@ specific language governing permissions and limitations under the License.
         <li class="right" >
           <a href="common.html" title="10.3.1. /db"
              >previous</a> |</li>
-  <li><a href="../../index.html">Apache CouchDB 1.5 Documentation</a> &raquo;</li>
+  <li><a href="../../index.html">Apache CouchDB 1.6 Documentation</a> &raquo;</li>
           <li><a href="../index.html" >10. API Reference</a> &raquo;</li>
-          <li><a href="index.html" >10.3. Database Methods</a> &raquo;</li> 
+          <li><a href="index.html" >10.3. Databases</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, The Apache Software Foundation.
+        &copy; Copyright 2014, The Apache Software Foundation.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
