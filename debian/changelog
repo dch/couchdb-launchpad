@@ -1,3 +1,10 @@
+apache-couchdb (1.6.0-0ubuntu1) precise; urgency=low
+
+  * Apache CouchDB 1.6.0 released
+  * Relax
+
+ -- Dave Cottlehuber <dch@apache.org>  Wed, 16 Jul 2014 15:24:20 -0700
+
 apache-couchdb (1.5.0-0ubuntu2) precise; urgency=low
 
   * Use correct vendor names in GET / response
