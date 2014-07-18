@@ -1,3 +1,9 @@
+apache-couchdb (1.6.0-0ubuntu3) trusty; urgency=low
+
+  * package for trusty
+
+ -- Dave Cottlehuber <dch@apache.org>  Fri, 18 Jul 2014 03:20:40 -0700
+
 apache-couchdb (1.6.0-0ubuntu2) precise; urgency=low
 
   * Remove init and launchd scripts using new configure options
