@@ -1,3 +1,9 @@
+apache-couchdb (1.6.1-0ubuntu3) utopic; urgency=low
+
+  * package for utopic
+
+ -- Dave Cottlehuber <dch@apache.org>  Wed, 03 Sep 2014 21:19:39 +0000
+
 apache-couchdb (1.6.1-0ubuntu2) trusty; urgency=low
 
   * package for trusty
