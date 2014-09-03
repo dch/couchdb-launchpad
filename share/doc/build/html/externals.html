@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -30,8 +28,8 @@ specific language governing permissions and limitations under the License.
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '1.6.0',
+        URL_ROOT:    './',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -128,8 +126,9 @@ the client and the server to test the proxy transmissions.</p>
 <h2>7.2. How does it work? - HTTP Proxying<a class="headerlink" href="#how-does-it-work-http-proxying" title="Permalink to this headline">¶</a></h2>
 <p>To configure a <a class="reference internal" href="config/proxying.html#config-proxy"><em>proxy handler</em></a>, edit your <cite>local.ini</cite> and
 add a section like such:</p>
-<div class="highlight-json"><pre>[httpd_global_handlers]
-_fti = {couch_httpd_proxy, handle_proxy_req, &lt;&lt;"http://127.0.0.1:5985"&gt;&gt;}</pre>
+<div class="highlight-json"><div class="highlight"><pre>[httpd_global_handlers]
+_fti = {couch_httpd_proxy, handle_proxy_req, &lt;&lt;&quot;http://127.0.0.1:5985&quot;&gt;&gt;}
+</pre></div>
 </div>
 <p>This would be approximately what you&#8217;d need to do to get <a class="reference external" href="https://github.com/rnewson/couchdb-lucene">CouchDB-Lucene</a>
 handled through this interface. The URL you use to access a query would be:</p>
@@ -155,8 +154,9 @@ processes, you need to either tell CouchDB about each one, or have a main
 process that forks off the required sub-processes.</p>
 <p>To configure an <a class="reference internal" href="config/externals.html#os_daemons" title="[os_daemons]"><tt class="xref config config-section docutils literal"><span class="pre">OS</span> <span class="pre">daemon</span></tt></a>, add this to your
 <cite>local.ini</cite>:</p>
-<div class="highlight-json"><pre>[os_daemons]
-my_daemon = /path/to/command -with args</pre>
+<div class="highlight-json"><div class="highlight"><pre>[os_daemons]
+my_daemon = /path/to/command -with args
+</pre></div>
 </div>
 <div class="section" id="configuration-api">
 <h3>7.3.1. Configuration API<a class="headerlink" href="#configuration-api" title="Permalink to this headline">¶</a></h3>
@@ -167,23 +167,28 @@ if you desire. Or they can peek at things like the
 <a class="reference internal" href="config/http.html#httpd/bind_address" title="bind_address"><tt class="xref config config-option docutils literal"><span class="pre">httpd/bind_address</span></tt></a> and <a class="reference internal" href="config/http.html#httpd/port" title="port"><tt class="xref config config-option docutils literal"><span class="pre">httpd/port</span></tt></a> that CouchDB
 is using.</p>
 <p>A request for a config section looks like this:</p>
-<div class="highlight-json"><pre>["get", "os_daemons"]\n</pre>
+<div class="highlight-json"><div class="highlight"><pre>[&quot;get&quot;, &quot;os_daemons&quot;]\n
+</pre></div>
 </div>
 <p>And the response:</p>
-<div class="highlight-json"><pre>{"my_daemon": "/path/to/command -with args"}\n</pre>
+<div class="highlight-json"><div class="highlight"><pre>{&quot;my_daemon&quot;: &quot;/path/to/command -with args&quot;}\n
+</pre></div>
 </div>
 <p>Or to get a specific key:</p>
-<div class="highlight-json"><pre>["get", "os_daemons", "my_daemon"]\n</pre>
+<div class="highlight-json"><div class="highlight"><pre>[&quot;get&quot;, &quot;os_daemons&quot;, &quot;my_daemon&quot;]\n
+</pre></div>
 </div>
 <p>And the response:</p>
-<div class="highlight-json"><pre>"/path/to/command -with args"\n</pre>
+<div class="highlight-json"><div class="highlight"><pre>&quot;/path/to/command -with args&quot;\n
+</pre></div>
 </div>
 <p>All requests and responses are terminated with a newline (indicated by <tt class="docutils literal"><span class="pre">\n</span></tt>).</p>
 </div>
 <div class="section" id="logging-api">
 <h3>7.3.2. Logging API<a class="headerlink" href="#logging-api" title="Permalink to this headline">¶</a></h3>
 <p>There&#8217;s also an API for adding messages to CouchDB&#8217;s logs. Its simply:</p>
-<div class="highlight-json"><pre>["log", $MESG]\n</pre>
+<div class="highlight-json"><div class="highlight"><pre>[&quot;log&quot;, $MESG]\n
+</pre></div>
 </div>
 <p>Where <tt class="docutils literal"><span class="pre">$MESG</span></tt> is any arbitrary JSON. There is no response from this command. As
 with the config API, the trailing <tt class="docutils literal"><span class="pre">\n</span></tt> represents a newline byte.</p>
@@ -278,11 +283,12 @@ Hello World
 </pre></div>
 </div>
 <p>The corresponding CouchDB logs look like:</p>
-<div class="highlight-json"><pre>Apache CouchDB 1.5.0 (LogLevel=info) is starting.
+<div class="highlight-json"><div class="highlight"><pre>Apache CouchDB 1.5.0 (LogLevel=info) is starting.
 Apache CouchDB has started. Time to relax.
 [info] [&lt;0.31.0&gt;] Apache CouchDB has started on http://127.0.0.1:5984/
-[info] [&lt;0.105.0&gt;] 127.0.0.1 - - 'GET' /_hello 200
-[info] [&lt;0.95.0&gt;] Daemon "node-hello" :: GET /</pre>
+[info] [&lt;0.105.0&gt;] 127.0.0.1 - - &#39;GET&#39; /_hello 200
+[info] [&lt;0.95.0&gt;] Daemon &quot;node-hello&quot; :: GET /
+</pre></div>
 </div>
 </div>
 </div>
@@ -436,7 +442,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

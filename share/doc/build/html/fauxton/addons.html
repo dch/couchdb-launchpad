@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -77,7 +75,7 @@ specific language governing permissions and limitations under the License.
 <span id="fauxton-addons"></span><h1>9.2. Writting Addons<a class="headerlink" href="#writting-addons" title="Permalink to this headline">¶</a></h1>
 <p>Addons allow you to extend Fauxton for a specific use case. Usually, they
 have the following structure:</p>
-<div class="highlight-json"><pre>+ my_addon/
+<div class="highlight-json"><div class="highlight"><pre>+ my_addon/
 | ---+ assets [optional]
 |    \ ---+ less
 |         \ ---- my_addon.less
@@ -85,16 +83,17 @@ have the following structure:</p>
 |    \ ---- my_addon.html - underscore template fragments
 | ---- resources.js - models and collections of the addon
 | ---- routes.js - URL routing for the addon
-| ---- views.js - views that the model provides</pre>
+| ---- views.js - views that the model provides
+</pre></div>
 </div>
 <div class="section" id="generating-an-addon">
 <h2>9.2.1. Generating an Addon<a class="headerlink" href="#generating-an-addon" title="Permalink to this headline">¶</a></h2>
 <p>We have a <cite>grunt-init</cite> template that lets you create a skeleton addon,
 including all the boiler plate code. Run <tt class="docutils literal"><span class="pre">grunt-init</span> <span class="pre">tasks/addon</span></tt> and answer
 the questions it asks to create an addon:</p>
-<div class="highlight-json"><pre>± grunt-init tasks/addon
+<div class="highlight-json"><div class="highlight"><pre>± grunt-init tasks/addon
 path.existsSync is now called `fs.existsSync`.
-Running "addon" task
+Running &quot;addon&quot; task
 
 Please answer the following:
 [?] Add on Name (WickedCool) SuperAddon
@@ -104,7 +103,8 @@ Please answer the following:
 
 Created addon SuperAddon in app/addons
 
-Done, without errors.</pre>
+Done, without errors.
+</pre></div>
 </div>
 <p>Once the addon is created add the name to the settings.json file to get it
 compiled and added on the next install.</p>
@@ -142,9 +142,9 @@ selector for a named set of routes, for example:</p>
 <div class="section" id="hello-world-addon">
 <h2>9.2.3. Hello world Addon<a class="headerlink" href="#hello-world-addon" title="Permalink to this headline">¶</a></h2>
 <p>First create the addon skeleton:</p>
-<div class="highlight-json"><pre>± bbb addon
+<div class="highlight-json"><div class="highlight"><pre>± bbb addon
 path.existsSync is now called `fs.existsSync`.
-Running "addon" task
+Running &quot;addon&quot; task
 
 Please answer the following:
 [?] Add on Name (WickedCool) Hello
@@ -153,7 +153,8 @@ Please answer the following:
 
 Created addon Hello in app/addons
 
-Done, without errors.</pre>
+Done, without errors.
+</pre></div>
 </div>
 <p>In <cite>app/addons/hello/templates/hello.html</cite> place:</p>
 <div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;h1&gt;</span>Hello!<span class="nt">&lt;/h1&gt;</span>
@@ -385,7 +386,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

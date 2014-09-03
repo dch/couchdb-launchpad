@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -383,7 +381,7 @@ for comparing arbitrary JSON objects for collation. For example, the JSON value
 <tt class="docutils literal"><span class="pre">[&quot;foo&quot;,</span> <span class="pre">2]</span></tt> is sorted after (considered “greater than”) the values
 <tt class="docutils literal"><span class="pre">[&quot;foo&quot;]</span></tt> or <tt class="docutils literal"><span class="pre">[&quot;foo&quot;,</span> <span class="pre">1,</span> <span class="pre">&quot;bar&quot;]</span></tt>, but before e.g. <tt class="docutils literal"><span class="pre">[&quot;foo&quot;,</span> <span class="pre">2,</span> <span class="pre">&quot;bar&quot;]</span></tt>.
 This feature enables a whole class of tricks that are rather non-obvious...</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="collation.html#views-collation"><em>Views Collation</em></a></p>
 </div>
@@ -430,7 +428,8 @@ corresponding document</p>
 </div>
 <p>Now, to get a specific blog post and all associated comments, we&#8217;d invoke that
 view with the query string:</p>
-<div class="highlight-json"><pre>?startkey=["myslug"]&amp;endkey;=["myslug", 2]</pre>
+<div class="highlight-json"><div class="highlight"><pre>?startkey=[&quot;myslug&quot;]&amp;endkey;=[&quot;myslug&quot;, 2]
+</pre></div>
 </div>
 <p>We&#8217;d get back the first three rows, those that belong to the <tt class="docutils literal"><span class="pre">myslug</span></tt> post,
 but not the others. Et voila, we now have the data we need to display a post
@@ -599,7 +598,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

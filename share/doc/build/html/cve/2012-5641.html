@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -118,9 +116,10 @@ CouchDB installation, this requires amending the
 <a class="reference internal" href="../config/http-handlers.html#httpd_global_handlers/favicon.ico" title="favicon.ico"><tt class="xref config config-option docutils literal"><span class="pre">httpd_global_handlers/favicon.ico</span></tt></a> and
 <a class="reference internal" href="../config/http-handlers.html#httpd_global_handlers/_utils" title="_utils"><tt class="xref config config-option docutils literal"><span class="pre">httpd_global_handlers/_utils</span></tt></a> lines within
 <a class="reference internal" href="../config/http-handlers.html#httpd_global_handlers" title="[httpd_global_handlers]"><tt class="xref config config-section docutils literal"><span class="pre">httpd_global_handlers</span></tt></a>:</p>
-<div class="highlight-json"><pre>[httpd_global_handlers]
-favicon.ico = {couch_httpd_misc_handlers, handle_welcome_req, &lt;&lt;"Forbidden"&gt;&gt;}
-_utils = {couch_httpd_misc_handlers, handle_welcome_req, &lt;&lt;"Forbidden"&gt;&gt;}</pre>
+<div class="highlight-json"><div class="highlight"><pre>[httpd_global_handlers]
+favicon.ico = {couch_httpd_misc_handlers, handle_welcome_req, &lt;&lt;&quot;Forbidden&quot;&gt;&gt;}
+_utils = {couch_httpd_misc_handlers, handle_welcome_req, &lt;&lt;&quot;Forbidden&quot;&gt;&gt;}
+</pre></div>
 </div>
 <p>If additional handlers have been added, such as to support Adobe&#8217;s Flash
 <cite>crossdomain.xml</cite> files, these would also need to be excluded.</p>
@@ -284,7 +283,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

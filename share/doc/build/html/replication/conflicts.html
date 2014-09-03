@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -214,7 +212,8 @@ instance. If you choose to do this instead of PUT, it means you don&#8217;t have
 write any code for the possibility of getting a 409 response, because you will
 never get one. Rather, you have to deal with conflicts appearing later in the
 database, which is what you&#8217;d have to do in a multi-master application anyway.</p>
-<div class="highlight-http"><pre>POST /db/_bulk_docs</pre>
+<div class="highlight-http"><div class="highlight"><pre>POST /db/_bulk_docs
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
   <span class="s2">&quot;all_or_nothing&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -524,11 +523,12 @@ for v2a you can find their common ancestor revision. However if the database
 has been compacted, the content of that document revision will have been lost.
 <tt class="docutils literal"><span class="pre">revs_info</span></tt> will still show that v1 was an ancestor, but report it as
 &#8220;missing&#8221;:</p>
-<div class="highlight-json"><pre>BEFORE COMPACTION           AFTER COMPACTION
+<div class="highlight-json"><div class="highlight"><pre>BEFORE COMPACTION           AFTER COMPACTION
 
      ,-&gt; v2a                     v2a
    v1
-     `-&gt; v2b                     v2b</pre>
+     `-&gt; v2b                     v2b
+</pre></div>
 </div>
 <p>So if you want to work with diffs, the recommended way is to store those diffs
 within the new revision itself. That is: when you replace v1 with v2a, include
@@ -580,9 +580,10 @@ from which you can work backwards to any previous state. The &#8220;pointer&#822
 actually an SHA1 hash of the tip commit.</p>
 <p>If you are replicating with one or more peers, a separate branch is made for
 each of the peers. For example, you might have:</p>
-<div class="highlight-json"><pre>master               -- my local branch
-remotes/foo/master   -- branch on peer 'foo'
-remotes/bar/master   -- branch on peer 'bar'</pre>
+<div class="highlight-json"><div class="highlight"><pre>master               -- my local branch
+remotes/foo/master   -- branch on peer &#39;foo&#39;
+remotes/bar/master   -- branch on peer &#39;bar&#39;
+</pre></div>
 </div>
 <p>In the normal way of working, replication is a &#8220;pull&#8221;, importing changes from
 a remote peer into the local repository. A &#8220;pull&#8221; does two things: first &#8220;fetch&#8221;
@@ -591,23 +592,26 @@ attempt to &#8220;merge&#8221; those changes into the local branch.</p>
 <p>Now let&#8217;s consider the business card. Alice has created a git repo containing
 <tt class="docutils literal"><span class="pre">bob.vcf</span></tt>, and cloned it across to the other machine. The branches look like
 this, where <tt class="docutils literal"><span class="pre">AAAAAAAA</span></tt> is the SHA1 of the commit:</p>
-<div class="highlight-json"><pre>---------- desktop ----------           ---------- laptop ----------
+<div class="highlight-json"><div class="highlight"><pre>---------- desktop ----------           ---------- laptop ----------
 master: AAAAAAAA                        master: AAAAAAAA
-remotes/laptop/master: AAAAAAAA         remotes/desktop/master: AAAAAAAA</pre>
+remotes/laptop/master: AAAAAAAA         remotes/desktop/master: AAAAAAAA
+</pre></div>
 </div>
 <p>Now she makes a change on the desktop, and commits it into the desktop repo;
 then she makes a different change on the laptop, and commits it into the laptop
 repo:</p>
-<div class="highlight-json"><pre>---------- desktop ----------           ---------- laptop ----------
+<div class="highlight-json"><div class="highlight"><pre>---------- desktop ----------           ---------- laptop ----------
 master: BBBBBBBB                        master: CCCCCCCC
-remotes/laptop/master: AAAAAAAA         remotes/desktop/master: AAAAAAAA</pre>
+remotes/laptop/master: AAAAAAAA         remotes/desktop/master: AAAAAAAA
+</pre></div>
 </div>
 <p>Now on the desktop she does <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span> <span class="pre">laptop</span></tt>. Firstly, the remote objects
 are copied across into the local repo and the remote tracking branch is
 updated:</p>
-<div class="highlight-json"><pre>---------- desktop ----------           ---------- laptop ----------
+<div class="highlight-json"><div class="highlight"><pre>---------- desktop ----------           ---------- laptop ----------
 master: BBBBBBBB                        master: CCCCCCCC
-remotes/laptop/master: CCCCCCCC         remotes/desktop/master: AAAAAAAA</pre>
+remotes/laptop/master: CCCCCCCC         remotes/desktop/master: AAAAAAAA
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -617,23 +621,26 @@ remotes/laptop/master: CCCCCCCC         remotes/desktop/master: AAAAAAAA</pre>
 the parent commit to <tt class="docutils literal"><span class="pre">CCCCCCCC</span></tt> is <tt class="docutils literal"><span class="pre">AAAAAAAA</span></tt>, so it takes a diff between
 <tt class="docutils literal"><span class="pre">AAAAAAAA</span></tt> and <tt class="docutils literal"><span class="pre">CCCCCCCC</span></tt> and tries to apply it to <tt class="docutils literal"><span class="pre">BBBBBBBB</span></tt>.</p>
 <p>If this is successful, then you&#8217;ll get a new version with a merge commit:</p>
-<div class="highlight-json"><pre>---------- desktop ----------           ---------- laptop ----------
+<div class="highlight-json"><div class="highlight"><pre>---------- desktop ----------           ---------- laptop ----------
 master: DDDDDDDD                        master: CCCCCCCC
-remotes/laptop/master: CCCCCCCC         remotes/desktop/master: AAAAAAAA</pre>
+remotes/laptop/master: CCCCCCCC         remotes/desktop/master: AAAAAAAA
+</pre></div>
 </div>
 <p>Then Alice has to logon to the laptop and run <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span> <span class="pre">desktop</span></tt>. A similar
 process occurs. The remote tracking branch is updated:</p>
-<div class="highlight-json"><pre>---------- desktop ----------           ---------- laptop ----------
+<div class="highlight-json"><div class="highlight"><pre>---------- desktop ----------           ---------- laptop ----------
 master: DDDDDDDD                        master: CCCCCCCC
-remotes/laptop/master: CCCCCCCC         remotes/desktop/master: DDDDDDDD</pre>
+remotes/laptop/master: CCCCCCCC         remotes/desktop/master: DDDDDDDD
+</pre></div>
 </div>
 <p>Then a merge takes place. This is a special-case: <tt class="docutils literal"><span class="pre">CCCCCCCC</span></tt> one of the parent
 commits of <tt class="docutils literal"><span class="pre">DDDDDDDD</span></tt>, so the laptop can <cite>fast forward</cite> update from
 <tt class="docutils literal"><span class="pre">CCCCCCCC</span></tt> to <tt class="docutils literal"><span class="pre">DDDDDDDD</span></tt> directly without having to do any complex merging.
 This leaves the final state as:</p>
-<div class="highlight-json"><pre>---------- desktop ----------           ---------- laptop ----------
+<div class="highlight-json"><div class="highlight"><pre>---------- desktop ----------           ---------- laptop ----------
 master: DDDDDDDD                        master: DDDDDDDD
-remotes/laptop/master: CCCCCCCC         remotes/desktop/master: DDDDDDDD</pre>
+remotes/laptop/master: CCCCCCCC         remotes/desktop/master: DDDDDDDD
+</pre></div>
 </div>
 <p>Now this is all and good, but you may wonder how this is relevant when thinking
 about CouchDB.</p>
@@ -651,10 +658,11 @@ work well for XML or JSON if it&#8217;s presented without any line breaks.</p>
 multiple remote tracking branches, some of which may match your local branch,
 some of which may be behind you, and some of which may be ahead of you
 (i.e. contain changes that you haven&#8217;t yet merged):</p>
-<div class="highlight-json"><pre>master: AAAAAAAA
+<div class="highlight-json"><div class="highlight"><pre>master: AAAAAAAA
 remotes/foo/master: BBBBBBBB
 remotes/bar/master: CCCCCCCC
-remotes/baz/master: AAAAAAAA</pre>
+remotes/baz/master: AAAAAAAA
+</pre></div>
 </div>
 <p>Note that each peer is explicitly tracked, and therefore has to be explicitly
 created. If a peer becomes stale or is no longer needed, it&#8217;s up to you to
@@ -916,7 +924,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

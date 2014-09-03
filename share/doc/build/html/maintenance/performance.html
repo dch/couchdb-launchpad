@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -107,7 +105,8 @@ easiest way to set this option is through the <tt class="docutils literal"><span
 variable. For example, to give Erlang four threads with which to perform I/O
 operations add the following to <tt class="docutils literal"><span class="pre">(prefix)/etc/defaults/couchdb</span></tt>
 (or equivalent):</p>
-<div class="highlight-json"><pre>export ERL_FLAGS="+A 4"</pre>
+<div class="highlight-json"><div class="highlight"><pre>export ERL_FLAGS=&quot;+A 4&quot;
+</pre></div>
 </div>
 </div>
 </div>
@@ -149,7 +148,8 @@ will be continuously replicating.</p>
 the Erlang runtime system will not allow more than 1024 connections by
 default. Adding the following directive to <tt class="docutils literal"><span class="pre">(prefix)/etc/default/couchdb</span></tt> (or
 equivalent) will increase this limit (in this case to 4096):</p>
-<div class="highlight-json"><pre>export ERL_MAX_PORTS=4096</pre>
+<div class="highlight-json"><div class="highlight"><pre>export ERL_MAX_PORTS=4096
+</pre></div>
 </div>
 <p>CouchDB versions up to 1.1.x also create Erlang Term Storage (<a class="reference external" href="http://www.erlang.org/doc/man/ets.html">ETS</a>) tables for
 each replication. If you are using a version of CouchDB older than 1.2 and
@@ -168,9 +168,10 @@ process. If your system is set up to use the Pluggable Authentication Modules
 creating a file named <tt class="docutils literal"><span class="pre">/etc/security/limits.d/100-couchdb.conf</span></tt> with the
 following contents will ensure that CouchDB can open enough file descriptors
 to service your increased maximum open databases and Erlang ports:</p>
-<div class="highlight-json"><pre>#&lt;domain&gt;    &lt;type&gt;    &lt;item&gt;    &lt;value&gt;
+<div class="highlight-json"><div class="highlight"><pre>#&lt;domain&gt;    &lt;type&gt;    &lt;item&gt;    &lt;value&gt;
 couchdb      hard      nofile    4096
-couchdb      soft      nofile    4096</pre>
+couchdb      soft      nofile    4096
+</pre></div>
 </div>
 <p>If your system does not use PAM, a <cite>ulimit</cite> command is usually available for
 use in a custom script to launch CouchDB with increased resource limits.
@@ -205,7 +206,7 @@ This TCP buffering behaviour can be disabled via
 <span class="na">socket_options</span> <span class="o">=</span> <span class="s">[{nodelay, true}]</span>
 </pre></div>
 </div>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">Bulk <a class="reference internal" href="../api/database/bulk-api.html#api-db-all-docs"><em>load</em></a> and <a class="reference internal" href="../api/database/bulk-api.html#api-db-bulk-docs"><em>store</em></a> API.</p>
 </div>
@@ -291,7 +292,7 @@ and cached) view with about 78,000 items went down from 60 seconds to 4 seconds.
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../couchapp/ddocs.html#reducefun-builtin"><em>Builtin reduce functions</em></a></p>
 </div>
@@ -466,7 +467,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

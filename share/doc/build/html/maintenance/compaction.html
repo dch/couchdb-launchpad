@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -95,7 +93,8 @@ resolution during replication. The number of stored revisions
 <p>Compaction is manually triggered operation per database and runs as a background
 task. To start it for specific database there is need to send HTTP
 <a class="reference internal" href="../api/database/compact.html#post--db-_compact" title="POST /{db}/_compact"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/{db}/_compact</span></tt></a> sub-resource of the target database:</p>
-<div class="highlight-json"><pre>curl -H "Content-Type: application/json" -X POST http://localhost:5984/my_db/_compact</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -H &quot;Content-Type: application/json&quot; -X POST http://localhost:5984/my_db/_compact
+</pre></div>
 </div>
 <p>On success, HTTP status <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.3">202 Accepted</a> is returned immediately:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">202</span> <span class="ne">Accepted</span>
@@ -125,7 +124,8 @@ for the request. If you don&#8217;t, you will be aware about with HTTP status
 </div>
 <p>When the compaction is successful started and running it is possible to get
 information about it via <a class="reference internal" href="../api/database/common.html#api-db"><em>database information resource</em></a>:</p>
-<div class="highlight-json"><pre>curl http://localhost:5984/my_db</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl http://localhost:5984/my_db
+</pre></div>
 </div>
 <div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="na">Cache-Control</span><span class="o">:</span> <span class="l">must-revalidate</span>
@@ -152,7 +152,8 @@ information about it via <a class="reference internal" href="../api/database/com
 <p>Note that <tt class="docutils literal"><span class="pre">compaction_running</span></tt> field is <tt class="docutils literal"><span class="pre">true</span></tt> indicating that compaction
 is actually running. To track the compaction progress you may query the
 <a class="reference internal" href="../api/server/common.html#get--_active_tasks" title="GET /_active_tasks"><tt class="xref http http-get docutils literal"><span class="pre">_active_tasks</span></tt></a> resource:</p>
-<div class="highlight-json"><pre>curl http://localhost:5984/my_db</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl http://localhost:5984/my_db
+</pre></div>
 </div>
 <div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="na">Cache-Control</span><span class="o">:</span> <span class="l">must-revalidate</span>
@@ -181,7 +182,8 @@ is actually running. To track the compaction progress you may query the
 <p><cite>Views</cite> are also need compaction like databases, unlike databases views
 are compacted by groups per <cite>design document</cite>. To start their compaction there
 is need to send HTTP <a class="reference internal" href="../api/database/compact.html#post--db-_compact-ddoc" title="POST /{db}/_compact/{ddoc}"><tt class="xref http http-post docutils literal"><span class="pre">POST</span> <span class="pre">/{db}/_compact/{ddoc}</span></tt></a> request:</p>
-<div class="highlight-json"><pre>curl -H "Content-Type: application/json" -X POST http://localhost:5984/dbname/_compact/designname</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -H &quot;Content-Type: application/json&quot; -X POST http://localhost:5984/dbname/_compact/designname
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">}</span>
 </pre></div>
@@ -196,7 +198,8 @@ task will be created.</p>
 When you change a view, old indexes remain on disk. To clean up all outdated
 view indexes (files named after the MD5 representation of views, that does not
 exist anymore) you can trigger a <a class="reference internal" href="../api/database/compact.html#api-db-view-cleanup"><em>view cleanup</em></a>:</p>
-<div class="highlight-json"><pre>curl -H "Content-Type: application/json" -X POST http://localhost:5984/dbname/_view_cleanup</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -H &quot;Content-Type: application/json&quot; -X POST http://localhost:5984/dbname/_view_cleanup
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">}</span>
 </pre></div>
@@ -364,7 +367,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

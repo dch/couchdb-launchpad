@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -176,8 +174,9 @@ require editing this file to update the whitelist:</p>
 <dl class="option">
 <dt id="httpd/enable_cors">
 <tt class="descname">enable_cors</tt><a class="headerlink" href="#httpd/enable_cors" title="Permalink to this definition">¶</a></dt>
-<dd><p class="versionadded">
-<span class="versionmodified">New in version 1.3.</span></p>
+<dd><div class="versionadded">
+<p><span class="versionmodified">New in version 1.3.</span></p>
+</div>
 <p>Controls <a class="reference internal" href="#config-cors"><em>CORS</em></a> feature:</p>
 <div class="highlight-ini"><div class="highlight"><pre><span class="k">[httpd]</span>
 <span class="na">enable_cors</span> <span class="o">=</span> <span class="s">false</span>
@@ -367,21 +366,22 @@ configuration screen in Futon. Here is what you need to do in
 <p>For more information please read <a class="reference external" href="http://www.openssl.org/docs/HOWTO/certificates.txt">certificates HOWTO</a>.</p>
 <p>Now start (or restart) CouchDB. You should be able to connect to it
 using HTTPS on port 6984:</p>
-<div class="highlight-bash"><pre>shell&gt; curl https://127.0.0.1:6984/
+<div class="highlight-bash"><div class="highlight"><pre>shell&gt; curl https://127.0.0.1:6984/
 curl: (60) SSL certificate problem, verify that the CA cert is OK. Details:
 error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed
 More details here: http://curl.haxx.se/docs/sslcerts.html
 
-curl performs SSL certificate verification by default, using a "bundle"
+curl performs SSL certificate verification by default, using a &quot;bundle&quot;
 of Certificate Authority (CA) public keys (CA certs). If the default
-bundle file isn't adequate, you can specify an alternate file
+bundle file isn&#39;t adequate, you can specify an alternate file
 using the --cacert option.
 If this HTTPS server uses a certificate signed by a CA represented in
 the bundle, the certificate verification probably failed due to a
 problem with the certificate (it might be expired, or the name might
 not match the domain name in the URL).
-If you'd like to turn off curl's verification of the certificate, use
-the -k (or --insecure) option.</pre>
+If you&#39;d like to turn off curl&#39;s verification of the certificate, use
+the -k (or --insecure) option.
+</pre></div>
 </div>
 <p>Oh no! What happened?! Remember, clients will notify their users that
 your certificate is self signed. <tt class="docutils literal"><span class="pre">curl</span></tt> is the client in this case and
@@ -475,8 +475,9 @@ verification fun will be used:</p>
 <dl class="section">
 <dt id="cors">
 <tt class="descname">[cors]</tt><a class="headerlink" href="#cors" title="Permalink to this definition">¶</a></dt>
-<dd><p class="versionadded">
-<span class="versionmodified">New in version 1.3: </span>added CORS support, see JIRA <a class="reference external" href="https://issues.apache.org/jira/browse/COUCHDB-431">COUCHDB-431</a></p>
+<dd><div class="versionadded">
+<p><span class="versionmodified">New in version 1.3: </span>added CORS support, see JIRA <a class="reference external" href="https://issues.apache.org/jira/browse/COUCHDB-431">COUCHDB-431</a></p>
+</div>
 <p><cite>CORS</cite>, or &#8220;Cross-Origin Resource Sharing&#8221;, allows a resource such as a web
 page running JavaScript inside a browser, to make AJAX requests
 (XMLHttpRequests) to a different domain, without compromising the security
@@ -558,7 +559,7 @@ explicitly.</p>
 </div>
 </dd></dl>
 
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p>Original JIRA <a class="reference external" href="https://issues.apache.org/jira/browse/COUCHDB-431">implementation ticket</a></p>
 <p>Standards and References:</p>
@@ -812,7 +813,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

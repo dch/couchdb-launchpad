@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -261,21 +259,27 @@ one record for them. See <a class="reference internal" href="#changes-filter-vie
 </div>
 </dd></dl>
 
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 0.11.0: </span>added <tt class="docutils literal"><span class="pre">include_docs</span></tt> parameter</p>
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 1.2.0: </span>added <tt class="docutils literal"><span class="pre">view</span></tt> parameter and special value <cite>_view</cite>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.11.0: </span>added <tt class="docutils literal"><span class="pre">include_docs</span></tt> parameter</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.2.0: </span>added <tt class="docutils literal"><span class="pre">view</span></tt> parameter and special value <cite>_view</cite>
 for <tt class="docutils literal"><span class="pre">filter</span></tt> one</p>
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 1.3.0: </span><tt class="docutils literal"><span class="pre">since</span></tt> parameter could take <cite>now</cite> value to start
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.3.0: </span><tt class="docutils literal"><span class="pre">since</span></tt> parameter could take <cite>now</cite> value to start
 listen changes since current seq number.</p>
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 1.3.0: </span><tt class="docutils literal"><span class="pre">eventsource</span></tt> feed type added.</p>
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 1.4.0: </span>Support <tt class="docutils literal"><span class="pre">Last-Event-ID</span></tt> header.</p>
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 1.6.0: </span>added <tt class="docutils literal"><span class="pre">attachments</span></tt> and <tt class="docutils literal"><span class="pre">att_encoding_info</span></tt>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.3.0: </span><tt class="docutils literal"><span class="pre">eventsource</span></tt> feed type added.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.4.0: </span>Support <tt class="docutils literal"><span class="pre">Last-Event-ID</span></tt> header.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.6.0: </span>added <tt class="docutils literal"><span class="pre">attachments</span></tt> and <tt class="docutils literal"><span class="pre">att_encoding_info</span></tt>
 parameters</p>
+</div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Using the <tt class="docutils literal"><span class="pre">attachments</span></tt> parameter to include attachments in the changes
@@ -336,7 +340,8 @@ document IDs to filter.</p>
 <div class="section" id="polling">
 <span id="changes-normal"></span><h3>Polling<a class="headerlink" href="#polling" title="Permalink to this headline">¶</a></h3>
 <p>By default all changes are immediately returned within the JSON body:</p>
-<div class="highlight-json"><pre>GET /somedatabase/_changes HTTP/1.1</pre>
+<div class="highlight-json"><div class="highlight"><pre>GET /somedatabase/_changes HTTP/1.1
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="o">:</span><span class="p">[</span>
 <span class="p">{</span><span class="s2">&quot;seq&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="s2">&quot;fresh&quot;</span><span class="p">,</span><span class="s2">&quot;changes&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;rev&quot;</span><span class="o">:</span><span class="s2">&quot;1-967a00dff5e02add41819138abb3284d&quot;</span><span class="p">}]},</span>
@@ -356,7 +361,8 @@ individually to make sure.)</p>
 will always be the same as the seq of the last item in results.)</p>
 <p>Sending a <tt class="docutils literal"><span class="pre">since</span></tt> param in the query string skips all changes up to and
 including the given sequence number:</p>
-<div class="highlight-json"><pre>GET /somedatabase/_changes?since=3 HTTP/1.1</pre>
+<div class="highlight-json"><div class="highlight"><pre>GET /somedatabase/_changes?since=3 HTTP/1.1
+</pre></div>
 </div>
 <p>The return structure for <tt class="docutils literal"><span class="pre">normal</span></tt> and <tt class="docutils literal"><span class="pre">longpoll</span></tt> modes is a JSON
 array of changes objects, and the last update sequence number.</p>
@@ -478,7 +484,8 @@ within a design document. The specification for the filter is the same
 as for replication filters. You specify the name of the filter function
 to the <tt class="docutils literal"><span class="pre">filter</span></tt> parameter, specifying the design document name and
 <a class="reference internal" href="../../couchapp/ddocs.html#filterfun"><em>filter name</em></a>. For example:</p>
-<div class="highlight-http"><pre>GET /db/_changes?filter=design_doc/filtername</pre>
+<div class="highlight-http"><div class="highlight"><pre>GET /db/_changes?filter=design_doc/filtername
+</pre></div>
 </div>
 <p>Additionally, there are couple of builtin filters are available and described
 below.</p>
@@ -546,8 +553,9 @@ requested database.</p>
 </div>
 <div class="section" id="view">
 <span id="changes-filter-view"></span><h3>_view<a class="headerlink" href="#view" title="Permalink to this headline">¶</a></h3>
-<p class="versionadded">
-<span class="versionmodified">New in version 1.2.</span></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.2.</span></p>
+</div>
 <p>The special filter <tt class="docutils literal"><span class="pre">_view</span></tt> allows to use existing <a class="reference internal" href="../../couchapp/ddocs.html#mapfun"><em>map function</em></a>
 as the <a class="reference internal" href="../../couchapp/ddocs.html#filterfun"><em>filter</em></a>. If the map function emits anything for the
 processed document it counts as accepted and the changes event emits to the
@@ -667,7 +675,7 @@ specific language governing permissions and limitations under the License.
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="bulk-api.html"
-                        title="previous chapter">10.3.2. <tt class="docutils literal docutils literal"><span class="pre">/db/_all_docs</span></tt></a></p>
+                        title="previous chapter">10.3.2. <tt class="docutils literal"><span class="pre">/db/_all_docs</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="compact.html"
                         title="next chapter">10.3.5. <tt class="docutils literal"><span class="pre">/db/_compact</span></tt></a></p><!--
@@ -761,7 +769,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

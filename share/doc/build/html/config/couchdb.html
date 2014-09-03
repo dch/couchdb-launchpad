@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -130,8 +128,9 @@ the header is written then any writes since the last commit are lost.</p>
 <dl class="option">
 <dt id="couchdb/file_compression">
 <tt class="descname">file_compression</tt><a class="headerlink" href="#couchdb/file_compression" title="Permalink to this definition">¶</a></dt>
-<dd><p class="versionchanged">
-<span class="versionmodified">Changed in version 1.2: </span>Added <a class="reference external" href="http://code.google.com/p/snappy/">Google Snappy</a> compression algorithm.</p>
+<dd><div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.2: </span>Added <a class="reference external" href="http://code.google.com/p/snappy/">Google Snappy</a> compression algorithm.</p>
+</div>
 <p>Method used to compress everything that is appended to database and
 view index files, except for attachments (see the <a class="reference internal" href="misc.html#attachments" title="[attachments]"><tt class="xref config config-section docutils literal"><span class="pre">attachments</span></tt></a>
 section). Available methods are:</p>
@@ -177,8 +176,9 @@ be replicating continuously.</p>
 <dl class="option">
 <dt id="couchdb/max_document_size">
 <tt class="descname">max_document_size</tt><a class="headerlink" href="#couchdb/max_document_size" title="Permalink to this definition">¶</a></dt>
-<dd><p class="versionchanged">
-<span class="versionmodified">Changed in version 1.3: </span>This option now actually works.</p>
+<dd><div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.3: </span>This option now actually works.</p>
+</div>
 <p>Defines a maximum size for JSON documents, in bytes. This limit does not
 apply to attachments, since they are transferred as a stream of chunks.
 If you set this to a small value, you might be unable to modify
@@ -232,8 +232,9 @@ service.</p>
 <dl class="option">
 <dt id="couchdb/uuid">
 <tt class="descname">uuid</tt><a class="headerlink" href="#couchdb/uuid" title="Permalink to this definition">¶</a></dt>
-<dd><p class="versionadded">
-<span class="versionmodified">New in version 1.3.</span></p>
+<dd><div class="versionadded">
+<p><span class="versionmodified">New in version 1.3.</span></p>
+</div>
 <p>Unique identifier for this CouchDB server instance.</p>
 <div class="highlight-ini"><div class="highlight"><pre><span class="k">[couchdb]</span>
 <span class="na">uuid</span> <span class="o">=</span> <span class="s">0a959b9b8227188afc2ac26ccdf345a6</span>
@@ -400,7 +401,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

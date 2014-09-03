@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -105,7 +103,8 @@ individually:</p>
 CouchDB is running at all. It can also act as a safety guard for libraries
 that require a certain version of CouchDB. We&#8217;re using the <a class="reference external" href="http://curl.haxx.se/">curl</a> utility
 again:</p>
-<div class="highlight-json"><pre>curl http://127.0.0.1:5984/</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl http://127.0.0.1:5984/
+</pre></div>
 </div>
 <p>CouchDB replies, all excited to get going:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
@@ -140,7 +139,8 @@ talking about the whole of CouchDB or a single database within CouchDB.</p>
 and we creatively give our database the name albums. Note that we&#8217;re now
 using the <tt class="docutils literal"><span class="pre">-X</span></tt> option again to tell curl to send a <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">PUT</a> request
 instead of the default <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3">GET</a> request:</p>
-<div class="highlight-json"><pre>curl -X PUT http://127.0.0.1:5984/albums</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://127.0.0.1:5984/albums
+</pre></div>
 </div>
 <p>CouchDB replies:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">}</span>
@@ -149,7 +149,8 @@ instead of the default <a class="reference external" href="http://www.w3.org/Pro
 <p>That&#8217;s it. You created a database and CouchDB told you that all went well.
 What happens if you try to create a database that already exists? Let&#8217;s try
 to create that database again:</p>
-<div class="highlight-json"><pre>curl -X PUT http://127.0.0.1:5984/albums</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://127.0.0.1:5984/albums
+</pre></div>
 </div>
 <p>CouchDB replies:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="s2">&quot;file_exists&quot;</span><span class="p">,</span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="s2">&quot;The database could not be created, the file already exists.&quot;</span><span class="p">}</span>
@@ -161,10 +162,11 @@ Very simple.</p>
 <p>Let&#8217;s create another database, this time with curl&#8217;s <tt class="docutils literal"><span class="pre">-v</span></tt> (for &#8220;verbose&#8221;)
 option. The verbose option tells curl to show us not only the essentials &#8211;
 the HTTP response body &#8211; but all the underlying request and response details:</p>
-<div class="highlight-json"><pre>curl -vX PUT http://127.0.0.1:5984/albums-backup</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -vX PUT http://127.0.0.1:5984/albums-backup
+</pre></div>
 </div>
 <p>curl elaborates:</p>
-<div class="highlight-json"><pre>* About to connect() to 127.0.0.1 port 5984 (#0)
+<div class="highlight-json"><div class="highlight"><pre>* About to connect() to 127.0.0.1 port 5984 (#0)
 *   Trying 127.0.0.1... connected
 * Connected to 127.0.0.1 (127.0.0.1) port 5984 (#0)
 &gt; PUT /albums-backup HTTP/1.1
@@ -179,27 +181,31 @@ the HTTP response body &#8211; but all the underlying request and response detai
 &lt; Content-Length: 12
 &lt; Cache-Control: must-revalidate
 &lt;
-{"ok":true}
+{&quot;ok&quot;:true}
 * Connection #0 to host 127.0.0.1 left intact
-* Closing connection #0</pre>
+* Closing connection #0
+</pre></div>
 </div>
 <p>What a mouthful. Let&#8217;s step through this line by line to understand what&#8217;s
 going on and find out what&#8217;s important. Once you&#8217;ve seen this output a few
 times, you&#8217;ll be able to spot the important bits more easily.</p>
-<div class="highlight-json"><pre>* About to connect() to 127.0.0.1 port 5984 (#0)</pre>
+<div class="highlight-json"><div class="highlight"><pre>* About to connect() to 127.0.0.1 port 5984 (#0)
+</pre></div>
 </div>
 <p>This is curl telling us that it is going to establish a TCP connection to the
 CouchDB server we specified in our request URI. Not at all important,
 except when debugging networking issues.</p>
-<div class="highlight-json"><pre>*   Trying 127.0.0.1... connected
-* Connected to 127.0.0.1 (127.0.0.1) port 5984 (#0)</pre>
+<div class="highlight-json"><div class="highlight"><pre>*   Trying 127.0.0.1... connected
+* Connected to 127.0.0.1 (127.0.0.1) port 5984 (#0)
+</pre></div>
 </div>
 <p>curl tells us it successfully connected to CouchDB. Again,
 not important if you aren&#8217;t trying to find problems with your network.</p>
 <p>The following lines are prefixed with <tt class="docutils literal"><span class="pre">&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;</span></tt> characters.
 The <tt class="docutils literal"><span class="pre">&gt;</span></tt> means the line was sent to CouchDB verbatim (without the actual
 <tt class="docutils literal"><span class="pre">&gt;</span></tt>). The <tt class="docutils literal"><span class="pre">&lt;</span></tt> means the line was sent back to curl by CouchDB.</p>
-<div class="highlight-json"><pre>&gt; PUT /albums-backup HTTP/1.1</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt; PUT /albums-backup HTTP/1.1
+</pre></div>
 </div>
 <p>This initiates an HTTP request. Its <em>method</em> is <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">PUT</a>, the <em>URI</em> is
 <tt class="docutils literal"><span class="pre">/albums-backup</span></tt>, and the HTTP version is <tt class="docutils literal"><span class="pre">HTTP/1.1</span></tt>. There is also
@@ -207,7 +213,8 @@ The <tt class="docutils literal"><span class="pre">&gt;</span></tt> means the li
 you should be using <tt class="docutils literal"><span class="pre">HTTP/1.1</span></tt>.</p>
 <p>Next, we see a number of <em>request headers</em>. These are used to provide
 additional details about the request to CouchDB.</p>
-<div class="highlight-json"><pre>&gt; User-Agent: curl/7.16.3 (powerpc-apple-darwin9.0) libcurl/7.16.3 OpenSSL/0.9.7l zlib/1.2.3</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt; User-Agent: curl/7.16.3 (powerpc-apple-darwin9.0) libcurl/7.16.3 OpenSSL/0.9.7l zlib/1.2.3
+</pre></div>
 </div>
 <p>The User-Agent header tells CouchDB which piece of client software is doing
 the HTTP request. We don&#8217;t learn anything new: it&#8217;s curl. This header is
@@ -216,21 +223,25 @@ implementations that a server might want to prepare the response for.
 It also helps to determine which platform a user is on. This information
 can be used for technical and statistical reasons. For CouchDB, the
 <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43">User-Agent</a> header is irrelevant.</p>
-<div class="highlight-json"><pre>&gt; Host: 127.0.0.1:5984</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt; Host: 127.0.0.1:5984
+</pre></div>
 </div>
 <p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.23">Host</a> header is required by <tt class="docutils literal"><span class="pre">HTTP</span> <span class="pre">1.1</span></tt>. It tells the server
 the hostname that came with the request.</p>
-<div class="highlight-json"><pre>&gt; Accept: */*</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt; Accept: */*
+</pre></div>
 </div>
 <p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">Accept</a> header tells CouchDB that curl accepts any media type.
 We&#8217;ll look into why this is useful a little later.</p>
-<div class="highlight-json"><pre>&gt;</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt;
+</pre></div>
 </div>
 <p>An empty line denotes that the request headers are now finished and the rest
 of the request contains data we&#8217;re sending to the server. In this case,
 we&#8217;re not sending any data, so the rest of the curl output is dedicated to
 the HTTP response.</p>
-<div class="highlight-json"><pre>&lt; HTTP/1.1 201 Created</pre>
+<div class="highlight-json"><div class="highlight"><pre>&lt; HTTP/1.1 201 Created
+</pre></div>
 </div>
 <p>The first line of CouchDB&#8217;s HTTP response includes the HTTP version
 information (again, to acknowledge that the requested version could be
@@ -249,19 +260,22 @@ practice. For example, all response codes of <a class="reference external" href=
 tell you that some error occurred. If you want to shortcut your logic and
 immediately deal with the error, you could just check a &gt;= <tt class="docutils literal"><span class="pre">400</span></tt> response
 code.</p>
-<div class="highlight-json"><pre>&lt; Server: CouchDB (Erlang/OTP)</pre>
+<div class="highlight-json"><div class="highlight"><pre>&lt; Server: CouchDB (Erlang/OTP)
+</pre></div>
 </div>
 <p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.38">Server</a> header is good for diagnostics. It tells us which
 CouchDB version and which underlying Erlang version we are talking to.
 In general, you can ignore this header, but it is good to know it&#8217;s there if
 you need it.</p>
-<div class="highlight-json"><pre>&lt; Date: Sun, 05 Jul 2009 22:48:28 GMT</pre>
+<div class="highlight-json"><div class="highlight"><pre>&lt; Date: Sun, 05 Jul 2009 22:48:28 GMT
+</pre></div>
 </div>
 <p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.18">Date</a> header tells you the time of the server. Since client
 and server time are not necessarily synchronized, this header is purely
 informational. You shouldn&#8217;t build any critical application logic on top
 of this!</p>
-<div class="highlight-json"><pre>&lt; Content-Type: text/plain;charset=utf-8</pre>
+<div class="highlight-json"><div class="highlight"><pre>&lt; Content-Type: text/plain;charset=utf-8
+</pre></div>
 </div>
 <p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> header tells you which MIME type
 the HTTP response body is and its encoding. We already know CouchDB returns
@@ -284,15 +298,18 @@ the popular <a class="reference external" href="http://jsonview.com/">JSONView</
 <span class="pre">application/json</span></tt> in your request, CouchDB knows that you can deal with a pure
 JSON response with the proper <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> header and will
 use it instead of <em class="mimetype">text/plain</em>.</p>
-<div class="highlight-json"><pre>&lt; Content-Length: 12</pre>
+<div class="highlight-json"><div class="highlight"><pre>&lt; Content-Length: 12
+</pre></div>
 </div>
 <p>The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13">Content-Length</a> header simply tells us how many bytes
 the response body has.</p>
-<div class="highlight-json"><pre>&lt; Cache-Control: must-revalidate</pre>
+<div class="highlight-json"><div class="highlight"><pre>&lt; Cache-Control: must-revalidate
+</pre></div>
 </div>
 <p>This <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9">Cache-Control</a> header tells you, or any proxy server between
 CouchDB and you, not to cache this response.</p>
-<div class="highlight-json"><pre>&lt;</pre>
+<div class="highlight-json"><div class="highlight"><pre>&lt;
+</pre></div>
 </div>
 <p>This empty line tells us we&#8217;re done with the response headers and what
 follows now is the response body.</p>
@@ -300,8 +317,9 @@ follows now is the response body.</p>
 </pre></div>
 </div>
 <p>We&#8217;ve seen this before.</p>
-<div class="highlight-json"><pre>* Connection #0 to host 127.0.0.1 left intact
-* Closing connection #0</pre>
+<div class="highlight-json"><div class="highlight"><pre>* Connection #0 to host 127.0.0.1 left intact
+* Closing connection #0
+</pre></div>
 </div>
 <p>The last two lines are curl telling us that it kept the TCP connection it
 opened in the beginning open for a moment, but then closed it after it
@@ -311,7 +329,8 @@ but we&#8217;ll omit some of the headers we&#8217;ve seen here and include only 
 that are important for the particular request.</p>
 <p>Creating databases is all fine, but how do we get rid of one? Easy &#8211; just
 change the HTTP method:</p>
-<div class="highlight-json"><pre>&gt; curl -vX DELETE http://127.0.0.1:5984/albums-backup</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt; curl -vX DELETE http://127.0.0.1:5984/albums-backup
+</pre></div>
 </div>
 <p>This deletes a CouchDB database. The request will remove the file that the
 database contents are stored in. There is no <em>&#8220;Are you sure?&#8221;</em> safety net or
@@ -339,7 +358,8 @@ what somebody else is doing? For one, that somebody else could be you at a
 later time or on a different computer; secondly, CouchDB replication lets you
 share documents with others and using UUIDs ensures that it all works.
 But more on that later; let&#8217;s make some documents:</p>
-<div class="highlight-json"><pre>curl -X PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af -d '{"title":"There is Nothing Left to Lose","artist":"Foo Fighters"}'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af -d &#39;{&quot;title&quot;:&quot;There is Nothing Left to Lose&quot;,&quot;artist&quot;:&quot;Foo Fighters&quot;}&#39;
+</pre></div>
 </div>
 <p>CouchDB replies:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="s2">&quot;6e1295ed6c29495e54cc05947f18c8af&quot;</span><span class="p">,</span><span class="s2">&quot;rev&quot;</span><span class="o">:</span><span class="s2">&quot;1-2902191555&quot;</span><span class="p">}</span>
@@ -360,7 +380,8 @@ values.</p>
 <p>If you don&#8217;t have a UUID handy, you can ask CouchDB to give you one (in fact,
 that is what we did just now without showing you). Simply send a
 <a class="reference internal" href="../api/server/common.html#get--_uuids" title="GET /_uuids"><tt class="xref http http-get docutils literal"><span class="pre">GET</span> <span class="pre">/_uuids</span></tt></a> request:</p>
-<div class="highlight-json"><pre>curl -X GET http://127.0.0.1:5984/_uuids</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X GET http://127.0.0.1:5984/_uuids
+</pre></div>
 </div>
 <p>CouchDB replies:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;uuids&quot;</span><span class="o">:</span><span class="p">[</span><span class="s2">&quot;6e1295ed6c29495e54cc05947f18c8af&quot;</span><span class="p">]}</span>
@@ -371,7 +392,8 @@ parameter to request 10 UUIDs, or really, any number you need.</p>
 </div>
 <p>To double-check that CouchDB isn&#8217;t lying about having saved your document (it
 usually doesn&#8217;t), try to retrieve it by sending a GET request:</p>
-<div class="highlight-json"><pre>curl -X GET http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X GET http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af
+</pre></div>
 </div>
 <p>We hope you see a pattern here. Everything in CouchDB has an address, a URI,
 and you use the different HTTP methods to operate on these URIs.</p>
@@ -401,8 +423,9 @@ request the document update, CouchDB will not accept your update because you
 are likely to overwrite data you didn&#8217;t know existed. Or simplified: whoever
 saves a change to a document first, wins. Let&#8217;s see what happens if we don&#8217;t
 provide a <tt class="docutils literal"><span class="pre">_rev</span></tt> field (which is equivalent to providing a outdated value):</p>
-<div class="highlight-json"><pre>curl -X PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af \
-     -d '{"title":"There is Nothing Left to Lose","artist":"Foo Fighters","year":"1997"}'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af \
+     -d &#39;{&quot;title&quot;:&quot;There is Nothing Left to Lose&quot;,&quot;artist&quot;:&quot;Foo Fighters&quot;,&quot;year&quot;:&quot;1997&quot;}&#39;
+</pre></div>
 </div>
 <p>CouchDB replies:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="s2">&quot;conflict&quot;</span><span class="p">,</span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="s2">&quot;Document update conflict.&quot;</span><span class="p">}</span>
@@ -410,8 +433,9 @@ provide a <tt class="docutils literal"><span class="pre">_rev</span></tt> field 
 </div>
 <p>If you see this, add the latest revision number of your document to the JSON
 structure:</p>
-<div class="highlight-json"><pre>curl -X PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af \
-     -d '{"_rev":"1-2902191555","title":"There is Nothing Left to Lose","artist":"Foo Fighters","year":"1997"}'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af \
+     -d &#39;{&quot;_rev&quot;:&quot;1-2902191555&quot;,&quot;title&quot;:&quot;There is Nothing Left to Lose&quot;,&quot;artist&quot;:&quot;Foo Fighters&quot;,&quot;year&quot;:&quot;1997&quot;}&#39;
+</pre></div>
 </div>
 <p>Now you see why it was handy that CouchDB returned that <tt class="docutils literal"><span class="pre">_rev</span></tt> when we made
 the initial request. CouchDB replies:</p>
@@ -463,8 +487,9 @@ later examples.</p>
 <p>We&#8217;ll add some more of our favorite music albums. Get a fresh UUID from the
 <tt class="docutils literal"><span class="pre">/_uuids</span></tt> resource. If you don&#8217;t remember how that works, you can look it up
 a few pages back.</p>
-<div class="highlight-json"><pre>curl -vX PUT http://127.0.0.1:5984/albums/70b50bfa0a4b3aed1f8aff9e92dc16a0 \
-     -d '{"title":"Blackened Sky","artist":"Biffy Clyro","year":2002}'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -vX PUT http://127.0.0.1:5984/albums/70b50bfa0a4b3aed1f8aff9e92dc16a0 \
+     -d &#39;{&quot;title&quot;:&quot;Blackened Sky&quot;,&quot;artist&quot;:&quot;Biffy Clyro&quot;,&quot;year&quot;:2002}&#39;
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -476,13 +501,14 @@ worry about data.</p>
 </div>
 <p>Now with the <tt class="docutils literal"><span class="pre">-v</span></tt> option, CouchDB&#8217;s reply (with only the important bits shown)
 looks like this:</p>
-<div class="highlight-json"><pre>&gt; PUT /albums/70b50bfa0a4b3aed1f8aff9e92dc16a0 HTTP/1.1
+<div class="highlight-json"><div class="highlight"><pre>&gt; PUT /albums/70b50bfa0a4b3aed1f8aff9e92dc16a0 HTTP/1.1
 &gt;
 &lt; HTTP/1.1 201 Created
 &lt; Location: http://127.0.0.1:5984/albums/70b50bfa0a4b3aed1f8aff9e92dc16a0
-&lt; ETag: "1-e89c99d29d06671fa0a4b3ae8aff9e"
+&lt; ETag: &quot;1-e89c99d29d06671fa0a4b3ae8aff9e&quot;
 &lt;
-{"ok":true,"id":"70b50bfa0a4b3aed1f8aff9e92dc16a0","rev":"1-e89c99d29d06671fa0a4b3ae8aff9e"}</pre>
+{&quot;ok&quot;:true,&quot;id&quot;:&quot;70b50bfa0a4b3aed1f8aff9e92dc16a0&quot;,&quot;rev&quot;:&quot;1-e89c99d29d06671fa0a4b3ae8aff9e&quot;}
+</pre></div>
 </div>
 <p>We&#8217;re getting back the <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.2">201 Created</a> HTTP status code in the response
 headers, as we saw earlier when we created a database. The <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3">Location</a>
@@ -506,8 +532,9 @@ documents, music, or movie files. Let&#8217;s make one.</p>
 the album artwork to the <tt class="docutils literal"><span class="pre">6e1295ed6c29495e54cc05947f18c8af</span></tt> document
 (<em>&#8220;There is Nothing Left to Lose&#8221;</em>), and let&#8217;s also say the artwork is in a file
 <cite>artwork.jpg</cite> in the current directory:</p>
-<div class="highlight-json"><pre>curl -vX PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af/artwork.jpg?rev=2-2739352689 \
-     --data-binary @artwork.jpg -H "Content-Type:image/jpg"</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -vX PUT http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af/artwork.jpg?rev=2-2739352689 \
+     --data-binary @artwork.jpg -H &quot;Content-Type:image/jpg&quot;
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -524,7 +551,8 @@ attaching some data is changing the document.</p>
 <p>You should now see your artwork image if you point your browser to
 <a class="reference external" href="http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af/artwork.jpg">http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af/artwork.jpg</a></p>
 <p>If you request the document again, you&#8217;ll see a new member:</p>
-<div class="highlight-json"><pre>curl http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl http://127.0.0.1:5984/albums/6e1295ed6c29495e54cc05947f18c8af
+</pre></div>
 </div>
 <p>CouchDB replies:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
@@ -567,12 +595,14 @@ in this document, we&#8217;ll just show you how to use it.</p>
 create a target database for you, and will return a replication failure if
 the target doesn&#8217;t exist (likewise for the source, but that mistake isn&#8217;t as
 easy to make):</p>
-<div class="highlight-json"><pre>curl -X PUT http://127.0.0.1:5984/albums-replica</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://127.0.0.1:5984/albums-replica
+</pre></div>
 </div>
 <p>Now we can use the database <cite>albums-replica</cite> as a replication target:</p>
-<div class="highlight-json"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
-     -d '{"source":"albums","target":"albums-replica"}' \
-     -H "Content-Type: application/json"</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
+     -d &#39;{&quot;source&quot;:&quot;albums&quot;,&quot;target&quot;:&quot;albums-replica&quot;}&#39; \
+     -H &quot;Content-Type: application/json&quot;
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -624,9 +654,10 @@ a stable version of your code and data.</p>
 and target members of our replication request are actually links (like in
 HTML) and so far we&#8217;ve seen links relative to the server we&#8217;re working on
 (hence local). You can also specify a remote database as the target:</p>
-<div class="highlight-json"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
-     -d '{"source":"albums","target":"http://example.org:5984/albums-replica"}' \
-     -H "Content-Type:application/json"</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
+     -d &#39;{&quot;source&quot;:&quot;albums&quot;,&quot;target&quot;:&quot;http://example.org:5984/albums-replica&quot;}&#39; \
+     -H &quot;Content-Type:application/json&quot;
+</pre></div>
 </div>
 <p>Using a <em>local source</em> and a <em>remote target</em> database is called <em>push
 replication</em>. We&#8217;re pushing changes to a remote server.</p>
@@ -641,15 +672,17 @@ door.</p>
 <p>You can also use a <em>remote source</em> and a <em>local target</em> to do a <em>pull
 replication</em>. This is great for getting the latest changes from a server that
 is used by others:</p>
-<div class="highlight-json"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
-     -d '{"source":"http://example.org:5984/albums-replica","target":"albums"}' \
-     -H "Content-Type:application/json"</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
+     -d &#39;{&quot;source&quot;:&quot;http://example.org:5984/albums-replica&quot;,&quot;target&quot;:&quot;albums&quot;}&#39; \
+     -H &quot;Content-Type:application/json&quot;
+</pre></div>
 </div>
 <p>Finally, you can run remote replication, which is mostly useful for management
 operations:</p>
-<div class="highlight-json"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
-     -d '{"source":"http://example.org:5984/albums","target":"http://example.org:5984/albums-replica"}' \
-     -H"Content-Type: application/json"</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -vX POST http://127.0.0.1:5984/_replicate \
+     -d &#39;{&quot;source&quot;:&quot;http://example.org:5984/albums&quot;,&quot;target&quot;:&quot;http://example.org:5984/albums-replica&quot;}&#39; \
+     -H&quot;Content-Type: application/json&quot;
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -677,7 +710,7 @@ view.</p>
 <p>This is still not the full CouchDB API, but we discussed the essentials in
 great detail. We&#8217;re going to fill in the blanks as we go. For now, we believe
 you&#8217;re ready to start building CouchDB applications.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p><a class="reference internal" href="../api/index.html#api"><em>Complete HTTP API Reference</em></a>:</p>
 <ul class="last simple">
@@ -841,7 +874,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

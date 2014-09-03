@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -438,13 +436,14 @@ document.</p>
 </pre></div>
 </div>
 <p><strong>Request</strong>:</p>
-<div class="highlight-http"><pre>POST /recipes/_design/recipe/_update/ingredients HTTP/1.1
+<div class="highlight-http"><div class="highlight"><pre>POST /recipes/_design/recipe/_update/ingredients HTTP/1.1
 Accept: application/json
 Content-Length: 10
 Content-Type: application/json
 Host: localhost:5984
 
-something</pre>
+something
+</pre></div>
 </div>
 <p><strong>Response</strong>:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Object Not Found</span>
@@ -512,13 +511,14 @@ document.</p>
 </pre></div>
 </div>
 <p><strong>Request</strong>:</p>
-<div class="highlight-http"><pre>POST /recipes/_design/recipe/_update/ingredients/SpaghettiWithMeatballs HTTP/1.1
+<div class="highlight-http"><div class="highlight"><pre>POST /recipes/_design/recipe/_update/ingredients/SpaghettiWithMeatballs HTTP/1.1
 Accept: application/json
 Content-Length: 5
 Content-Type: application/json
 Host: localhost:5984
 
-love</pre>
+love
+</pre></div>
 </div>
 <p><strong>Response</strong>:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">Created</span>
@@ -590,7 +590,7 @@ specific language governing permissions and limitations under the License.
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="views.html"
-                        title="previous chapter">10.5.4. <tt class="docutils literal docutils literal"><span class="pre">/db/_design/design-doc/_view/view-name</span></tt></a></p>
+                        title="previous chapter">10.5.4. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_view/view-name</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="rewrites.html"
                         title="next chapter">10.5.11. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_rewrite/path</span></tt></a></p><!--
@@ -684,7 +684,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

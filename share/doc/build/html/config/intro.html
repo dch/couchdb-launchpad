@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -101,15 +99,17 @@ target operation system and may be changed during building from the source code.
 For binary distributions, it mostly points to the installation path
 (e.g. <tt class="docutils literal"><span class="pre">C:\Program</span> <span class="pre">Files\CouchDB\etc\couchdb</span></tt> for Windows).</p>
 <p>To see the actual configuration files chain run in shell:</p>
-<div class="highlight-ini"><pre>couchdb -c</pre>
+<div class="highlight-ini"><div class="highlight"><pre>couchdb -c
+</pre></div>
 </div>
 <p>This will print out all <em>actual</em> configuration files that will form the result
 CouchDB configuration:</p>
-<div class="highlight-ini"><pre>/etc/couchdb/default.ini
+<div class="highlight-ini"><div class="highlight"><pre>/etc/couchdb/default.ini
 /etc/couchdb/default.d/geocouch.ini
 /etc/couchdb/local.ini
 /etc/couchdb/local.d/geocouch.ini
-/etc/couchdb/local.d/vendor.ini</pre>
+/etc/couchdb/local.d/vendor.ini
+</pre></div>
 </div>
 <p>Settings in successive documents override the settings in earlier entries.
 For example, setting the <a class="reference internal" href="http.html#httpd/bind_address" title="bind_address"><tt class="xref config config-option docutils literal"><span class="pre">httpd/bind_address</span></tt></a> parameter in <tt class="docutils literal"><span class="pre">local.ini</span></tt>
@@ -127,13 +127,14 @@ by using next command line options:</p>
 <li><tt class="docutils literal"><span class="pre">-A</span></tt>: adds configuration directory to the chain</li>
 </ul>
 <p>Let&#8217;s add these options and see how the configuration chain changes:</p>
-<div class="highlight-ini"><pre>shell&gt; couchdb -c -a /home/couchdb/custom.ini
+<div class="highlight-ini"><div class="highlight"><pre>shell&gt; couchdb -c -a /home/couchdb/custom.ini
 /etc/couchdb/default.ini
 /etc/couchdb/default.d/geocouch.ini
 /etc/couchdb/local.ini
 /etc/couchdb/local.d/geocouch.ini
 /etc/couchdb/local.d/vendor.ini
-/home/couchdb/custom.ini</pre>
+/home/couchdb/custom.ini
+</pre></div>
 </div>
 <p>In case when <cite>/home/couchdb/custom.ini</cite> exists it will be added to
 the configuration chain.</p>
@@ -189,15 +190,18 @@ to apply these changes.</p>
 <p>Alternatively, configuration parameters could be set via the
 <a class="reference internal" href="../api/server/configuration.html#api-config"><em>HTTP API</em></a>. This API allows to change CouchDB configuration
 on-the-fly without requiring a server restart:</p>
-<div class="highlight-ini"><pre>curl -X PUT http://localhost:5984/_config/uuids/algorithm -d '"random"'</pre>
+<div class="highlight-ini"><div class="highlight"><pre>curl -X PUT http://localhost:5984/_config/uuids/algorithm -d &#39;&quot;random&quot;&#39;
+</pre></div>
 </div>
 <p>In the response the old parameter&#8217;s value returns:</p>
-<div class="highlight-ini"><pre>"sequential"</pre>
+<div class="highlight-ini"><div class="highlight"><pre>&quot;sequential&quot;
+</pre></div>
 </div>
 <p>You should be careful with changing configuration via the HTTP API since it&#8217;s
 easy to make CouchDB unavailable. For instance, if you&#8217;d like to change the
 <a class="reference internal" href="http.html#httpd/bind_address" title="bind_address"><tt class="xref config config-option docutils literal"><span class="pre">httpd/bind_address</span></tt></a> for a new one:</p>
-<div class="highlight-ini"><pre>curl -X PUT http://localhost:5984/_config/httpd/bind_address -d '"10.10.0.128"'</pre>
+<div class="highlight-ini"><div class="highlight"><pre>curl -X PUT http://localhost:5984/_config/httpd/bind_address -d &#39;&quot;10.10.0.128&quot;&#39;
+</pre></div>
 </div>
 <p>However, if you make a typo, or the specified IP address is not available
 from your network, CouchDB will be unavailable for you in both cases and
@@ -356,7 +360,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

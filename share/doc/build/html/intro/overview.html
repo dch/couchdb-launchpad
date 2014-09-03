@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -160,7 +158,7 @@ storage and sharing is too simple to build real applications on &#8211; it simpl
 doesn&#8217;t do enough of the things we want and expect. We want to slice and dice
 and see our data in many different ways. What is needed is a way to filter,
 organize and report on data that hasn&#8217;t been decomposed into tables.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../couchapp/views/index.html#views"><em>Guide to Views</em></a></p>
 </div>
@@ -187,7 +185,7 @@ as an argument and then does whatever computation it needs to do to determine
 the data that is to be made available through the view, if any.
 It can add multiple rows to the view based on a single document,
 or it can add no rows at all.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../couchapp/ddocs.html#viewfun"><em>View functions</em></a></p>
 </div>
@@ -236,7 +234,7 @@ its previously committed state.</p>
 <p>To protect who can read and update documents, CouchDB has a simple reader
 access and update validation model that can be extended to implement custom
 security models.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../api/database/security.html#api-db-security"><em>/db/_security</em></a></p>
 </div>
@@ -263,7 +261,7 @@ where document updates are validated to check if the user is listed in an
 like checking a separate user account profile for permission settings.</p>
 <p>The update validations are enforced for both live usage and replicated
 updates, ensuring security and data validation in a shared, distributed system.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../couchapp/ddocs.html#vdufun"><em>Validate document update functions</em></a></p>
 </div>
@@ -316,7 +314,7 @@ semantics.</p>
 agents attempt to resolve the same conflicts. If resolved conflicts result in
 more conflicts, the system accommodates them in the same manner, determining
 the same winner on each machine and maintaining single document semantics.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../replication/conflicts.html#replication-conflicts"><em>Replication and conflict model</em></a></p>
 </div>
@@ -540,7 +538,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

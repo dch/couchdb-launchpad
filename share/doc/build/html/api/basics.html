@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -189,11 +187,12 @@ header, or when specifying <tt class="docutils literal"><span class="pre">*/*</s
 </pre></div>
 </div>
 <p>The returned headers are:</p>
-<div class="highlight-http"><pre>Server: CouchDB (Erlang/OTP)
+<div class="highlight-http"><div class="highlight"><pre>Server: CouchDB (Erlang/OTP)
 Date: Thu, 13 Jan 2011 13:39:34 GMT
 Content-Type: text/plain;charset=utf-8
 Content-Length: 227
-Cache-Control: must-revalidate</pre>
+Cache-Control: must-revalidate
+</pre></div>
 </div>
 <p>Note that the returned content type is <tt class="docutils literal"><span class="pre">text/plain</span></tt> even though the
 information returned by the request is in JSON format.</p>
@@ -204,11 +203,12 @@ information returned by the request is in JSON format.</p>
 </pre></div>
 </div>
 <p>The headers returned include the <tt class="docutils literal"><span class="pre">application/json</span></tt> content type:</p>
-<div class="highlight-http"><pre>Server: CouchDB (Erlang/OTP)
+<div class="highlight-http"><div class="highlight"><pre>Server: CouchDB (Erlang/OTP)
 Date: Thu, 13 Jan 2013 13:40:11 GMT
 Content-Type: application/json
 Content-Length: 227
-Cache-Control: must-revalidate</pre>
+Cache-Control: must-revalidate
+</pre></div>
 </div>
 </li>
 </ul>
@@ -362,49 +362,53 @@ accept that numbers are stored in doubles).</p>
 <p>Here&#8217;s a log for a couple of the more common JSON libraries that happen
 to be on the author&#8217;s machine:</p>
 <p>Spidermonkey:</p>
-<div class="highlight-json"><pre>$ js -h 2&gt;&amp;1 | head -n 1
+<div class="highlight-json"><div class="highlight"><pre>$ js -h 2&gt;&amp;1 | head -n 1
 JavaScript-C 1.8.5 2011-03-31
 $ js
-js&gt; JSON.stringify(JSON.parse("1.01234567890123456789012345678901234567890"))
-"1.0123456789012346"
-js&gt; var f = JSON.stringify(JSON.parse("1.01234567890123456789012345678901234567890"))
+js&gt; JSON.stringify(JSON.parse(&quot;1.01234567890123456789012345678901234567890&quot;))
+&quot;1.0123456789012346&quot;
+js&gt; var f = JSON.stringify(JSON.parse(&quot;1.01234567890123456789012345678901234567890&quot;))
 js&gt; JSON.stringify(JSON.parse(f))
-"1.0123456789012346"</pre>
+&quot;1.0123456789012346&quot;
+</pre></div>
 </div>
 <p>Node:</p>
-<div class="highlight-json"><pre>$ node -v
+<div class="highlight-json"><div class="highlight"><pre>$ node -v
 v0.6.15
 $ node
-JSON.stringify(JSON.parse("1.01234567890123456789012345678901234567890"))
-'1.0123456789012346'
-var f = JSON.stringify(JSON.parse("1.01234567890123456789012345678901234567890"))
+JSON.stringify(JSON.parse(&quot;1.01234567890123456789012345678901234567890&quot;))
+&#39;1.0123456789012346&#39;
+var f = JSON.stringify(JSON.parse(&quot;1.01234567890123456789012345678901234567890&quot;))
 undefined
 JSON.stringify(JSON.parse(f))
-'1.0123456789012346'</pre>
+&#39;1.0123456789012346&#39;
+</pre></div>
 </div>
 <p>Python:</p>
-<div class="highlight-json"><pre>$ python
+<div class="highlight-json"><div class="highlight"><pre>$ python
 Python 2.7.2 (default, Jun 20 2012, 16:23:33)
 [GCC 4.2.1 Compatible Apple Clang 4.0 (tags/Apple/clang-418.0.60)] on darwin
-Type "help", "copyright", "credits" or "license" for more information.
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
 import json
-json.dumps(json.loads("1.01234567890123456789012345678901234567890"))
-'1.0123456789012346'
-f = json.dumps(json.loads("1.01234567890123456789012345678901234567890"))
+json.dumps(json.loads(&quot;1.01234567890123456789012345678901234567890&quot;))
+&#39;1.0123456789012346&#39;
+f = json.dumps(json.loads(&quot;1.01234567890123456789012345678901234567890&quot;))
 json.dumps(json.loads(f))
-'1.0123456789012346'</pre>
+&#39;1.0123456789012346&#39;
+</pre></div>
 </div>
 <p>Ruby:</p>
-<div class="highlight-json"><pre>$ irb --version
+<div class="highlight-json"><div class="highlight"><pre>$ irb --version
 irb 0.9.5(05/04/13)
-require 'JSON'
+require &#39;JSON&#39;
 =&gt; true
-JSON.dump(JSON.load("[1.01234567890123456789012345678901234567890]"))
-=&gt; "[1.01234567890123]"
-f = JSON.dump(JSON.load("[1.01234567890123456789012345678901234567890]"))
-=&gt; "[1.01234567890123]"
+JSON.dump(JSON.load(&quot;[1.01234567890123456789012345678901234567890]&quot;))
+=&gt; &quot;[1.01234567890123]&quot;
+f = JSON.dump(JSON.load(&quot;[1.01234567890123456789012345678901234567890]&quot;))
+=&gt; &quot;[1.01234567890123]&quot;
 JSON.dump(JSON.load(f))
-=&gt; "[1.01234567890123]"</pre>
+=&gt; &quot;[1.01234567890123]&quot;
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -413,17 +417,18 @@ wrapped the value. Should be obvious it doesn&#8217;t affect the result of
 parsing the number though.</p>
 </div>
 <p>Ejson (CouchDB&#8217;s current parser) at CouchDB sha 168a663b:</p>
-<div class="highlight-json"><pre>$ ./utils/run -i
+<div class="highlight-json"><div class="highlight"><pre>$ ./utils/run -i
 Erlang R14B04 (erts-5.8.5) [source] [64-bit] [smp:2:2] [rq:2]
 [async-threads:4] [hipe] [kernel-poll:true]
 
 Eshell V5.8.5  (abort with ^G)
-1&gt; ejson:encode(ejson:decode(&lt;&lt;"1.01234567890123456789012345678901234567890"&gt;&gt;)).
-&lt;&lt;"1.0123456789012346135"&gt;&gt;
-2&gt; F = ejson:encode(ejson:decode(&lt;&lt;"1.01234567890123456789012345678901234567890"&gt;&gt;)).
-&lt;&lt;"1.0123456789012346135"&gt;&gt;
+1&gt; ejson:encode(ejson:decode(&lt;&lt;&quot;1.01234567890123456789012345678901234567890&quot;&gt;&gt;)).
+&lt;&lt;&quot;1.0123456789012346135&quot;&gt;&gt;
+2&gt; F = ejson:encode(ejson:decode(&lt;&lt;&quot;1.01234567890123456789012345678901234567890&quot;&gt;&gt;)).
+&lt;&lt;&quot;1.0123456789012346135&quot;&gt;&gt;
 3&gt; ejson:encode(ejson:decode(F)).
-&lt;&lt;"1.0123456789012346135"&gt;&gt;</pre>
+&lt;&lt;&quot;1.0123456789012346135&quot;&gt;&gt;
+</pre></div>
 </div>
 <p>As you can see they all pretty much behave the same except for Ruby
 actually does appear to be losing some precision over the other
@@ -442,7 +447,8 @@ value that a double can represent.</p>
 <p>The important point to understand is that we&#8217;re mapping from one
 infinite set onto a finite set. An easy way to see this is by
 reflecting on this:</p>
-<div class="highlight-json"><pre>1.0 == 1.00 == 1.000 = 1.(infinite zeroes)</pre>
+<div class="highlight-json"><div class="highlight"><pre>1.0 == 1.00 == 1.000 = 1.(infinite zeroes)
+</pre></div>
 </div>
 <p>Obviously a computer can&#8217;t hold infinite bytes so we have to
 decimate our infinitely sized set to a finite set that can be
@@ -707,7 +713,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

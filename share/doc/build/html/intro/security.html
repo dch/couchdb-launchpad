@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -124,16 +122,18 @@ identification for certain requests:</p>
 <h4>Creating New Admin User<a class="headerlink" href="#creating-new-admin-user" title="Permalink to this headline">¶</a></h4>
 <p>Let&#8217;s do another walk through the API using <cite>curl</cite> to see how CouchDB behaves
 when you add admin users.</p>
-<div class="highlight-json"><pre>&gt; HOST="http://127.0.0.1:5984"
+<div class="highlight-json"><div class="highlight"><pre>&gt; HOST=&quot;http://127.0.0.1:5984&quot;
 &gt; curl -X PUT $HOST/database
-{"ok":true}</pre>
+{&quot;ok&quot;:true}
+</pre></div>
 </div>
 <p>When starting out fresh, we can add a database. Nothing unexpected. Now let&#8217;s
 create an admin user. We&#8217;ll call her <tt class="docutils literal"><span class="pre">anna</span></tt>, and her password is <tt class="docutils literal"><span class="pre">secret</span></tt>.
 Note the double quotes in the following code; they are needed to denote a string
 value for the <a class="reference internal" href="../api/server/configuration.html#api-config"><em>configuration API</em></a>:</p>
-<div class="highlight-json"><pre>&gt; curl -X PUT $HOST/_config/admins/anna -d '"secret"'
-""</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt; curl -X PUT $HOST/_config/admins/anna -d &#39;&quot;secret&quot;&#39;
+&quot;&quot;
+</pre></div>
 </div>
 <p>As per the <a class="reference internal" href="../api/server/configuration.html#api-config"><em>_config</em></a> API&#8217;s behavior, we&#8217;re getting
 the previous value for the config item we just wrote. Since our admin user
@@ -184,13 +184,15 @@ by default to sign about using <a class="reference external" href="http://en.wik
 <span id="intro-security-basicauth"></span><h3>Basic Authentication<a class="headerlink" href="#basic-authentication" title="Permalink to this headline">¶</a></h3>
 <p>Now that we have defined an admin, CouchDB will not allow us to create new
 databases unless we give the correct admin user credentials. Let&#8217;s verify:</p>
-<div class="highlight-json"><pre>&gt; curl -X PUT $HOST/somedatabase
-{"error":"unauthorized","reason":"You are not a server admin."}</pre>
+<div class="highlight-json"><div class="highlight"><pre>&gt; curl -X PUT $HOST/somedatabase
+{&quot;error&quot;:&quot;unauthorized&quot;,&quot;reason&quot;:&quot;You are not a server admin.&quot;}
+</pre></div>
 </div>
 <p>That looks about right. Now we try again with the correct credentials:</p>
-<div class="highlight-json"><pre>&gt; HOST="http://anna:secret@127.0.0.1:5984"
+<div class="highlight-json"><div class="highlight"><pre>&gt; HOST=&quot;http://anna:secret@127.0.0.1:5984&quot;
 &gt; curl -X PUT $HOST/somedatabase
-{"ok":true}</pre>
+{&quot;ok&quot;:true}
+</pre></div>
 </div>
 <p>If you have ever accessed a website or FTP server that was password-protected,
 the <tt class="docutils literal"><span class="pre">username:password&#64;</span></tt> URL variant should look familiar.</p>
@@ -205,7 +207,7 @@ with other collocation customers is public. There are multiple ways to secure
 communication between you or your application and CouchDB that exceed the
 scope of this documentation. CouchDB as of version <a class="reference internal" href="../whatsnew/1.1.html#release-1-1-0"><em>1.1.0</em></a>
 comes with <a class="reference internal" href="../config/http.html#config-ssl"><em>SSL built in</em></a>.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../api/server/authn.html#api-auth-basic"><em>Basic Authentication API Reference</em></a></p>
 </div>
@@ -231,34 +233,37 @@ API. The API is smart enough to decode HTML form submissions, so you don&#8217;t
 to resort to any smarts in your application.</p>
 <p>If you are not using HTML forms to log in, you need to send an HTTP request
 that looks as if an HTML form generated it. Luckily, this is super simple:</p>
-<div class="highlight-json"><pre>&gt; HOST="http://127.0.0.1:5984"
+<div class="highlight-json"><div class="highlight"><pre>&gt; HOST=&quot;http://127.0.0.1:5984&quot;
 &gt; curl -vX POST $HOST/_session \
-       -H 'Content-Type:application/x-www-form-urlencoded' \
-       -d 'name=anna&amp;password=secret'</pre>
+       -H &#39;Content-Type:application/x-www-form-urlencoded&#39; \
+       -d &#39;name=anna&amp;password=secret&#39;
+</pre></div>
 </div>
 <p>CouchDB replies, and we&#8217;ll give you some more detail:</p>
-<div class="highlight-json"><pre>&lt; HTTP/1.1 200 OK
+<div class="highlight-json"><div class="highlight"><pre>&lt; HTTP/1.1 200 OK
 &lt; Set-Cookie: AuthSession=YW5uYTo0QUIzOTdFQjrC4ipN-D-53hw1sJepVzcVxnriEw;
 &lt; Version=1; Path=/; HttpOnly
 &gt; ...
 &lt;
-{"ok":true}</pre>
+{&quot;ok&quot;:true}
+</pre></div>
 </div>
 <p>A <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> response code tells us all is well, a <a class="reference external" href="http://tools.ietf.org/html/rfc2109#section-4.2.2">Set-Cookie</a>
 header includes the token we can use for the next request, and the standard JSON
 response tells us again that the request was successful.</p>
 <p>Now we can use this token to make another request as the same user without
 sending the username and password again:</p>
-<div class="highlight-json"><pre>&gt; curl -vX PUT $HOST/mydatabase \
+<div class="highlight-json"><div class="highlight"><pre>&gt; curl -vX PUT $HOST/mydatabase \
        --cookie AuthSession=YW5uYTo0QUIzOTdFQjrC4ipN-D-53hw1sJepVzcVxnriEw \
-       -H "X-CouchDB-WWW-Authenticate: Cookie" \
-       -H "Content-Type:application/x-www-form-urlencoded"
-{"ok":true}</pre>
+       -H &quot;X-CouchDB-WWW-Authenticate: Cookie&quot; \
+       -H &quot;Content-Type:application/x-www-form-urlencoded&quot;
+{&quot;ok&quot;:true}
+</pre></div>
 </div>
 <p>You can keep using this token for 10 minutes by default. After 10 minutes you
 need to authenticate your user again. The token lifetime can be configured
 with the timeout (in seconds) setting in the <a class="reference internal" href="../config/auth.html#config-couch-httpd-auth"><em>couch_httpd_auth</em></a> configuration section.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../api/server/authn.html#api-auth-cookie"><em>Cookie Authentication API Reference</em></a></p>
 </div>
@@ -334,10 +339,11 @@ such design decision for future releases.</p>
 <p>Creating new user is a very trivial operation. You need just to send single
 <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">PUT</a> request with user&#8217;s data to CouchDB. Let&#8217;s create user with login
 <cite>jan</cite> and password <cite>apple</cite>:</p>
-<div class="highlight-json"><pre>curl -X PUT http://localhost:5984/_users/org.couchdb.user:jan \
-     -H "Accept: application/json" \
-     -H "Content-Type: application/json" \
-     -d '{"name": "jan", "password": "apple", "roles": [], "type": "user"}'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://localhost:5984/_users/org.couchdb.user:jan \
+     -H &quot;Accept: application/json&quot; \
+     -H &quot;Content-Type: application/json&quot; \
+     -d &#39;{&quot;name&quot;: &quot;jan&quot;, &quot;password&quot;: &quot;apple&quot;, &quot;roles&quot;: [], &quot;type&quot;: &quot;user&quot;}&#39;
+</pre></div>
 </div>
 <p>This <cite>curl</cite> command will produce next HTTP request:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="nf">PUT</span> <span class="nn">/_users/org.couchdb.user:jan</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
@@ -363,7 +369,8 @@ such design decision for future releases.</p>
 </div>
 <p>Document successfully created what also means that user <cite>jan</cite> have created too!
 Let&#8217;s check is this true:</p>
-<div class="highlight-json"><pre>curl -X POST http://localhost:5984/_session -d 'name=jan&amp;password=apple'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X POST http://localhost:5984/_session -d &#39;name=jan&amp;password=apple&#39;
+</pre></div>
 </div>
 <p>CouchDB should respond with:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;jan&quot;</span><span class="p">,</span><span class="s2">&quot;roles&quot;</span><span class="o">:</span><span class="p">[]}</span>
@@ -391,7 +398,8 @@ field and replaces it with the <em>secured hash</em>, depending on chosen
 <p>Summarizing above, we need to get document content, add <tt class="docutils literal"><span class="pre">password</span></tt> field
 with new plain text password value and store JSON result to the authentication
 database.</p>
-<div class="highlight-json"><pre>curl -X GET http://localhost:5984/_users/org.couchdb.user:jan</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X GET http://localhost:5984/_users/org.couchdb.user:jan
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
   <span class="s2">&quot;_id&quot;</span><span class="o">:</span> <span class="s2">&quot;org.couchdb.user:jan&quot;</span><span class="p">,</span>
@@ -408,24 +416,27 @@ database.</p>
 </div>
 <p>Here is our user&#8217;s document. We may strip hashes from stored document to reduce
 amount of posted data:</p>
-<div class="highlight-json"><pre>curl -X PUT http://localhost:5984/_users/org.couchdb.user:jan \
-     -H "Accept: application/json" \
-     -H "Content-Type: application/json" \
-     -H "If-Match: 1-e0ebfb84005b920488fc7a8cc5470cc0" \
-     -d '{"name":"jan", "roles":[], "type":"user", "password":"orange"}'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://localhost:5984/_users/org.couchdb.user:jan \
+     -H &quot;Accept: application/json&quot; \
+     -H &quot;Content-Type: application/json&quot; \
+     -H &quot;If-Match: 1-e0ebfb84005b920488fc7a8cc5470cc0&quot; \
+     -d &#39;{&quot;name&quot;:&quot;jan&quot;, &quot;roles&quot;:[], &quot;type&quot;:&quot;user&quot;, &quot;password&quot;:&quot;orange&quot;}&#39;
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="s2">&quot;org.couchdb.user:jan&quot;</span><span class="p">,</span><span class="s2">&quot;rev&quot;</span><span class="o">:</span><span class="s2">&quot;2-ed293d3a0ae09f0c624f10538ef33c6f&quot;</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Updated! Now let&#8217;s check that password was really changed:</p>
-<div class="highlight-json"><pre>curl -X POST http://localhost:5984/_session -d 'name=jan&amp;password=apple'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X POST http://localhost:5984/_session -d &#39;name=jan&amp;password=apple&#39;
+</pre></div>
 </div>
 <p>CouchDB should respond with:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="s2">&quot;unauthorized&quot;</span><span class="p">,</span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="s2">&quot;Name or password is incorrect.&quot;</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Looks like the password <tt class="docutils literal"><span class="pre">apple</span></tt> is wrong, what about <tt class="docutils literal"><span class="pre">orange</span></tt>?</p>
-<div class="highlight-json"><pre>curl -X POST http://localhost:5984/_session -d 'name=jan&amp;password=orange'</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X POST http://localhost:5984/_session -d &#39;name=jan&amp;password=orange&#39;
+</pre></div>
 </div>
 <p>CouchDB should respond with:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;jan&quot;</span><span class="p">,</span><span class="s2">&quot;roles&quot;</span><span class="o">:</span><span class="p">[]}</span>
@@ -443,8 +454,9 @@ on your application layer like Futon does.</p>
 </div>
 <div class="section" id="users-public-information">
 <h3>Users Public Information<a class="headerlink" href="#users-public-information" title="Permalink to this headline">¶</a></h3>
-<p class="versionadded">
-<span class="versionmodified">New in version 1.4.</span></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.4.</span></p>
+</div>
 <p>Sometimes users <em>wants</em> to share some information with the World. For instance,
 their contact email to let other users get in touch with them. To solve this
 problem, but still keep sensitive and private information secured there is
@@ -452,7 +464,8 @@ special <a class="reference internal" href="../config/index.html#config"><em>con
 separated list of users document fields that will be publicity available.</p>
 <p>Normally, if you request any user&#8217;s document and you&#8217;re not administrator or
 this document owner, CouchDB will respond with <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a>:</p>
-<div class="highlight-json"><pre>curl http://localhost:5984/_users/org.couchdb.user:robert</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl http://localhost:5984/_users/org.couchdb.user:robert
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="s2">&quot;not_found&quot;</span><span class="p">,</span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="s2">&quot;missing&quot;</span><span class="p">}</span>
 </pre></div>
@@ -463,13 +476,15 @@ security reasons.</p>
 option. Remember, that this action requires administrator&#8217;s privileges and
 the next command will ask for password for user <cite>admin</cite>, assuming that they are
 the server administrator:</p>
-<div class="highlight-json"><pre>curl -X PUT http://localhost:5984/_config/couch_http_auth/public_fields \
-     -H "Content-Type: application/json" \
-     -d '"name"' \
-     -u admin</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl -X PUT http://localhost:5984/_config/couch_http_auth/public_fields \
+     -H &quot;Content-Type: application/json&quot; \
+     -d &#39;&quot;name&quot;&#39; \
+     -u admin
+</pre></div>
 </div>
 <p>What have changed? Let&#8217;s check Robert&#8217;s document once again:</p>
-<div class="highlight-json"><pre>curl http://localhost:5984/_users/org.couchdb.user:robert</pre>
+<div class="highlight-json"><div class="highlight"><pre>curl http://localhost:5984/_users/org.couchdb.user:robert
+</pre></div>
 </div>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="o">:</span><span class="s2">&quot;org.couchdb.user:robert&quot;</span><span class="p">,</span><span class="s2">&quot;_rev&quot;</span><span class="o">:</span><span class="s2">&quot;6-869e2d3cbd8b081f9419f190438ecbe7&quot;</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;robert&quot;</span><span class="p">}</span>
 </pre></div>
@@ -643,7 +658,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

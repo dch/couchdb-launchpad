@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -537,14 +535,15 @@ and processed.</p>
 <p>The communication protocol for <cite>list</cite> functions is a bit complex so let&#8217;s use
 an example for illustration.</p>
 <p>Let&#8217;s assume that we have view a function that emits <cite>id-rev</cite> pairs:</p>
-<div class="highlight-json"><pre>function(doc) {
+<div class="highlight-json"><div class="highlight"><pre>function(doc) {
   emit(doc._id, doc._rev);
-}</pre>
+}
+</pre></div>
 </div>
 <p>And we&#8217;d like to emulate <tt class="docutils literal"><span class="pre">_all_docs</span></tt> JSON response with list function. Our
 <em>first</em> version of the list functions looks like this:</p>
-<div class="highlight-json"><pre>function(head, req){
-  start({'headers': {'Content-Type': 'application/json'}});
+<div class="highlight-json"><div class="highlight"><pre>function(head, req){
+  start({&#39;headers&#39;: {&#39;Content-Type&#39;: &#39;application/json&#39;}});
   var resp = head;
   var rows = [];
   while(row=getRow()){
@@ -552,14 +551,16 @@ an example for illustration.</p>
   }
   resp.rows = rows;
   return toJSON(resp);
-}</pre>
+}
+</pre></div>
 </div>
 <p>The whole communication session during list function execution could be divided
 on three parts:</p>
 <ol class="arabic">
 <li><p class="first">Initialization</p>
 <p>The first returned object from list function is an array of next structure:</p>
-<div class="highlight-json"><pre>["start", &lt;chunks&gt;, &lt;headers&gt;]</pre>
+<div class="highlight-json"><div class="highlight"><pre>[&quot;start&quot;, &lt;chunks&gt;, &lt;headers&gt;]
+</pre></div>
 </div>
 <p>Where <tt class="docutils literal"><span class="pre">&lt;chunks&gt;</span></tt> is an array of text chunks that will be sent to client
 and <tt class="docutils literal"><span class="pre">&lt;headers&gt;</span></tt> is an object with response HTTP headers.</p>
@@ -629,32 +630,34 @@ message from the Query Server. That&#8217;s ok when there are only a few rows in
 view result, but it&#8217;s not acceptable for millions documents and millions view
 rows</p>
 <p>Let&#8217;s fix our list function and see the changes in communication:</p>
-<div class="highlight-json"><pre>function(head, req){
-  start({'headers': {'Content-Type': 'application/json'}});
-  send('{');
-  send('"total_rows":' + toJSON(head.total_rows) + ',');
-  send('"offset":' + toJSON(head.offset) + ',');
-  send('"rows":[');
+<div class="highlight-json"><div class="highlight"><pre>function(head, req){
+  start({&#39;headers&#39;: {&#39;Content-Type&#39;: &#39;application/json&#39;}});
+  send(&#39;{&#39;);
+  send(&#39;&quot;total_rows&quot;:&#39; + toJSON(head.total_rows) + &#39;,&#39;);
+  send(&#39;&quot;offset&quot;:&#39; + toJSON(head.offset) + &#39;,&#39;);
+  send(&#39;&quot;rows&quot;:[&#39;);
   if (row=getRow()){
     send(toJSON(row));
   }
   while(row=getRow()){
-    send(',' + toJSON(row));
+    send(&#39;,&#39; + toJSON(row));
   }
-  send(']');
-  return '}';
-}</pre>
+  send(&#39;]&#39;);
+  return &#39;}&#39;;
+}
+</pre></div>
 </div>
 <p>&#8220;Wait, what?&#8221; - you&#8217;d like to ask. Yes, we&#8217;d build JSON response manually by
 string chunks, but let&#8217;s take a look on logs:</p>
-<div class="highlight-json"><pre>[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: ["start",["{","\"total_rows\":2,","\"offset\":0,","\"rows\":["],{"headers":{"Content-Type":"application/json"}}]
+<div class="highlight-json"><div class="highlight"><pre>[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: [&quot;start&quot;,[&quot;{&quot;,&quot;\&quot;total_rows\&quot;:2,&quot;,&quot;\&quot;offset\&quot;:0,&quot;,&quot;\&quot;rows\&quot;:[&quot;],{&quot;headers&quot;:{&quot;Content-Type&quot;:&quot;application/json&quot;}}]
 [Wed, 24 Jul 2013 05:45:30 GMT] [info] [&lt;0.18963.1&gt;] 127.0.0.1 - - GET /blog/_design/post/_list/index/all_docs 200
-[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Input  :: ["list_row",{"id":"0cb42c267fe32d4b56b3500bc503e030","key":"0cb42c267fe32d4b56b3500bc503e030","value":"1-967a00dff5e02add41819138abb3284d"}]
-[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: ["chunks",["{\"id\":\"0cb42c267fe32d4b56b3500bc503e030\",\"key\":\"0cb42c267fe32d4b56b3500bc503e030\",\"value\":\"1-967a00dff5e02add41819138abb3284d\"}"]]
-[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Input  :: ["list_row",{"id":"431926a69504bde41851eb3c18a27b1f","key":"431926a69504bde41851eb3c18a27b1f","value":"1-967a00dff5e02add41819138abb3284d"}]
-[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: ["chunks",[",{\"id\":\"431926a69504bde41851eb3c18a27b1f\",\"key\":\"431926a69504bde41851eb3c18a27b1f\",\"value\":\"1-967a00dff5e02add41819138abb3284d\"}"]]
-[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Input  :: ["list_end"]
-[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: ["end",["]","}"]]</pre>
+[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Input  :: [&quot;list_row&quot;,{&quot;id&quot;:&quot;0cb42c267fe32d4b56b3500bc503e030&quot;,&quot;key&quot;:&quot;0cb42c267fe32d4b56b3500bc503e030&quot;,&quot;value&quot;:&quot;1-967a00dff5e02add41819138abb3284d&quot;}]
+[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: [&quot;chunks&quot;,[&quot;{\&quot;id\&quot;:\&quot;0cb42c267fe32d4b56b3500bc503e030\&quot;,\&quot;key\&quot;:\&quot;0cb42c267fe32d4b56b3500bc503e030\&quot;,\&quot;value\&quot;:\&quot;1-967a00dff5e02add41819138abb3284d\&quot;}&quot;]]
+[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Input  :: [&quot;list_row&quot;,{&quot;id&quot;:&quot;431926a69504bde41851eb3c18a27b1f&quot;,&quot;key&quot;:&quot;431926a69504bde41851eb3c18a27b1f&quot;,&quot;value&quot;:&quot;1-967a00dff5e02add41819138abb3284d&quot;}]
+[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: [&quot;chunks&quot;,[&quot;,{\&quot;id\&quot;:\&quot;431926a69504bde41851eb3c18a27b1f\&quot;,\&quot;key\&quot;:\&quot;431926a69504bde41851eb3c18a27b1f\&quot;,\&quot;value\&quot;:\&quot;1-967a00dff5e02add41819138abb3284d\&quot;}&quot;]]
+[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Input  :: [&quot;list_end&quot;]
+[Wed, 24 Jul 2013 05:45:30 GMT] [debug] [&lt;0.19191.1&gt;] OS Process #Port&lt;0.4444&gt; Output :: [&quot;end&quot;,[&quot;]&quot;,&quot;}&quot;]]
+</pre></div>
 </div>
 <p>Note, that now the Query Server sends response by lightweight chunks and if
 our communication process was extremely slow, the client will see how response
@@ -924,8 +927,9 @@ result, like they have for our previous list function.</p>
 </tr>
 </tbody>
 </table>
-<p class="versionadded">
-<span class="versionmodified">New in version 1.2.</span></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.2.</span></p>
+</div>
 <p>Executes <a class="reference internal" href="../couchapp/ddocs.html#viewfilter"><em>view function</em></a> in place of the filter.</p>
 <p>Acts in the same way as <a class="reference internal" href="#qs-ddoc-filters"><em>filters</em></a> command.</p>
 </div>
@@ -1065,7 +1069,8 @@ field, log, on a separate line:</p>
 </pre></div>
 </div>
 <p>CouchDB responds nothing, but writes received message into log file:</p>
-<div class="highlight-json"><pre>[Sun, 13 Feb 2009 23:31:30 GMT] [info] [&lt;0.72.0&gt;] Query Server Log Message: some message</pre>
+<div class="highlight-json"><div class="highlight"><pre>[Sun, 13 Feb 2009 23:31:30 GMT] [info] [&lt;0.72.0&gt;] Query Server Log Message: some message
+</pre></div>
 </div>
 <p>These messages are only logged at <a class="reference internal" href="../config/logging.html#log/level" title="level"><tt class="xref config config-option docutils literal"><span class="pre">info</span> <span class="pre">level</span></tt></a>.</p>
 </div>
@@ -1236,7 +1241,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

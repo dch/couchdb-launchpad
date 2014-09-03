@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -95,33 +93,39 @@ Old releases are available at <a class="reference external" href="http://archive
 <div class="section" id="installation-with-homebrew">
 <span id="install-mac-homebrew"></span><h2>2.3.2. Installation with HomeBrew<a class="headerlink" href="#installation-with-homebrew" title="Permalink to this headline">¶</a></h2>
 <p>You can install the build tools by running:</p>
-<div class="highlight-json"><pre>open /Applications/Installers/Xcode\ Tools/XcodeTools.mpkg</pre>
+<div class="highlight-json"><div class="highlight"><pre>open /Applications/Installers/Xcode\ Tools/XcodeTools.mpkg
+</pre></div>
 </div>
 <p>You will need <a class="reference external" href="http://mxcl.github.com/homebrew/">Homebrew</a> installed to use the <cite>brew</cite> command. To install the
 other <a class="reference internal" href="unix.html#install-unix-dependencies"><em>dependencies</em></a> run next commands:</p>
-<div class="highlight-json"><pre>brew install autoconf
+<div class="highlight-json"><div class="highlight"><pre>brew install autoconf
 brew install autoconf-archive
 brew install automake
 brew install libtool
 brew install erlang
 brew install icu4c
 brew install spidermonkey
-brew install curl</pre>
+brew install curl
+</pre></div>
 </div>
 <p>You may want to link ICU so that CouchDB can find the header files
 automatically:</p>
-<div class="highlight-json"><pre>brew link icu4c</pre>
+<div class="highlight-json"><div class="highlight"><pre>brew link icu4c
+</pre></div>
 </div>
 <p>The same is true for recent versions of Erlang:</p>
-<div class="highlight-json"><pre>brew link erlang</pre>
+<div class="highlight-json"><div class="highlight"><pre>brew link erlang
+</pre></div>
 </div>
 <p>Now it&#8217;s time to brew CouchDB:</p>
-<div class="highlight-json"><pre>brew install couchdb</pre>
+<div class="highlight-json"><div class="highlight"><pre>brew install couchdb
+</pre></div>
 </div>
 <p>The above Erlang install will use the bottled (pre-compiled) version if you are:
 using <cite>/usr/local</cite> for <cite>homebrew</cite>, and on 10.6 or 10.7. If you&#8217;re not on one of
 these, <cite>homebrew</cite> will build from source, so consider doing:</p>
-<div class="highlight-json"><pre>brew install erlang --no-docs</pre>
+<div class="highlight-json"><div class="highlight"><pre>brew install erlang --no-docs
+</pre></div>
 </div>
 <p>to trim down compilation time.</p>
 <p>If you&#8217;re hacking on CouchDB, and we hope you will, you may try the current
@@ -131,7 +135,8 @@ This will allow quick installation of the future release branch when it becomes
 active. If you&#8217;re not sure if you need this, then you probably don&#8217;t.
 In both cases we assume you are comfortable identifying bugs, and handling any
 potential upgrades between commits to the codebase.</p>
-<div class="highlight-json"><pre>brew install [--devel|--head] couchdb</pre>
+<div class="highlight-json"><div class="highlight"><pre>brew install [--devel|--head] couchdb
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -157,24 +162,30 @@ fault or a bus error, you will need to install your own version of OpenSSL.</p>
 <h3>Running as a Daemon<a class="headerlink" href="#running-as-a-daemon" title="Permalink to this headline">¶</a></h3>
 <p>You can use the <cite>launchctl</cite> command to control the CouchDB daemon.</p>
 <p>You can load the configuration by running:</p>
-<div class="highlight-json"><pre>sudo launchctl load \
-     /usr/local/Library/LaunchDaemons/org.apache.couchdb.plist</pre>
+<div class="highlight-json"><div class="highlight"><pre>sudo launchctl load \
+     /usr/local/Library/LaunchDaemons/org.apache.couchdb.plist
+</pre></div>
 </div>
 <p>You can stop the CouchDB daemon by running:</p>
-<div class="highlight-json"><pre>sudo launchctl unload \
-     /usr/local/Library/LaunchDaemons/org.apache.couchdb.plist</pre>
+<div class="highlight-json"><div class="highlight"><pre>sudo launchctl unload \
+     /usr/local/Library/LaunchDaemons/org.apache.couchdb.plist
+</pre></div>
 </div>
 <p>You can start CouchDB by running:</p>
-<div class="highlight-json"><pre>sudo launchctl start org.apache.couchdb</pre>
+<div class="highlight-json"><div class="highlight"><pre>sudo launchctl start org.apache.couchdb
+</pre></div>
 </div>
 <p>You can restart CouchDB by running:</p>
-<div class="highlight-json"><pre>sudo launchctl stop org.apache.couchdb</pre>
+<div class="highlight-json"><div class="highlight"><pre>sudo launchctl stop org.apache.couchdb
+</pre></div>
 </div>
 <p>You can edit the launchd configuration by running:</p>
-<div class="highlight-json"><pre>open /usr/local/Library/LaunchDaemons/org.apache.couchdb.plist</pre>
+<div class="highlight-json"><div class="highlight"><pre>open /usr/local/Library/LaunchDaemons/org.apache.couchdb.plist
+</pre></div>
 </div>
 <p>To start the daemon on boot, copy the configuration file to:</p>
-<div class="highlight-json"><pre>/Library/LaunchDaemons</pre>
+<div class="highlight-json"><div class="highlight"><pre>/Library/LaunchDaemons
+</pre></div>
 </div>
 <p>Consult your system documentation for more information.</p>
 </div>
@@ -187,24 +198,28 @@ fault or a bus error, you will need to install your own version of OpenSSL.</p>
 <li><tt class="docutils literal"><span class="pre">couchdb-devel</span></tt> - updated every few weeks with the latest from the master
 branch</li>
 </ul>
-<div class="highlight-json"><pre>$ sudo port install couchdb</pre>
+<div class="highlight-json"><div class="highlight"><pre>$ sudo port install couchdb
+</pre></div>
 </div>
 <p>should be enough. MacPorts takes care of installing all necessary dependencies.
 If you have already installed some of the CouchDB dependencies via MacPorts,
 run this command to check and upgrade any outdated ones, after installing
 CouchDB:</p>
-<div class="highlight-json"><pre>$ sudo port upgrade couchdb</pre>
+<div class="highlight-json"><div class="highlight"><pre>$ sudo port upgrade couchdb
+</pre></div>
 </div>
 <p>This will upgrade dependencies recursively, if there are more recent versions
 available. If you want to run CouchDB as a service controlled by the OS, load
 the launchd configuration which comes with the project, with this command:</p>
-<div class="highlight-json"><pre>$ sudo port load couchdb</pre>
+<div class="highlight-json"><div class="highlight"><pre>$ sudo port load couchdb
+</pre></div>
 </div>
 <p>and it should be up and accessible via Futon at <a class="reference external" href="http://127.0.0.1:5984/_utils">http://127.0.0.1:5984/_utils</a>.
 It should also be restarted automatically after reboot.</p>
 <p>Updating the ports collection. The collection of port files has to be updated
 to reflect the latest versions of available packages. In order to do that run:</p>
-<div class="highlight-json"><pre>$ sudo port selfupdate</pre>
+<div class="highlight-json"><div class="highlight"><pre>$ sudo port selfupdate
+</pre></div>
 </div>
 <p>to update the port tree, and then install just as explained.</p>
 </div>
@@ -357,7 +372,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

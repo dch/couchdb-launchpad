@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -111,8 +109,9 @@ code in the browser, using the context of the remote user.</p>
 <h2>15.6.3. Work-Around<a class="headerlink" href="#work-around" title="Permalink to this headline">¶</a></h2>
 <p>Disable the Futon user interface completely, by adapting <cite>local.ini</cite> and
 restarting CouchDB:</p>
-<div class="highlight-json"><pre>[httpd_global_handlers]
-_utils = {couch_httpd_misc_handlers, handle_welcome_req, &lt;&lt;"Forbidden"&gt;&gt;}</pre>
+<div class="highlight-json"><div class="highlight"><pre>[httpd_global_handlers]
+_utils = {couch_httpd_misc_handlers, handle_welcome_req, &lt;&lt;&quot;Forbidden&quot;&gt;&gt;}
+</pre></div>
 </div>
 <p>Or by removing the UI test suite components:</p>
 <ul class="simple">
@@ -273,7 +272,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

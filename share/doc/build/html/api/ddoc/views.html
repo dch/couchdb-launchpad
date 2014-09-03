@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -221,9 +219,10 @@ returned contains only the document ID and revision</li>
 </div>
 </dd></dl>
 
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 1.6.0: </span>added <tt class="docutils literal"><span class="pre">attachments</span></tt> and <tt class="docutils literal"><span class="pre">att_encoding_info</span></tt>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.6.0: </span>added <tt class="docutils literal"><span class="pre">attachments</span></tt> and <tt class="docutils literal"><span class="pre">att_encoding_info</span></tt>
 parameters</p>
+</div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Using the <tt class="docutils literal"><span class="pre">attachments</span></tt> parameter to include attachments in view results
@@ -641,8 +640,9 @@ content. The basic order of output is as follows:</p>
 <p>The sorting direction is applied before the filtering applied using the
 <tt class="docutils literal"><span class="pre">startkey</span></tt> and <tt class="docutils literal"><span class="pre">endkey</span></tt> query arguments. For example the following
 query:</p>
-<div class="highlight-http"><pre>GET http://couchdb:5984/recipes/_design/recipes/_view/by_ingredient?startkey=%22carrots%22&amp;endkey=%22egg%22
-Accept: application/json</pre>
+<div class="highlight-http"><div class="highlight"><pre>GET http://couchdb:5984/recipes/_design/recipes/_view/by_ingredient?startkey=%22carrots%22&amp;endkey=%22egg%22
+Accept: application/json
+</pre></div>
 </div>
 <p>will operate correctly when listing all the matching entries between
 <tt class="docutils literal"><span class="pre">carrots</span></tt> and <tt class="docutils literal"><span class="pre">egg</span></tt>. If the order of output is reversed with the
@@ -679,7 +679,7 @@ not important.</p>
 <p>To use raw collation add <tt class="docutils literal"><span class="pre">&quot;collation&quot;:</span> <span class="pre">&quot;raw&quot;</span></tt> key-value pair to the design
 documents <tt class="docutils literal"><span class="pre">options</span></tt> object at the root level. After that, views will be
 regenerated and new order applied.</p>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../../couchapp/views/collation.html#views-collation"><em>Views Collation</em></a></p>
 </div>
@@ -870,10 +870,10 @@ specific language governing permissions and limitations under the License.
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="common.html"
-                        title="previous chapter">10.5.1. <tt class="docutils literal docutils literal docutils literal"><span class="pre">/db/_design/design-doc</span></tt></a></p>
+                        title="previous chapter">10.5.1. <tt class="docutils literal"><span class="pre">/db/_design/design-doc</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="render.html"
-                        title="next chapter">10.5.5. <tt class="docutils literal docutils literal docutils literal"><span class="pre">/db/_design/design-doc/_show/show-name</span></tt></a></p><!--
+                        title="next chapter">10.5.5. <tt class="docutils literal"><span class="pre">/db/_design/design-doc/_show/show-name</span></tt></a></p><!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
@@ -964,7 +964,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

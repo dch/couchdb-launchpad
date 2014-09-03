@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -109,7 +107,8 @@ associated orders. The values 0 and 1 for the sorting token are arbitrary.</p>
 </pre></div>
 </div>
 <p>To list a specific customer with <tt class="docutils literal"><span class="pre">_id</span></tt> XYZ, and all of that customer&#8217;s orders, limit the startkey and endkey ranges to cover only documents for that customer&#8217;s <tt class="docutils literal"><span class="pre">_id</span></tt>:</p>
-<div class="highlight-json"><pre>startkey=["XYZ"]&amp;endkey=["XYZ", {}]</pre>
+<div class="highlight-json"><div class="highlight"><pre>startkey=[&quot;XYZ&quot;]&amp;endkey=[&quot;XYZ&quot;, {}]
+</pre></div>
 </div>
 <p>It is not recommended to emit the document itself in the view. Instead, to include the bodies of the documents when requesting the view, request the view with <tt class="docutils literal"><span class="pre">?include_docs=true</span></tt>.</p>
 </div>
@@ -138,10 +137,12 @@ client side JavaScript to make date sorting easy in the browser.</p>
 it is better to use a high value unicode character, than to use a <tt class="docutils literal"><span class="pre">'ZZZZ'</span></tt>
 suffix.</p>
 <p>That is, rather than:</p>
-<div class="highlight-json"><pre>startkey="abc"&amp;endkey="abcZZZZZZZZZ"</pre>
+<div class="highlight-json"><div class="highlight"><pre>startkey=&quot;abc&quot;&amp;endkey=&quot;abcZZZZZZZZZ&quot;
+</pre></div>
 </div>
 <p>You should use:</p>
-<div class="highlight-json"><pre>startkey="abc"&amp;endkey="abc\ufff0"</pre>
+<div class="highlight-json"><div class="highlight"><pre>startkey=&quot;abc&quot;&amp;endkey=&quot;abc\ufff0&quot;
+</pre></div>
 </div>
 </div>
 <div class="section" id="collation-specification">
@@ -230,19 +231,23 @@ lowercase before uppercase, so <tt class="docutils literal"><span class="pre">a<
 </pre></div>
 </div>
 <p>This shows the collation sequence to be:</p>
-<div class="highlight-json"><pre>` ^ _ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ &amp; # % + &lt; = &gt; | ~ $ 0 1 2 3 4 5 6 7 8 9
-a A b B c C d D e E f F g G h H i I j J k K l L m M n N o O p P q Q r R s S t T u U v V w W x X y Y z Z</pre>
+<div class="highlight-json"><div class="highlight"><pre>` ^ _ - , ; : ! ? . &#39; &quot; ( ) [ ] { } @ * / \ &amp; # % + &lt; = &gt; | ~ $ 0 1 2 3 4 5 6 7 8 9
+a A b B c C d D e E f F g G h H i I j J k K l L m M n N o O p P q Q r R s S t T u U v V w W x X y Y z Z
+</pre></div>
 </div>
 <div class="section" id="key-ranges">
 <h3>Key ranges<a class="headerlink" href="#key-ranges" title="Permalink to this headline">¶</a></h3>
 <p>Take special care when querying key ranges. For example: the query:</p>
-<div class="highlight-json"><pre>startkey="Abc"&amp;endkey="AbcZZZZ"</pre>
+<div class="highlight-json"><div class="highlight"><pre>startkey=&quot;Abc&quot;&amp;endkey=&quot;AbcZZZZ&quot;
+</pre></div>
 </div>
 <p>will match &#8220;ABC&#8221; and &#8220;abc1&#8221;, but not &#8220;abc&#8221;. This is because UCA sorts as:</p>
-<div class="highlight-json"><pre>abc &lt; Abc &lt; ABC &lt; abc1 &lt; AbcZZZZZ</pre>
+<div class="highlight-json"><div class="highlight"><pre>abc &lt; Abc &lt; ABC &lt; abc1 &lt; AbcZZZZZ
+</pre></div>
 </div>
 <p>For most applications, to avoid problems you should lowercase the <cite>startkey</cite>:</p>
-<div class="highlight-json"><pre>startkey="abc"&amp;endkey="abcZZZZZZZZ"</pre>
+<div class="highlight-json"><div class="highlight"><pre>startkey=&quot;abc&quot;&amp;endkey=&quot;abcZZZZZZZZ&quot;
+</pre></div>
 </div>
 <p>will match all keys starting with <tt class="docutils literal"><span class="pre">[aA][bB][cC]</span></tt></p>
 </div>
@@ -257,11 +262,13 @@ with &#8220;foo&#8221; in the first element, such as <tt class="docutils literal
 <h2>_all_docs<a class="headerlink" href="#all-docs" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../../api/database/bulk-api.html#api-db-all-docs"><em>_all_docs</em></a>  view is a special case because it uses
 ASCII collation for doc ids, not UCA:</p>
-<div class="highlight-json"><pre>startkey="_design/"&amp;endkey="_design/ZZZZZZZZ"</pre>
+<div class="highlight-json"><div class="highlight"><pre>startkey=&quot;_design/&quot;&amp;endkey=&quot;_design/ZZZZZZZZ&quot;
+</pre></div>
 </div>
 <p>will not find <tt class="docutils literal"><span class="pre">_design/abc</span></tt> because <cite>&#8216;Z&#8217;</cite> comes before <cite>&#8216;a&#8217;</cite> in the ASCII
 sequence. A better solution is:</p>
-<div class="highlight-json"><pre>startkey="_design/"&amp;endkey="_design0"</pre>
+<div class="highlight-json"><div class="highlight"><pre>startkey=&quot;_design/&quot;&amp;endkey=&quot;_design0&quot;
+</pre></div>
 </div>
 </div>
 <div class="section" id="raw-collation">
@@ -437,7 +444,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

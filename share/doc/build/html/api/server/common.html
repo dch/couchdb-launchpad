@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -335,8 +333,9 @@ type set of response object fields might be different.</p>
 </div>
 <div class="section" id="db-updates">
 <span id="api-server-db-updates"></span><h1>10.2.4. <tt class="docutils literal"><span class="pre">/_db_updates</span></tt><a class="headerlink" href="#db-updates" title="Permalink to this headline">¶</a></h1>
-<p class="versionadded">
-<span class="versionmodified">New in version 1.4.</span></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.4.</span></p>
+</div>
 <dl class="get">
 <dt id="get--_db_updates">
 <tt class="descname">GET </tt><tt class="descname">/_db_updates</tt><a class="headerlink" href="#get--_db_updates" title="Permalink to this definition">¶</a></dt>
@@ -488,7 +487,8 @@ use the <tt class="docutils literal"><span class="pre">bytes</span></tt> argumen
 returned, and <tt class="docutils literal"><span class="pre">offset</span></tt>, which specifies where the reading of the log
 should start, counted back from the end. For example, if you use the
 following request:</p>
-<div class="highlight-http"><pre>GET /_log?bytes=500&amp;offset=2000</pre>
+<div class="highlight-http"><div class="highlight"><pre>GET /_log?bytes=500&amp;offset=2000
+</pre></div>
 </div>
 <p>Reading of the log will start at 2000 bytes from the end of the log, and
 500 bytes will be shown.</p>
@@ -697,14 +697,15 @@ on the same host, or a different host)</li>
 <p>For example, to request replication between a database local to the
 CouchDB instance to which you send the request, and a remote database
 you might use the following request:</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/_replicate
+<div class="highlight-http"><div class="highlight"><pre>POST http://couchdb:5984/_replicate
 Content-Type: application/json
 Accept: application/json
 
 {
-   "source" : "recipes",
-   "target" : "http://coucdb-remote:5984/recipes",
-}</pre>
+   &quot;source&quot; : &quot;recipes&quot;,
+   &quot;target&quot; : &quot;http://coucdb-remote:5984/recipes&quot;,
+}
+</pre></div>
 </div>
 <p>In all cases, the requested databases in the <tt class="docutils literal"><span class="pre">source</span></tt> and <tt class="docutils literal"><span class="pre">target</span></tt>
 specification must exist. If they do not, an error will be returned
@@ -717,15 +718,16 @@ within the JSON object:</p>
 </div>
 <p>You can create the target database (providing your user credentials
 allow it) by adding the <tt class="docutils literal"><span class="pre">create_target</span></tt> field to the request object:</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/_replicate
+<div class="highlight-http"><div class="highlight"><pre>POST http://couchdb:5984/_replicate
 Content-Type: application/json
 Accept: application/json
 
 {
-   "create_target" : true
-   "source" : "recipes",
-   "target" : "http://couchdb-remote:5984/recipes",
-}</pre>
+   &quot;create_target&quot; : true
+   &quot;source&quot; : &quot;recipes&quot;,
+   &quot;target&quot; : &quot;http://couchdb-remote:5984/recipes&quot;,
+}
+</pre></div>
 </div>
 <p>The <tt class="docutils literal"><span class="pre">create_target</span></tt> field is not destructive. If the database already
 exists, the replication proceeds as normal.</p>
@@ -737,14 +739,15 @@ be synchronized. By default, the replication process occurs one time and
 synchronizes the two databases together. For example, you can request a
 single synchronization between two databases by supplying the <tt class="docutils literal"><span class="pre">source</span></tt>
 and <tt class="docutils literal"><span class="pre">target</span></tt> fields within the request JSON content.</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/_replicate
+<div class="highlight-http"><div class="highlight"><pre>POST http://couchdb:5984/_replicate
 Accept: application/json
 Content-Type: application/json
 
 {
-   "source" : "recipes",
-   "target" : "recipes-snapshot",
-}</pre>
+   &quot;source&quot; : &quot;recipes&quot;,
+   &quot;target&quot; : &quot;recipes-snapshot&quot;,
+}
+</pre></div>
 </div>
 <p>In the above example, the databases <tt class="docutils literal"><span class="pre">recipes</span></tt> and <tt class="docutils literal"><span class="pre">recipes-snapshot</span></tt>
 will be synchronized. These databases are local to the CouchDB instance
@@ -783,15 +786,16 @@ database permanently replicated from the source, you must set the
 <p>With continuous replication changes in the source database are
 replicated to the target database in perpetuity until you specifically
 request that replication ceases.</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/_replicate
+<div class="highlight-http"><div class="highlight"><pre>POST http://couchdb:5984/_replicate
 Accept: application/json
 Content-Type: application/json
 
 {
-   "continuous" : true
-   "source" : "recipes",
-   "target" : "http://couchdb-remote:5984/recipes",
-}</pre>
+   &quot;continuous&quot; : true
+   &quot;source&quot; : &quot;recipes&quot;,
+   &quot;target&quot; : &quot;http://couchdb-remote:5984/recipes&quot;,
+}
+</pre></div>
 </div>
 <p>Changes will be replicated between the two databases as long as a
 network connection is available between the two instances.</p>
@@ -812,29 +816,31 @@ cancellation request to be honoured. For example, if you requested
 continuous replication, the cancellation request must also contain the
 <tt class="docutils literal"><span class="pre">continuous</span></tt> field.</p>
 <p>For example, the replication request:</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/_replicate
+<div class="highlight-http"><div class="highlight"><pre>POST http://couchdb:5984/_replicate
 Content-Type: application/json
 Accept: application/json
 
 {
-   "source" : "recipes",
-   "target" : "http://couchdb-remote:5984/recipes",
-   "create_target" : true,
-   "continuous" : true
-}</pre>
+   &quot;source&quot; : &quot;recipes&quot;,
+   &quot;target&quot; : &quot;http://couchdb-remote:5984/recipes&quot;,
+   &quot;create_target&quot; : true,
+   &quot;continuous&quot; : true
+}
+</pre></div>
 </div>
 <p>Must be canceled using the request:</p>
-<div class="highlight-http"><pre>POST http://couchdb:5984/_replicate
+<div class="highlight-http"><div class="highlight"><pre>POST http://couchdb:5984/_replicate
 Accept: application/json
 Content-Type: application/json
 
 {
-    "cancel" : true,
-    "continuous" : true
-    "create_target" : true,
-    "source" : "recipes",
-    "target" : "http://couchdb-remote:5984/recipes",
-}</pre>
+    &quot;cancel&quot; : true,
+    &quot;continuous&quot; : true
+    &quot;create_target&quot; : true,
+    &quot;source&quot; : &quot;recipes&quot;,
+    &quot;target&quot; : &quot;http://couchdb-remote:5984/recipes&quot;,
+}
+</pre></div>
 </div>
 <p>Requesting cancellation of a replication that does not exist results in
 a 404 error.</p>
@@ -1179,7 +1185,8 @@ defined, but the descriptions below provide</p>
 <p>You can also access individual statistics by quoting the statistics
 sections and statistic ID as part of the URL path. For example, to get
 the <tt class="docutils literal"><span class="pre">request_time</span></tt> statistics, you can use:</p>
-<div class="highlight-http"><pre>GET /_stats/couchdb/request_time</pre>
+<div class="highlight-http"><div class="highlight"><pre>GET /_stats/couchdb/request_time
+</pre></div>
 </div>
 <p>This returns an entire statistics object, as with the full request, but
 containing only the request individual statistic. Hence, the returned
@@ -1252,8 +1259,9 @@ structure is as follows:</p>
 </div>
 <div class="section" id="uuids">
 <span id="api-server-uuids"></span><h1>10.2.10. <tt class="docutils literal"><span class="pre">/_uuids</span></tt><a class="headerlink" href="#uuids" title="Permalink to this headline">¶</a></h1>
-<p class="versionchanged">
-<span class="versionmodified">Changed in version 1.5.1.</span></p>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.5.1.</span></p>
+</div>
 <dl class="get">
 <dt id="get--_uuids">
 <tt class="descname">GET </tt><tt class="descname">/_uuids</tt><a class="headerlink" href="#get--_uuids" title="Permalink to this definition">¶</a></dt>
@@ -1337,11 +1345,12 @@ UUIDs.</p>
 <p>The UUID type may be changed at any time through the
 <a class="reference internal" href="configuration.html#api-config-section-key"><em>Configuration API</em></a>. For example, the UUID type
 could be changed to <tt class="docutils literal"><span class="pre">random</span></tt> by sending this HTTP request:</p>
-<div class="highlight-http"><pre>PUT http://couchdb:5984/_config/uuids/algorithm
+<div class="highlight-http"><div class="highlight"><pre>PUT http://couchdb:5984/_config/uuids/algorithm
 Content-Type: application/json
 Accept: */*
 
-"random"</pre>
+&quot;random&quot;
+</pre></div>
 </div>
 <p>You can verify the change by obtaining a list of UUIDs:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
@@ -1547,7 +1556,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

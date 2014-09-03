@@ -1,4 +1,3 @@
-
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,7 +12,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +29,7 @@ specific language governing permissions and limitations under the License.
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -80,8 +78,9 @@ specific language governing permissions and limitations under the License.
 <dl class="section">
 <dt id="query_servers">
 <tt class="descname">[query_servers]</tt><a class="headerlink" href="#query_servers" title="Permalink to this definition">¶</a></dt>
-<dd><p class="versionchanged">
-<span class="versionmodified">Changed in version 1.2:: </span>Added CoffeeScript query server</p>
+<dd><div class="versionchanged">
+<p><span class="versionmodified">Changed in version 1.2:: </span>Added CoffeeScript query server</p>
+</div>
 <p>CouchDB delegates computation of <a class="reference internal" href="../couchapp/ddocs.html#ddocs"><em>design documents</em></a> functions to
 external query servers. The external query server is a special OS process which
 communicates with CouchDB over standard input/output using a very simple
@@ -115,7 +114,7 @@ running via <a class="reference external" href="https://developer.mozilla.org/en
 <span class="na">coffeescript</span> <span class="o">=</span> <span class="s">/usr/bin/couchjs /usr/share/couchdb/server/main-coffee.js</span>
 </pre></div>
 </div>
-<div class="admonition-see-also admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#config-native-query-servers"><em>Native Erlang Query Server</em></a> that allows
 to process Erlang <cite>ddocs</cite> and runs within CouchDB bypassing stdio
@@ -361,7 +360,7 @@ specific language governing permissions and limitations under the License.
     </div>
     <div class="footer">
         &copy; Copyright 2014, The Apache Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
