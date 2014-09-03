@@ -1,3 +1,9 @@
+apache-couchdb (1.6.1-0ubuntu2) trusty; urgency=low
+
+  * package for trusty
+
+ -- Dave Cottlehuber <dch@apache.org>  Wed, 03 Sep 2014 21:18:46 +0000
+
 apache-couchdb (1.6.1-0ubuntu1) precise; urgency=low
 
   * Apache CouchDB 1.6.1 official tarball released
