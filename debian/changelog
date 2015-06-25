@@ -1,3 +1,10 @@
+apache-couchdb (1.6.1-0ubuntu5) trusty; urgency=medium
+
+  * Adjust upstart script to support minimal Ubuntu 14.04
+    Fix contributed by Shawn Parrish <sparrish@nodeping.com>
+
+ -- Dave Cottlehuber <dch@apache.org>  Thu, 25 Jun 2015 07:34:56 +0000
+
 apache-couchdb (1.6.1-0ubuntu4) utopic; urgency=medium
 
   * Adjust upstart script to support minimal Ubuntu 14.04
