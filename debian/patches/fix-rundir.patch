@@ -1,0 +1,25 @@
+Description: use debian recommended /run instead of /var/run/
+Author: Dave Cottlehuber <dch@apache.org>
+---
+--- apache-couchdb-1.6.1.orig/configure
++++ apache-couchdb-1.6.1/configure
+@@ -19218,7 +19218,7 @@ localstatelibdir=${localstatedir}/lib/${
+ 
+ localstatelogdir=${localstatedir}/log/${package_identifier}
+ 
+-localstaterundir=${localstatedir}/run/${package_identifier}
++localstaterundir=/run/${package_identifier}
+ 
+ erlangversion=${erlangversion}
+ 
+--- apache-couchdb-1.6.1.orig/configure.ac
++++ apache-couchdb-1.6.1/configure.ac
+@@ -695,7 +695,7 @@ AC_SUBST([localdocdir], [${datadir}/doc/
+ AC_SUBST([locallibdir], [${libdir}/${package_identifier}])
+ AC_SUBST([localstatelibdir], [${localstatedir}/lib/${package_identifier}])
+ AC_SUBST([localstatelogdir], [${localstatedir}/log/${package_identifier}])
+-AC_SUBST([localstaterundir], [${localstatedir}/run/${package_identifier}])
++AC_SUBST([localstaterundir], [/run/${package_identifier}])
+ AC_SUBST([erlangversion], [${erlangversion}])
+ AC_SUBST([erlangbin], [${ERL}])
+ 

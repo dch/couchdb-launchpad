@@ -1,0 +1,16 @@
+[Unit]
+Description=Apache CouchDB
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=/var/lib/couchdb
+RuntimeDirectory=couchdb
+User=couchdb
+ExecStart=/usr/bin/couchdb
+Restart=always
+User=couchdb
+Group=couchdb
+
+[Install]
+WantedBy=multi-user.target

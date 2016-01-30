@@ -19218,7 +19218,7 @@ localstatelibdir=${localstatedir}/lib/${package_identifier}
 
 localstatelogdir=${localstatedir}/log/${package_identifier}
 
-localstaterundir=/run/${package_identifier}
+localstaterundir=${localstatedir}/run/${package_identifier}
 
 erlangversion=${erlangversion}
 

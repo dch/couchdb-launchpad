@@ -70,7 +70,6 @@ Package: couchdb
 Architecture: all
 Depends: couchdb-bin (>= ${source:Version}),
          adduser,
-         upstart,
          ${misc:Depends},
 Replaces: couchdb-bin (<= 1.0.1-0ubuntu18)
 Description: RESTful document oriented database - system-wide instance
