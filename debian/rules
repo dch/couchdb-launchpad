@@ -1,7 +1,10 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@
+	dh $@ --with autoreconf,systemd
+
+override_dh_auto_clean:
+	dh_auto_clean
 
 override_dh_auto_configure:
 	sed -i s/%package_author_name%/`lsb_release -si`/ etc/couchdb/default.ini.tpl.in

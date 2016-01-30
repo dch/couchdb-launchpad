@@ -1,0 +1,37 @@
+Description: use new systemd-friendly rundir for couch.uri
+ .
+ apache-couchdb (1.6.1-0ubuntu1~ppa1-wily) wily; urgency=medium
+ .
+   * add systemd unit debian/couchdb.service daemon
+   * switch /var/run/couchdb/couch.uri to /run/couchdb/couch.uri
+   * add systemd to dh and build-depends
+   * drop upstart
+   * bump standards-version to 3.9.5 and 9
+   * include pkg-config for builds
+   * package for wily
+   * include upstream patch to support OTP 18.x
+Author: Dave Cottlehuber <dch@apache.org>
+
+---
+--- apache-couchdb-1.6.1-0ubuntu1~ppa1.orig/bin/couch-config.tpl.in
++++ apache-couchdb-1.6.1-0ubuntu1~ppa1/bin/couch-config.tpl.in
+@@ -20,7 +20,7 @@ couchversion="%version%"
+ dbdir="%localstatelibdir%"
+ viewdir="%localstatelibdir%"
+ confdir="%localconfdir%"
+-urifile="%localstaterundir%/couch.uri"
++urifile="/run/couchdb/couch.uri"
+ logdir="%localstatelogdir%"
+ erlangversion="%erlangversion%"
+ erlangbin="%erlangbin%"
+--- apache-couchdb-1.6.1-0ubuntu1~ppa1.orig/etc/couchdb/default.ini.tpl.in
++++ apache-couchdb-1.6.1-0ubuntu1~ppa1/etc/couchdb/default.ini.tpl.in
+@@ -13,7 +13,7 @@ max_document_size = 4294967296 ; 4 GB
+ os_process_timeout = 5000 ; 5 seconds. for view and external servers.
+ max_dbs_open = 100
+ delayed_commits = true ; set this to false to ensure an fsync before 201 Created is returned
+-uri_file = %localstaterundir%/couch.uri
++uri_file = /run/couchdb/couch.uri
+ ; Method used to compress everything that is appended to database and view index files, except
+ ; for attachments (see the attachments section). Available methods are:
+ ;

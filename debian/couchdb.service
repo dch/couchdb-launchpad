@@ -1,0 +1,16 @@
+[Unit]
+Description=System-wide CouchDB instance
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+RuntimeDirectory=couchdb
+User=couchdb
+ExecStart=/usr/bin/couchdb
+Restart=always
+User=couchdb
+Group=couchdb
+
+[Install]
+WantedBy=multi-user.target
+
