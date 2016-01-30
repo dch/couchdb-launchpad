@@ -1,3 +1,15 @@
+apache-couchdb (1.6.1-0ubuntu6~ppa0-wily-0.1) wily; urgency=medium
+
+  * add systemd unit debian/couchdb.service daemon
+  * switch /var/run/couchdb/couch.uri to /run/couchdb/couch.uri
+  * add systemd to dh and build-depends
+  * drop upstart in favour of systemd
+  * bump standards-version to 3.9.5 and 9
+  * include pkg-config for builds
+  * use recommended Ubuntu packaging format for PPAs
+
+ -- Dave Cottlehuber <dch@apache.org>  Sat, 23 Jan 2016 11:35:56 +0000
+
 apache-couchdb (1.6.1-0ubuntu5) trusty; urgency=medium
 
   * Adjust upstart script to support minimal Ubuntu 14.04
