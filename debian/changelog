@@ -1,3 +1,9 @@
+apache-couchdb (1.6.1-0ubuntu6ppa2~xenial1) xenial; urgency=low
+
+  * package for xenial
+
+ -- Dave Cottlehuber <dch@apache.org>  Sun, 31 Jan 2016 23:15:32 +0000
+
 apache-couchdb (1.6.1-0ubuntu6ppa2~wily1) wily; urgency=medium
 
   * include upstream patch to support OTP 18.x
