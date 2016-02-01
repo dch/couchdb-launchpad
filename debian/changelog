@@ -1,3 +1,16 @@
+apache-couchdb (1.6.1-0ubuntu6ppa2~wily1) wily; urgency=medium
+
+  * include upstream patch to support OTP 18.x
+  * drop upstart in favour of systemd
+  * add systemd unit debian/couchdb.service daemon
+  * add systemd to dh and build-depends
+  * switch /var/run/couchdb/couch.uri to /run/couchdb/couch.uri
+  * include pkg-config for builds
+  * bump Debian packaging tools
+  * package for wily
+
+ -- Dave Cottlehuber <dch@apache.org>  Sat, 23 Jan 2016 11:35:56 +0000
+
 apache-couchdb (1.6.1-0ubuntu5) trusty; urgency=medium
 
   * Adjust upstart script to support minimal Ubuntu 14.04

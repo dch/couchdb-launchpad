@@ -2,23 +2,27 @@ Source: apache-couchdb
 Section: misc
 Priority: optional
 Maintainer: Dave Cottlehuber <dch@apache.org>
-Build-Depends: debhelper (>= 8.0.0),
+Standards-Version: 3.9.6
+Build-Depends: autoconf-archive,
                autotools-dev,
-               erlang-dev (>= 1:14.b.4),
+               debhelper (>= 9),
+               dh-autoreconf,
+               dh-systemd,
                erlang-crypto,
+               erlang-dev (>= 1:14.b.4),
                erlang-eunit,
                erlang-inets,
-               erlang-xmerl,
                erlang-os-mon,
                erlang-syntax-tools,
+               erlang-xmerl,
                help2man,
                libcurl4-openssl-dev,
                libicu-dev,
                libmozjs185-dev,
-#               python-sphinx (>= 1.1.3),
                lsb-release,
-Standards-Version: 3.9.3
+               pkg-config,
 Homepage: http://couchdb.apache.org/
+#               python-sphinx (>= 1.1.3),
 
 Package: couchdb-common
 Architecture: all
