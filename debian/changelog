@@ -1,3 +1,10 @@
+apache-couchdb (2.0.0-0ubuntu0~ppa0-xenial-0.0) xenial; urgency=medium
+
+  * Apache CouchDB 2.0.0 official tarball release
+  * redo packaging tools to accommodate new build steps
+
+ -- Dave Cottlehuber <dch@apache.org>  Sun, 18 Sep 2016 23:52:45 +0200
+
 apache-couchdb (1.6.1-0ubuntu6ppa2~xenial1) xenial; urgency=low
 
   * package for xenial
