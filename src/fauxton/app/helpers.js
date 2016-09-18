@@ -17,68 +17,44 @@
 // want to change this later, but for now this should be thought of as a
 // "purely functional" helper system.
 
+import constants from "./constants";
+import utils from "./core/utils";
+import d3 from "d3";
+import moment from "moment";
 
-define([
-  "core/utils",
-  "d3"
-],
+var Helpers = {};
 
-function(utils, d3) {
+Helpers.removeSpecialCharacters = utils.removeSpecialCharacters;
 
-  var Helpers = {};
+Helpers.safeURL = utils.safeURLName;
 
-  Helpers.removeSpecialCharacters = utils.removeSpecialCharacters;
+Helpers.imageUrl = function (path) {
+  // TODO: add dynamic path for different deploy targets
+  return path;
+};
 
-  Helpers.safeURL = utils.safeURLName;
+Helpers.getDocUrl = function (key) {
+  return (_.has(constants.DOC_URLS, key)) ? constants.DOC_URLS[key] : '#';
+};
 
-  Helpers.imageUrl = function(path) {
-    // TODO: add dynamic path for different deploy targets
-    return path;
+// File size pretty printing, taken from futon.format.js
+Helpers.formatSize = function (size, decimals = 1) {
+    var jump = 512;
+    if (size < jump) return size + " bytes";
+    var units = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    var i = 0;
+    while (size >= jump && i < units.length) {
+      i += 1;
+      size /= 1024;
+    }
+    return size.toFixed(decimals) + ' ' + units[i - 1];
   };
 
+Helpers.formatDate = function (timestamp) {
+  return moment(timestamp, 'X').format('MMM Do, h:mm:ss a');
+};
+Helpers.getDateFromNow = function (timestamp) {
+  return moment(timestamp, 'X').fromNow();
+};
 
-  // Get the URL for documentation, wiki, wherever we store it.
-  // update the URLs in documentation_urls.js
-  Helpers.docs =  {
-    "docs": "http://docs.couchdb.org/en/latest/intro/api.html#documents",
-    "all_dbs": "http://docs.couchdb.org/en/latest/api/server/common.html?highlight=all_dbs#get--_all_dbs",
-    "replication_doc": "http://docs.couchdb.org/en/latest/replication/replicator.html#basics",
-    "design_doc": "http://docs.couchdb.org/en/latest/couchapp/ddocs.html#design-docs",
-    "view_functions": "http://docs.couchdb.org/en/latest/couchapp/ddocs.html#view-functions",
-    "map_functions": "http://docs.couchdb.org/en/latest/couchapp/ddocs.html#map-functions",
-    "reduce_functions": "http://docs.couchdb.org/en/latest/couchapp/ddocs.html#reduce-and-rereduce-functions",
-    "api_reference": "http://docs.couchdb.org/en/latest/http-api.html",
-    "database_permission": "http://docs.couchdb.org/en/latest/api/database/security.html#db-security",
-    "stats": "http://docs.couchdb.org/en/latest/api/server/common.html?highlight=stats#get--_stats",
-    "_active_tasks": "http://docs.couchdb.org/en/latest/api/server/common.html?highlight=stats#active-tasks",
-    "log": "http://docs.couchdb.org/en/latest/api/server/common.html?highlight=stats#log",
-    "config": "http://docs.couchdb.org/en/latest/config/index.html",
-    "views": "http://docs.couchdb.org/en/latest/intro/overview.html#views",
-    "changes": "http://docs.couchdb.org/en/latest/api/database/changes.html?highlight=changes#post--db-_changes"
-  };
-
-  Helpers.getDocUrl = function(docKey){
-    return Helpers.docs[docKey] || '#';
-  };
-
-  // File size pretty printing, taken from futon.format.js
-  Helpers.formatSize = function(size) {
-      var jump = 512;
-      if (size < jump) return size + " bytes";
-      var units = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-      var i = 0;
-      while (size >= jump && i < units.length) {
-        i += 1;
-        size /= 1024;
-      }
-      return size.toFixed(1) + ' ' + units[i - 1];
-    };
-
-  Helpers.formatDate = function(timestamp){
-    var format = d3.time.format("%b. %e at %H:%M%p");
-    return format(new Date(timestamp*1000));
-  };
-
-  return Helpers;
-});
-
+export default Helpers;

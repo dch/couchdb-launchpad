@@ -13,32 +13,47 @@
 var fs = require('fs'),
     path = require('path');
 
-exports.init = function(grunt) {
-  var _ = grunt.util._;
+exports.devServerPort = 8000;
+exports.couch = 'http://localhost:5984/';
 
-  return { 
+exports.init = function (grunt) {
+  var _ = grunt.util._,
+      platform = process.platform;
+
+  return {
     readSettingsFile: function () {
       if (fs.existsSync("settings.json")) {
         return grunt.file.readJSON("settings.json");
-      } else if (fs.existsSync("settings.json.default")) {
-        return grunt.file.readJSON("settings.json.default");
-      } else {
-        return {deps: []};
+      } else if (fs.existsSync('settings.json.default.json')) {
+        return grunt.file.readJSON('settings.json.default.json');
       }
+
+      throw new Error('settings.json file missing');
+    },
+
+    readI18nFile: function () {
+      if (fs.existsSync('i18n.json')) {
+        return grunt.file.readJSON('i18n.json');
+      }
+      if (fs.existsSync('i18n.json.default.json')) {
+        return grunt.file.readJSON('i18n.json.default.json');
+      }
+
+      throw new Error('i18n file missing');
     },
 
     processAddons: function (callback) {
       this.readSettingsFile().deps.forEach(callback);
     },
 
-    watchFiles: function (fileExtensions, defaults) {
-      return _.reduce(this.readSettingsFile().deps, function (files, dep) { 
-        if (dep.path) { 
+    getFileList: function (fileExtensions, defaults) {
+      return _.reduce(this.readSettingsFile().deps, function (files, dep) {
+        if (dep.path) {
           _.each(fileExtensions, function (fileExtension) {
-            files.push(path.join(dep.path, '**/*' + fileExtension ));
+            files.push(path.join(dep.path, '**/*' + fileExtension));
           });
         }
-        return files
+        return files;
       }, defaults);
     }
   };

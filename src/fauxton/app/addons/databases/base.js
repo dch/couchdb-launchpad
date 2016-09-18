@@ -10,28 +10,69 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-define([
-  "app",
+import app from "../../app";
+import FauxtonAPI from "../../core/api";
+import Databases from "./routes";
+import "./assets/less/databases.less";
 
-  "api",
+Databases.initialize = function () {
+  FauxtonAPI.addHeaderLink({
+    href:"#/_all_dbs",
+    title:"Databases",
+    icon: "fonticon-database",
+    className: 'databases'
+  });
+};
 
-  // Modules
-  "addons/databases/routes",
-  // Views
-  "addons/databases/views"
+// Utility functions
+Databases.databaseUrl = function (database) {
+  var name = _.isObject(database) ? database.id : database,
+      dbname = app.utils.safeURLName(name);
 
-],
+  return ['/database/', dbname, '/_all_docs?limit=' + Databases.DocLimit].join('');
+};
 
-function(app, FauxtonAPI, Databases, Views) {
-  Databases.Views = Views;
+FauxtonAPI.registerUrls('changes', {
+  server: function (id, query) {
+    return app.host + '/' + id + '/_changes' + query;
 
-  // Utility functions
-  Databases.databaseUrl = function(database) {
-    var name = _.isObject(database) ? database.id : database,
-        dbname = app.utils.safeURLName(name);
+  },
+  app: function (id, query) {
+    return '/database/' + id + '/_changes' + query;
+  },
 
-    return ["/database/", dbname, "/_all_docs?limit=" + Databases.DocLimit].join('');
-  };
-
-  return Databases;
+  apiurl: function (id, query) {
+    return window.location.origin + '/' + id + '/_changes' + query;
+  }
 });
+
+FauxtonAPI.registerUrls('allDBs', {
+  app: function () {
+    return '_all_dbs';
+  }
+});
+
+FauxtonAPI.registerUrls('databaseBaseURL', {
+  server: function (database) {
+    return window.location.origin + '/' + database;
+  },
+  app: function (database) {
+    return '/database/' + database;
+  }
+});
+
+FauxtonAPI.registerUrls('permissions', {
+  server: function (db) {
+    return app.host + '/' + db + '/_security';
+  },
+
+  app: function (db) {
+    return '/database/' + db + '/permissions';
+  },
+
+  apiurl: function (db) {
+    return window.location.origin + '/' + db + '/_security';
+  }
+});
+
+export default Databases;

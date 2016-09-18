@@ -13,6 +13,7 @@
 -module(couch_replicator_notifier).
 
 -behaviour(gen_event).
+-vsn(1).
 
 % public API
 -export([start_link/1, stop/1, notify/1]).
@@ -21,7 +22,7 @@
 -export([init/1, terminate/2, code_change/3]).
 -export([handle_event/2, handle_call/2, handle_info/2]).
 
--include("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
 
 start_link(FunAcc) ->
     couch_event_sup:start_link(couch_replication,
@@ -48,7 +49,7 @@ handle_event(Event, {Fun, Acc}) when is_function(Fun, 2) ->
     {ok, {Fun, Acc2}}.
 
 handle_call(_Msg, State) ->
-    {reply, ok, State}.
+    {ok, ok, State}.
 
 handle_info(_Msg, State) ->
     {ok, State}.

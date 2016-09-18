@@ -14,8 +14,8 @@
 
 -compile(export_all).
 
--include("couch_db.hrl").
--define(ADMIN, #user_ctx{roles=[<<"_admin">>]}).
+-include_lib("couch/include/couch_db.hrl").
+-include_lib("couch/include/couch_eunit.hrl").
 
 
 init_db(Name, Type) ->
@@ -29,10 +29,12 @@ init_db(Name, Type, Count) ->
 
 
 new_db(Name, Type) ->
-    couch_server:delete(Name, [{user_ctx, ?ADMIN}]),
-    {ok, Db} = couch_db:create(Name, [{user_ctx, ?ADMIN}]),
+    couch_server:delete(Name, [?ADMIN_CTX]),
+    {ok, Db} = couch_db:create(Name, [?ADMIN_CTX]),
     save_docs(Db, [ddoc(Type)]).
 
+delete_db(Name) ->
+    couch_server:delete(Name, [?ADMIN_CTX]).
 
 save_docs(Db, Docs) ->
     {ok, _} = couch_db:update_docs(Db, Docs, []),
@@ -40,14 +42,31 @@ save_docs(Db, Docs) ->
 
 
 make_docs(Count) ->
-    make_docs(Count, []).
+    [doc(I) || I <- lists:seq(1, Count)].
 
-make_docs(Count, Acc) when Count =< 0 ->
-    Acc;
-make_docs(Count, Acc) ->
-    make_docs(Count-1, [doc(Count) | Acc]).
-
-
+ddoc(changes) ->
+    couch_doc:from_json_obj({[
+        {<<"_id">>, <<"_design/bar">>},
+        {<<"options">>, {[
+            {<<"seq_indexed">>, true}
+        ]}},
+        {<<"views">>, {[
+            {<<"baz">>, {[
+                {<<"map">>, <<"function(doc) {emit(doc.val, doc.val);}">>}
+            ]}},
+            {<<"bing">>, {[
+                {<<"map">>, <<"function(doc) {}">>}
+            ]}},
+            {<<"zing">>, {[
+                {<<"map">>, <<
+                    "function(doc) {\n"
+                    "  if(doc.foo !== undefined)\n"
+                    "    emit(doc.foo, 0);\n"
+                    "}"
+                >>}
+            ]}}
+        ]}}
+    ]});
 ddoc(map) ->
     couch_doc:from_json_obj({[
         {<<"_id">>, <<"_design/bar">>},
@@ -70,7 +89,7 @@ ddoc(map) ->
     ]});
 ddoc(red) ->
     couch_doc:from_json_obj({[
-        {<<"_id">>, <<"_design/bar">>},
+        {<<"_id">>, <<"_design/red">>},
         {<<"views">>, {[
             {<<"baz">>, {[
                 {<<"map">>, <<
@@ -79,6 +98,15 @@ ddoc(red) ->
                     "}\n"
                 >>},
                 {<<"reduce">>, <<"function(keys, vals) {return sum(vals);}">>}
+            ]}},
+            {<<"zing">>, {[
+                {<<"map">>, <<
+                    "function(doc) {\n"
+                    "  if(doc.foo !== undefined)\n"
+                    "    emit(doc.foo, null);\n"
+                    "}"
+                >>},
+                {<<"reduce">>, <<"_count">>}
             ]}}
         ]}}
     ]}).

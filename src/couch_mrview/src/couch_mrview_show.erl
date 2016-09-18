@@ -15,22 +15,12 @@
 -export([
     handle_doc_show_req/3,
     handle_doc_update_req/3,
-    handle_view_list_req/3
+    handle_view_list_req/3,
+    list_cb/2
 ]).
 
--include("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
 -include_lib("couch_mrview/include/couch_mrview.hrl").
-
--record(lacc, {
-    db,
-    req,
-    resp,
-    qserver,
-    lname,
-    etag,
-    code,
-    headers
-}).
 
 % /db/_design/foo/_show/bar/docid
 % show converts a json doc to a response of any content-type.
@@ -75,7 +65,7 @@ handle_doc_show_req(#httpd{
     handle_doc_show(Req, Db, DDoc, ShowName, nil);
 
 handle_doc_show_req(Req, _Db, _DDoc) ->
-    couch_httpd:send_error(Req, 404, <<"show_error">>, <<"Invalid path.">>).
+    chttpd:send_error(Req, 404, <<"show_error">>, <<"Invalid path.">>).
 
 handle_doc_show(Req, Db, DDoc, ShowName, Doc) ->
     handle_doc_show(Req, Db, DDoc, ShowName, Doc, null).
@@ -83,24 +73,24 @@ handle_doc_show(Req, Db, DDoc, ShowName, Doc) ->
 handle_doc_show(Req, Db, DDoc, ShowName, Doc, DocId) ->
     % get responder for ddoc/showname
     CurrentEtag = show_etag(Req, Doc, DDoc, []),
-    couch_httpd:etag_respond(Req, CurrentEtag, fun() ->
-        JsonReq = couch_httpd_external:json_req_obj(Req, Db, DocId),
+    chttpd:etag_respond(Req, CurrentEtag, fun() ->
+        JsonReq = chttpd_external:json_req_obj(Req, Db, DocId),
         JsonDoc = couch_query_servers:json_doc(Doc),
         [<<"resp">>, ExternalResp] =
             couch_query_servers:ddoc_prompt(DDoc, [<<"shows">>, ShowName],
                 [JsonDoc, JsonReq]),
         JsonResp = apply_etag(ExternalResp, CurrentEtag),
-        couch_httpd_external:send_external_response(Req, JsonResp)
+        chttpd_external:send_external_response(Req, JsonResp)
     end).
 
 
 show_etag(#httpd{user_ctx=UserCtx}=Req, Doc, DDoc, More) ->
-    Accept = couch_httpd:header_value(Req, "Accept"),
+    Accept = chttpd:header_value(Req, "Accept"),
     DocPart = case Doc of
         nil -> nil;
-        Doc -> couch_httpd:doc_etag(Doc)
+        Doc -> chttpd:doc_etag(Doc)
     end,
-    couch_httpd:make_etag({couch_httpd:doc_etag(DDoc), DocPart, Accept,
+    chttpd:make_etag({chttpd:doc_etag(DDoc), DocPart, Accept,
         {UserCtx#user_ctx.name, UserCtx#user_ctx.roles}, More}).
 
 % updates a doc based on a request
@@ -126,16 +116,16 @@ handle_doc_update_req(#httpd{
 
 
 handle_doc_update_req(Req, _Db, _DDoc) ->
-    couch_httpd:send_error(Req, 404, <<"update_error">>, <<"Invalid path.">>).
+    chttpd:send_error(Req, 404, <<"update_error">>, <<"Invalid path.">>).
 
 send_doc_update_response(Req, Db, DDoc, UpdateName, Doc, DocId) ->
-    JsonReq = couch_httpd_external:json_req_obj(Req, Db, DocId),
+    JsonReq = chttpd_external:json_req_obj(Req, Db, DocId),
     JsonDoc = couch_query_servers:json_doc(Doc),
     Cmd = [<<"updates">>, UpdateName],
     UpdateResp = couch_query_servers:ddoc_prompt(DDoc, Cmd, [JsonDoc, JsonReq]),
     JsonResp = case UpdateResp of
         [<<"up">>, {NewJsonDoc}, {JsonResp0}] ->
-            case couch_httpd:header_value(
+            case chttpd:header_value(
                     Req, "X-Couch-Full-Commit", "false") of
                 "true" ->
                     Options = [full_commit, {user_ctx, Req#httpd.user_ctx}];
@@ -146,18 +136,16 @@ send_doc_update_response(Req, Db, DDoc, UpdateName, Doc, DocId) ->
             couch_doc:validate_docid(NewDoc#doc.id),
             {ok, NewRev} = couch_db:update_doc(Db, NewDoc, Options),
             NewRevStr = couch_doc:rev_to_str(NewRev),
-            {[
-                {<<"code">>, 201},
-                {<<"headers">>, {[
-                    {<<"X-Couch-Update-NewRev">>, NewRevStr},
-                    {<<"X-Couch-Id">>, NewDoc#doc.id}
-                ]}}
-                | JsonResp0]};
+            {JsonResp1} = apply_headers(JsonResp0, [
+                {<<"X-Couch-Update-NewRev">>, NewRevStr},
+                {<<"X-Couch-Id">>, NewDoc#doc.id}
+            ]),
+            {[{<<"code">>, 201} | JsonResp1]};
         [<<"up">>, _Other, {JsonResp0}] ->
             {[{<<"code">>, 200} | JsonResp0]}
     end,
     % todo set location field
-    couch_httpd_external:send_external_response(Req, JsonResp).
+    chttpd_external:send_external_response(Req, JsonResp).
 
 
 handle_view_list_req(#httpd{method=Method}=Req, Db, DDoc)
@@ -172,10 +160,11 @@ handle_view_list_req(#httpd{method=Method}=Req, Db, DDoc)
             {ok, VDDoc} = couch_db:open_doc(Db, VDocId, [ejson_body]),
             handle_view_list(Req, Db, DDoc, LName, VDDoc, VName, undefined);
         _ ->
-            couch_httpd:send_error(Req, 404, <<"list_error">>, <<"Bad path.">>)
+            chttpd:send_error(Req, 404, <<"list_error">>, <<"Bad path.">>)
     end;
 handle_view_list_req(#httpd{method='POST'}=Req, Db, DDoc) ->
-    {Props} = couch_httpd:json_body_obj(Req),
+    chttpd:validate_ctype(Req, "application/json"),
+    {Props} = chttpd:json_body_obj(Req),
     Keys = proplists:get_value(<<"keys">>, Props),
     case Req#httpd.path_parts of
         [_, _, _DName, _, LName, VName] ->
@@ -186,22 +175,22 @@ handle_view_list_req(#httpd{method='POST'}=Req, Db, DDoc) ->
             {ok, VDDoc} = couch_db:open_doc(Db, VDocId, [ejson_body]),
             handle_view_list(Req, Db, DDoc, LName, VDDoc, VName, Keys);
         _ ->
-            couch_httpd:send_error(Req, 404, <<"list_error">>, <<"Bad path.">>)
+            chttpd:send_error(Req, 404, <<"list_error">>, <<"Bad path.">>)
     end;
 handle_view_list_req(Req, _Db, _DDoc) ->
-    couch_httpd:send_method_not_allowed(Req, "GET,POST,HEAD").
+    chttpd:send_method_not_allowed(Req, "GET,POST,HEAD").
 
 
 handle_view_list(Req, Db, DDoc, LName, VDDoc, VName, Keys) ->
-    Args0 = couch_mrview_http:parse_qs(Req, Keys),
+    Args0 = couch_mrview_http:parse_params(Req, Keys),
     ETagFun = fun(BaseSig, Acc0) ->
         UserCtx = Req#httpd.user_ctx,
         Name = UserCtx#user_ctx.name,
         Roles = UserCtx#user_ctx.roles,
-        Accept = couch_httpd:header_value(Req, "Accept"),
-        Parts = {couch_httpd:doc_etag(DDoc), Accept, {Name, Roles}},
-        ETag = couch_httpd:make_etag({BaseSig, Parts}),
-        case couch_httpd:etag_match(Req, ETag) of
+        Accept = chttpd:header_value(Req, "Accept"),
+        Parts = {chttpd:doc_etag(DDoc), Accept, {Name, Roles}},
+        ETag = chttpd:make_etag({BaseSig, Parts}),
+        case chttpd:etag_match(Req, ETag) of
             true -> throw({etag_match, ETag});
             false -> {ok, Acc0#lacc{etag=ETag}}
         end
@@ -238,7 +227,7 @@ list_cb({row, Row}, #lacc{code=undefined} = Acc) ->
 list_cb({row, Row}, Acc) ->
     send_list_row(Row, Acc);
 list_cb(complete, Acc) ->
-    #lacc{qserver = {Proc, _}, resp = Resp0} = Acc,
+    #lacc{qserver = {Proc, _}, req = Req, resp = Resp0} = Acc,
     if Resp0 =:= nil ->
         {ok, #lacc{resp = Resp}} = start_list_resp({[]}, Acc);
     true ->
@@ -251,12 +240,12 @@ list_cb(complete, Acc) ->
         [<<"end">>, Data] ->
             #lacc{resp = Resp2} = send_non_empty_chunk(Acc#lacc{resp=Resp}, Data)
     end,
-    couch_httpd:last_chunk(Resp2),
+    last_chunk(Req, Resp2),
     {ok, Resp2}.
 
 start_list_resp(Head, Acc) ->
     #lacc{db=Db, req=Req, qserver=QServer, lname=LName} = Acc,
-    JsonReq = couch_httpd_external:json_req_obj(Req, Db),
+    JsonReq = json_req_obj(Req, Db),
 
     [<<"start">>,Chunk,JsonResp] = couch_query_servers:ddoc_proc_prompt(QServer,
         [<<"lists">>, LName], [Head, JsonReq]),
@@ -269,11 +258,11 @@ fixup_headers(Headers, #lacc{etag=ETag} = Acc) ->
         code = Code,
         ctype = CType,
         headers = ExtHeaders
-    } = couch_httpd_external:parse_external_response(Headers2),
-    Headers3 = couch_httpd_external:default_or_content_type(CType, ExtHeaders),
+    } = chttpd_external:parse_external_response(Headers2),
+    Headers3 = chttpd_external:default_or_content_type(CType, ExtHeaders),
     Acc#lacc{code=Code, headers=Headers3}.
 
-send_list_row(Row, #lacc{qserver = {Proc, _}, resp = Resp} = Acc) ->
+send_list_row(Row, #lacc{qserver = {Proc, _}, req = Req, resp = Resp} = Acc) ->
     RowObj = case couch_util:get_value(id, Row) of
         undefined -> [];
         Id -> [{id, Id}]
@@ -297,23 +286,23 @@ send_list_row(Row, #lacc{qserver = {Proc, _}, resp = Resp} = Acc) ->
     [<<"end">>, Chunk, Headers] ->
         Acc2 = send_non_empty_chunk(fixup_headers(Headers, Acc), Chunk),
         #lacc{resp = Resp2} = Acc2,
-        couch_httpd:last_chunk(Resp2),
+        last_chunk(Req, Resp2),
         {stop, Acc2};
     [<<"end">>, Chunk] ->
         Acc2 = send_non_empty_chunk(Acc, Chunk),
         #lacc{resp = Resp2} = Acc2,
-        couch_httpd:last_chunk(Resp2),
+        last_chunk(Req, Resp2),
         {stop, Acc2}
     catch Error ->
         case Resp of
             undefined ->
-                {Code, _, _} = couch_httpd:error_info(Error),
+                {Code, _, _} = chttpd:error_info(Error),
                 #lacc{req=Req, headers=Headers} = Acc,
-                {ok, Resp2} = couch_httpd:start_chunked_response(Req, Code, Headers),
+                {ok, Resp2} = chttpd:start_chunked_response(Req, Code, Headers),
                 Acc2 = Acc#lacc{resp=Resp2, code=Code};
             _ -> Resp2 = Resp, Acc2 = Acc
         end,
-        couch_httpd:send_chunked_error(Resp2, Error),
+        chttpd:send_chunked_error(Resp2, Error),
         {stop, Acc2}
     end.
 
@@ -321,33 +310,41 @@ send_non_empty_chunk(Acc, []) ->
     Acc;
 send_non_empty_chunk(#lacc{resp=undefined} = Acc, Chunk) ->
     #lacc{req=Req, code=Code, headers=Headers} = Acc,
-    {ok, Resp} = couch_httpd:start_chunked_response(Req, Code, Headers),
+    {ok, Resp} = chttpd:start_chunked_response(Req, Code, Headers),
     send_non_empty_chunk(Acc#lacc{resp = Resp}, Chunk);
 send_non_empty_chunk(#lacc{resp=Resp} = Acc, Chunk) ->
-    couch_httpd:send_chunk(Resp, Chunk),
+    chttpd:send_chunk(Resp, Chunk),
     Acc.
 
 
+apply_etag(JsonResp, undefined) ->
+    JsonResp;
 apply_etag({ExternalResponse}, CurrentEtag) ->
     % Here we embark on the delicate task of replacing or creating the
     % headers on the JsonResponse object. We need to control the Etag and
     % Vary headers. If the external function controls the Etag, we'd have to
     % run it to check for a match, which sort of defeats the purpose.
-    case couch_util:get_value(<<"headers">>, ExternalResponse, nil) of
-    nil ->
-        % no JSON headers
-        % add our Etag and Vary headers to the response
-        {[{<<"headers">>, {[{<<"Etag">>, CurrentEtag}, {<<"Vary">>, <<"Accept">>}]}} | ExternalResponse]};
-    JsonHeaders ->
-        {[case Field of
-        {<<"headers">>, JsonHeaders} -> % add our headers
-            JsonHeadersEtagged = json_apply_field({<<"Etag">>, CurrentEtag}, JsonHeaders),
-            JsonHeadersVaried = json_apply_field({<<"Vary">>, <<"Accept">>}, JsonHeadersEtagged),
-            {<<"headers">>, JsonHeadersVaried};
-        _ -> % skip non-header fields
-            Field
-        end || Field <- ExternalResponse]}
+    apply_headers(ExternalResponse, [
+        {<<"ETag">>, CurrentEtag},
+        {<<"Vary">>, <<"Accept">>}
+    ]).
+
+apply_headers(JsonResp, []) ->
+    JsonResp;
+apply_headers(JsonResp, NewHeaders) ->
+    case couch_util:get_value(<<"headers">>, JsonResp) of
+        undefined ->
+            {[{<<"headers">>, {NewHeaders}}| JsonResp]};
+        JsonHeaders ->
+            Headers = apply_headers1(JsonHeaders, NewHeaders),
+            NewKV = {<<"headers">>, Headers},
+            {lists:keyreplace(<<"headers">>, 1, JsonResp, NewKV)}
     end.
+apply_headers1(JsonHeaders, [{Key, Value} | Rest]) ->
+    NewJsonHeaders = json_apply_field({Key, Value}, JsonHeaders),
+    apply_headers1(NewJsonHeaders, Rest);
+apply_headers1(JsonHeaders, []) ->
+    JsonHeaders.
 
 
 % Maybe this is in the proplists API
@@ -366,3 +363,67 @@ json_apply_field({Key, NewValue}, [], Acc) ->
     % end of list, add ours
     {[{Key, NewValue}|Acc]}.
 
+
+% This loads the db info if we have a fully loaded db record, but we might not
+% have the db locally on this node, so then load the info through fabric.
+json_req_obj(Req, #db{main_pid=Pid}=Db) when is_pid(Pid) ->
+    chttpd_external:json_req_obj(Req, Db);
+json_req_obj(Req, Db) ->
+    % use a separate process because we're already in a receive loop, and
+    % json_req_obj calls fabric:get_db_info()
+    spawn_monitor(fun() -> exit(chttpd_external:json_req_obj(Req, Db)) end),
+    receive {'DOWN', _, _, _, JsonReq} -> JsonReq end.
+
+last_chunk(Req, undefined) ->
+    chttpd:send_response(Req, 200, [], <<"">>);
+last_chunk(_Req, Resp) ->
+    chttpd:send_chunk(Resp, []).
+
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+apply_headers_test_() ->
+    [
+        should_apply_headers(),
+        should_apply_headers_with_merge(),
+        should_apply_headers_with_merge_overwrite()
+    ].
+
+should_apply_headers() ->
+    ?_test(begin
+        JsonResp = [{<<"code">>, 201}],
+        Headers  = [{<<"foo">>, <<"bar">>}],
+        {Props} = apply_headers(JsonResp, Headers),
+        JsonHeaders = couch_util:get_value(<<"headers">>, Props),
+        ?assertEqual({Headers}, JsonHeaders)
+    end).
+
+should_apply_headers_with_merge() ->
+    ?_test(begin
+        BaseHeaders = [{<<"bar">>, <<"baz">>}],
+        NewHeaders  = [{<<"foo">>, <<"bar">>}],
+        JsonResp = [
+            {<<"code">>, 201},
+            {<<"headers">>, {BaseHeaders}}
+        ],
+        {Props} = apply_headers(JsonResp, NewHeaders),
+        JsonHeaders = couch_util:get_value(<<"headers">>, Props),
+        ExpectedHeaders = {NewHeaders ++ BaseHeaders},
+        ?assertEqual(ExpectedHeaders, JsonHeaders)
+    end).
+
+should_apply_headers_with_merge_overwrite() ->
+    ?_test(begin
+        BaseHeaders = [{<<"foo">>, <<"bar">>}],
+        NewHeaders  = [{<<"foo">>, <<"baz">>}],
+        JsonResp = [
+            {<<"code">>, 201},
+            {<<"headers">>, {BaseHeaders}}
+        ],
+        {Props} = apply_headers(JsonResp, NewHeaders),
+        JsonHeaders = couch_util:get_value(<<"headers">>, Props),
+        ?assertEqual({NewHeaders}, JsonHeaders)
+    end).
+
+-endif.

@@ -10,17 +10,13 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-define([
-  "app",
-  "api",
-  "addons/activetasks/routes"
-],
+import app from "../../app";
+import FauxtonAPI from "../../core/api";
+import Activetasks from "./routes";
+import "./assets/less/activetasks.less";
 
-function (app, FauxtonAPI, Activetasks) {
+Activetasks.initialize = function () {
+  FauxtonAPI.addHeaderLink({title: 'Active Tasks', icon: 'fonticon-activetasks', href: '#/activetasks'});
+};
 
-  Activetasks.initialize = function() {
-    FauxtonAPI.addHeaderLink({title: "Active Tasks", icon: "fonticon-activetasks", href: "#/activetasks"});
-  };
- 
-  return Activetasks;
-});
+export default Activetasks;

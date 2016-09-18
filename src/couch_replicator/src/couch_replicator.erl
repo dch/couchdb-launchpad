@@ -12,9 +12,10 @@
 
 -module(couch_replicator).
 -behaviour(gen_server).
+-vsn(1).
 
 % public API
--export([replicate/1]).
+-export([replicate/2]).
 
 % meant to be used only by the replicator database listener
 -export([async_replicate/1]).
@@ -23,10 +24,17 @@
 % gen_server callbacks
 -export([init/1, terminate/2, code_change/3]).
 -export([handle_call/3, handle_cast/2, handle_info/2]).
+-export([format_status/2]).
 
--include("couch_db.hrl").
+-export([details/1]).
+
+-include_lib("couch/include/couch_db.hrl").
 -include("couch_replicator_api_wrap.hrl").
 -include("couch_replicator.hrl").
+
+-define(LOWEST_SEQ, 0).
+
+-define(DEFAULT_CHECKPOINT_INTERVAL, 30000).
 
 -import(couch_util, [
     get_value/2,
@@ -62,7 +70,7 @@
     changes_manager,
     changes_reader,
     workers,
-    stats = #rep_stats{},
+    stats = couch_replicator_stats:new(),
     session_id,
     source_db_compaction_notifier = nil,
     target_db_compaction_notifier = nil,
@@ -70,11 +78,15 @@
     target_monitor = nil,
     source_seq = nil,
     use_checkpoints = true,
-    checkpoint_interval = 5000
+    checkpoint_interval = ?DEFAULT_CHECKPOINT_INTERVAL,
+    type = db,
+    view = nil
 }).
 
 
-replicate(#rep{id = RepId, options = Options, user_ctx = UserCtx} = Rep) ->
+replicate(PostBody, Ctx) ->
+    {ok, #rep{id = RepId, options = Options, user_ctx = UserCtx} = Rep} =
+        couch_replicator_utils:parse_rep_doc(PostBody, Ctx),
     case get_value(cancel, Options, false) of
     true ->
         case get_value(id, Options, nil) of
@@ -126,24 +138,21 @@ async_replicate(#rep{id = {BaseId, Ext}, source = Src, target = Tgt} = Rep) ->
     %
     case supervisor:start_child(couch_replicator_job_sup, ChildSpec) of
     {ok, Pid} ->
-        ?LOG_INFO("starting new replication `~s` at ~p (`~s` -> `~s`)",
+        couch_log:notice("starting new replication `~s` at ~p (`~s` -> `~s`)",
             [RepChildId, Pid, Source, Target]),
         {ok, Pid};
     {error, already_present} ->
         case supervisor:restart_child(couch_replicator_job_sup, RepChildId) of
         {ok, Pid} ->
-            ?LOG_INFO("restarting replication `~s` at ~p (`~s` -> `~s`)",
+            couch_log:notice("restarting replication `~s` at ~p (`~s` -> `~s`)",
                 [RepChildId, Pid, Source, Target]),
             {ok, Pid};
         {error, running} ->
             %% this error occurs if multiple replicators are racing
             %% each other to start and somebody else won. Just grab
             %% the Pid by calling start_child again.
-            {error, {already_started, Pid}} =
-                supervisor:start_child(couch_replicator_job_sup, ChildSpec),
-            ?LOG_INFO("replication `~s` already running at ~p (`~s` -> `~s`)",
-                [RepChildId, Pid, Source, Target]),
-            {ok, Pid};
+            timer:sleep(50 + random:uniform(100)),
+            async_replicate(Rep);
         {error, {'EXIT', {badarg,
             [{erlang, apply, [gen_server, start_link, undefined]} | _]}}} ->
             % Clause to deal with a change in the supervisor module introduced
@@ -155,7 +164,7 @@ async_replicate(#rep{id = {BaseId, Ext}, source = Src, target = Tgt} = Rep) ->
             Error
         end;
     {error, {already_started, Pid}} ->
-        ?LOG_INFO("replication `~s` already running at ~p (`~s` -> `~s`)",
+        couch_log:notice("replication `~s` already running at ~p (`~s` -> `~s`)",
             [RepChildId, Pid, Source, Target]),
         {ok, Pid};
     {error, {Error, _}} ->
@@ -184,10 +193,10 @@ wait_for_result(RepId) ->
 
 cancel_replication({BaseId, Extension}) ->
     FullRepId = BaseId ++ Extension,
-    ?LOG_INFO("Canceling replication `~s`...", [FullRepId]),
+    couch_log:notice("Canceling replication `~s`...", [FullRepId]),
     case supervisor:terminate_child(couch_replicator_job_sup, FullRepId) of
     ok ->
-        ?LOG_INFO("Replication `~s` canceled.", [FullRepId]),
+        couch_log:notice("Replication `~s` canceled.", [FullRepId]),
         case supervisor:delete_child(couch_replicator_job_sup, FullRepId) of
             ok ->
                 {ok, {cancelled, ?l2b(FullRepId)}};
@@ -197,7 +206,7 @@ cancel_replication({BaseId, Extension}) ->
                 Error
         end;
     Error ->
-        ?LOG_ERROR("Error canceling replication `~s`: ~p", [FullRepId, Error]),
+        couch_log:error("Error canceling replication `~s`: ~p", [FullRepId, Error]),
         Error
     end.
 
@@ -206,41 +215,48 @@ cancel_replication(RepId, #user_ctx{name = Name, roles = Roles}) ->
     true ->
         cancel_replication(RepId);
     false ->
-        {BaseId, Ext} = RepId,
-        case lists:keysearch(
-            BaseId ++ Ext, 1, supervisor:which_children(couch_replicator_job_sup)) of
-        {value, {_, Pid, _, _}} when is_pid(Pid) ->
-            case (catch gen_server:call(Pid, get_details, infinity)) of
+        case find_replicator(RepId) of
+        {ok, Pid} ->
+            case details(Pid) of
             {ok, #rep{user_ctx = #user_ctx{name = Name}}} ->
                 cancel_replication(RepId);
             {ok, _} ->
                 throw({unauthorized,
                     <<"Can't cancel a replication triggered by another user">>});
-            {'EXIT', {noproc, {gen_server, call, _}}} ->
-                {error, not_found};
             Error ->
-                throw(Error)
+                Error
             end;
-        _ ->
-            {error, not_found}
+        Error ->
+            Error
         end
     end.
 
-init(InitArgs) ->
-    try
-        do_init(InitArgs)
-    catch
-    throw:{unauthorized, DbUri} ->
-        {stop, {unauthorized,
-            <<"unauthorized to access or create database ", DbUri/binary>>}};
-    throw:{db_not_found, DbUri} ->
-        {stop, {db_not_found, <<"could not open ", DbUri/binary>>}};
-    throw:Error ->
-        {stop, Error}
+find_replicator({BaseId, Ext} = _RepId) ->
+    case lists:keysearch(
+        BaseId ++ Ext, 1, supervisor:which_children(couch_replicator_job_sup)) of
+    {value, {_, Pid, _, _}} when is_pid(Pid) ->
+            {ok, Pid};
+    _ ->
+            {error, not_found}
     end.
 
-do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
+details(Pid) ->
+    case (catch gen_server:call(Pid, get_details)) of
+    {ok, Rep} ->
+        {ok, Rep};
+    {'EXIT', {noproc, {gen_server, call, _}}} ->
+        {error, not_found};
+    Error ->
+        throw(Error)
+    end.
+
+init(InitArgs) ->
+    {ok, InitArgs, 0}.
+
+do_init(#rep{options = Options, id = {BaseId, Ext}, user_ctx=UserCtx} = Rep) ->
     process_flag(trap_exit, true),
+
+    random:seed(os:timestamp()),
 
     #rep_state{
         source = Source,
@@ -248,8 +264,8 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
         source_name = SourceName,
         target_name = TargetName,
         start_seq = {_Ts, StartSeq},
-        source_seq = SourceCurSeq,
         committed_seq = {_, CommittedSeq},
+        highest_seq_done = {_, HighestSeq},
         checkpoint_interval = CheckpointInterval
     } = State = init_state(Rep),
 
@@ -261,7 +277,9 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
     ]),
     % This starts the _changes reader process. It adds the changes from
     % the source db to the ChangesQueue.
-    ChangesReader = spawn_changes_reader(StartSeq, Source, ChangesQueue, Options),
+    {ok, ChangesReader} = couch_replicator_changes_reader:start_link(
+        StartSeq, Source, ChangesQueue, Options
+    ),
     % Changes manager - responsible for dequeing batches from the changes queue
     % and deliver them to the worker processes.
     ChangesManager = spawn_changes_manager(self(), ChangesQueue, BatchSize),
@@ -271,6 +289,7 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
     MaxConns = get_value(http_connections, Options),
     Workers = lists:map(
         fun(_) ->
+            couch_stats:increment_counter([couch_replicator, workers_started]),
             {ok, Pid} = couch_replicator_worker:start_link(
                 self(), Source, Target, ChangesManager, MaxConns),
             Pid
@@ -279,7 +298,9 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
 
     couch_task_status:add_task([
         {type, replication},
+        {user, UserCtx#user_ctx.name},
         {replication_id, ?l2b(BaseId ++ Ext)},
+        {database, Rep#rep.db_name},
         {doc_id, Rep#rep.doc_id},
         {source, ?l2b(SourceName)},
         {target, ?l2b(TargetName)},
@@ -288,10 +309,10 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
         {missing_revisions_found, 0},
         {docs_read, 0},
         {docs_written, 0},
+        {changes_pending, get_pending_count(State)},
         {doc_write_failures, 0},
-        {source_seq, SourceCurSeq},
+        {source_seq, HighestSeq},
         {checkpointed_source_seq, CommittedSeq},
-        {progress, 0},
         {checkpoint_interval, CheckpointInterval}
     ]),
     couch_task_status:set_update_frequency(1000),
@@ -306,7 +327,7 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
     % cancel_replication/1) and then start the replication again, but this is
     % unfortunately not immune to race conditions.
 
-    ?LOG_INFO("Replication `~p` is using:~n"
+    couch_log:notice("Replication `~p` is using:~n"
         "~c~p worker processes~n"
         "~ca worker batch size of ~p~n"
         "~c~p HTTP connections~n"
@@ -324,7 +345,7 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
                 io_lib:format("~n~csource start sequence ~p", [$\t, StartSeq])
             end]),
 
-    ?LOG_DEBUG("Worker pids are: ~p", [Workers]),
+    couch_log:debug("Worker pids are: ~p", [Workers]),
 
     couch_replicator_manager:replication_started(Rep),
 
@@ -336,43 +357,56 @@ do_init(#rep{options = Options, id = {BaseId, Ext}} = Rep) ->
         }
     }.
 
+adjust_maxconn(Src = #httpdb{http_connections = 1}, RepId) ->
+    Msg = "Adjusting minimum number of HTTP source connections to 2 for ~p",
+    couch_log:notice(Msg, [RepId]),
+    Src#httpdb{http_connections = 2};
+
+adjust_maxconn(Src, _RepId) ->
+    Src.
 
 handle_info(shutdown, St) ->
     {stop, shutdown, St};
 
 handle_info({'DOWN', Ref, _, _, Why}, #rep_state{source_monitor = Ref} = St) ->
-    ?LOG_ERROR("Source database is down. Reason: ~p", [Why]),
+    couch_log:error("Source database is down. Reason: ~p", [Why]),
     {stop, source_db_down, St};
 
 handle_info({'DOWN', Ref, _, _, Why}, #rep_state{target_monitor = Ref} = St) ->
-    ?LOG_ERROR("Target database is down. Reason: ~p", [Why]),
+    couch_log:error("Target database is down. Reason: ~p", [Why]),
     {stop, target_db_down, St};
 
 handle_info({'EXIT', Pid, normal}, #rep_state{changes_reader=Pid} = State) ->
     {noreply, State};
 
 handle_info({'EXIT', Pid, Reason}, #rep_state{changes_reader=Pid} = State) ->
-    ?LOG_ERROR("ChangesReader process died with reason: ~p", [Reason]),
+    couch_stats:increment_counter([couch_replicator, changes_reader_deaths]),
+    couch_log:error("ChangesReader process died with reason: ~p", [Reason]),
     {stop, changes_reader_died, cancel_timer(State)};
 
 handle_info({'EXIT', Pid, normal}, #rep_state{changes_manager = Pid} = State) ->
     {noreply, State};
 
 handle_info({'EXIT', Pid, Reason}, #rep_state{changes_manager = Pid} = State) ->
-    ?LOG_ERROR("ChangesManager process died with reason: ~p", [Reason]),
+    couch_stats:increment_counter([couch_replicator, changes_manager_deaths]),
+    couch_log:error("ChangesManager process died with reason: ~p", [Reason]),
     {stop, changes_manager_died, cancel_timer(State)};
 
 handle_info({'EXIT', Pid, normal}, #rep_state{changes_queue=Pid} = State) ->
     {noreply, State};
 
 handle_info({'EXIT', Pid, Reason}, #rep_state{changes_queue=Pid} = State) ->
-    ?LOG_ERROR("ChangesQueue process died with reason: ~p", [Reason]),
+    couch_stats:increment_counter([couch_replicator, changes_queue_deaths]),
+    couch_log:error("ChangesQueue process died with reason: ~p", [Reason]),
     {stop, changes_queue_died, cancel_timer(State)};
 
 handle_info({'EXIT', Pid, normal}, #rep_state{workers = Workers} = State) ->
     case Workers -- [Pid] of
     Workers ->
-        {stop, {unknown_process_died, Pid, normal}, State};
+        couch_log:error("unknown pid bit the dust ~p ~n",[Pid]),
+        {noreply, State#rep_state{workers = Workers}};
+        %% not clear why a stop was here before
+        %%{stop, {unknown_process_died, Pid, normal}, State};
     [] ->
         catch unlink(State#rep_state.changes_manager),
         catch exit(State#rep_state.changes_manager, kill),
@@ -387,10 +421,18 @@ handle_info({'EXIT', Pid, Reason}, #rep_state{workers = Workers} = State) ->
     false ->
         {stop, {unknown_process_died, Pid, Reason}, State2};
     true ->
-        ?LOG_ERROR("Worker ~p died with reason: ~p", [Pid, Reason]),
+        couch_stats:increment_counter([couch_replicator, worker_deaths]),
+        couch_log:error("Worker ~p died with reason: ~p", [Pid, Reason]),
         {stop, {worker_died, Pid, Reason}, State2}
-    end.
+    end;
 
+handle_info(timeout, InitArgs) ->
+    try do_init(InitArgs) of {ok, State} ->
+        {noreply, State}
+    catch Class:Error ->
+        Stack = erlang:get_stacktrace(),
+        {stop, shutdown, {error, Class, Error, Stack, InitArgs}}
+    end.
 
 handle_call(get_details, _From, #rep_state{rep_details = Rep} = State) ->
     {reply, {ok, Rep}, State};
@@ -405,6 +447,8 @@ handle_call({report_seq_done, Seq, StatsInc}, From,
         current_through_seq = ThroughSeq, stats = Stats} = State) ->
     gen_server:reply(From, ok),
     {NewThroughSeq0, NewSeqsInProgress} = case SeqsInProgress of
+    [] ->
+        {Seq, []};
     [Seq | Rest] ->
         {Seq, Rest};
     [_ | _] ->
@@ -417,19 +461,17 @@ handle_call({report_seq_done, Seq, StatsInc}, From,
     _ ->
         NewThroughSeq0
     end,
-    ?LOG_DEBUG("Worker reported seq ~p, through seq was ~p, "
+    couch_log:debug("Worker reported seq ~p, through seq was ~p, "
         "new through seq is ~p, highest seq done was ~p, "
         "new highest seq done is ~p~n"
         "Seqs in progress were: ~p~nSeqs in progress are now: ~p",
         [Seq, ThroughSeq, NewThroughSeq, HighestDone,
             NewHighestDone, SeqsInProgress, NewSeqsInProgress]),
-    SourceCurSeq = source_cur_seq(State),
     NewState = State#rep_state{
         stats = couch_replicator_utils:sum_stats(Stats, StatsInc),
         current_through_seq = NewThroughSeq,
         seqs_in_progress = NewSeqsInProgress,
-        highest_seq_done = NewHighestDone,
-        source_seq = SourceCurSeq
+        highest_seq_done = NewHighestDone
     },
     update_task(NewState),
     {noreply, NewState}.
@@ -446,11 +488,20 @@ handle_cast({db_compacted, DbName},
     {noreply, State#rep_state{target = NewTarget}};
 
 handle_cast(checkpoint, State) ->
-    case do_checkpoint(State) of
-    {ok, NewState} ->
-        {noreply, NewState#rep_state{timer = start_timer(State)}};
-    Error ->
-        {stop, Error, State}
+    #rep_state{rep_details = #rep{} = Rep} = State,
+    case couch_replicator_manager:continue(Rep) of
+    {true, _} ->
+        case do_checkpoint(State) of
+        {ok, NewState} ->
+            couch_stats:increment_counter([couch_replicator, checkpoints, success]),
+            {noreply, NewState#rep_state{timer = start_timer(State)}};
+        Error ->
+            couch_stats:increment_counter([couch_replicator, checkpoints, failure]),
+            {stop, Error, State}
+        end;
+    {false, Owner} ->
+        couch_replicator_manager:replication_usurped(Rep, Owner),
+        {stop, shutdown, State}
     end;
 
 handle_cast({report_seq, Seq},
@@ -459,12 +510,46 @@ handle_cast({report_seq, Seq},
     {noreply, State#rep_state{seqs_in_progress = NewSeqsInProgress}}.
 
 
-code_change(OldVsn, OldState, Extra) when tuple_size(OldState) =:= 30 ->
-    code_change(OldVsn, erlang:append_element(OldState, true), Extra);
-code_change(OldVsn, OldState, Extra) when tuple_size(OldState) =:= 31 ->
-    code_change(OldVsn, erlang:append_element(OldState, 5000), Extra);
 code_change(_OldVsn, #rep_state{}=State, _Extra) ->
     {ok, State}.
+
+
+headers_strip_creds([], Acc) ->
+    lists:reverse(Acc);
+headers_strip_creds([{Key, Value0} | Rest], Acc) ->
+    Value = case string:to_lower(Key) of
+    "authorization" ->
+        "****";
+    _ ->
+        Value0
+    end,
+    headers_strip_creds(Rest, [{Key, Value} | Acc]).
+
+
+httpdb_strip_creds(#httpdb{url = Url, headers = Headers} = HttpDb) ->
+    HttpDb#httpdb{
+        url = couch_util:url_strip_password(Url),
+        headers = headers_strip_creds(Headers, [])
+    };
+httpdb_strip_creds(LocalDb) ->
+    LocalDb.
+
+
+rep_strip_creds(#rep{source = Source, target = Target} = Rep) ->
+    Rep#rep{
+        source = httpdb_strip_creds(Source),
+        target = httpdb_strip_creds(Target)
+    }.
+
+
+state_strip_creds(#rep_state{rep_details = Rep, source = Source, target = Target} = State) ->
+    % #rep_state contains the source and target at the top level and also
+    % in the nested #rep_details record
+    State#rep_state{
+        rep_details = rep_strip_creds(Rep),
+        source = httpdb_strip_creds(Source),
+        target = httpdb_strip_creds(Target)
+    }.
 
 
 terminate(normal, #rep_state{rep_details = #rep{id = RepId} = Rep,
@@ -478,18 +563,33 @@ terminate(shutdown, #rep_state{rep_details = #rep{id = RepId}} = State) ->
     couch_replicator_notifier:notify({error, RepId, <<"cancelled">>}),
     terminate_cleanup(State);
 
+terminate(shutdown, {error, Class, Error, Stack, InitArgs}) ->
+    #rep{id=RepId} = InitArgs,
+    couch_stats:increment_counter([couch_replicator, failed_starts]),
+    CleanInitArgs = rep_strip_creds(InitArgs),
+    couch_log:error("~p:~p: Replication failed to start for args ~p: ~p",
+             [Class, Error, CleanInitArgs, Stack]),
+    case Error of
+    {unauthorized, DbUri} ->
+        NotifyError = {unauthorized, <<"unauthorized to access or create database ", DbUri/binary>>};
+    {db_not_found, DbUri} ->
+        NotifyError = {db_not_found, <<"could not open ", DbUri/binary>>};
+    _ ->
+        NotifyError = Error
+    end,
+    couch_replicator_notifier:notify({error, RepId, NotifyError}),
+    couch_replicator_manager:replication_error(InitArgs, NotifyError);
 terminate(Reason, State) ->
     #rep_state{
         source_name = Source,
         target_name = Target,
         rep_details = #rep{id = {BaseId, Ext} = RepId} = Rep
     } = State,
-    ?LOG_ERROR("Replication `~s` (`~s` -> `~s`) failed: ~s",
+    couch_log:error("Replication `~s` (`~s` -> `~s`) failed: ~s",
         [BaseId ++ Ext, Source, Target, to_binary(Reason)]),
     terminate_cleanup(State),
     couch_replicator_notifier:notify({error, RepId, Reason}),
     couch_replicator_manager:replication_error(Rep, Reason).
-
 
 terminate_cleanup(State) ->
     update_task(State),
@@ -499,6 +599,10 @@ terminate_cleanup(State) ->
     couch_replicator_api_wrap:db_close(State#rep_state.target).
 
 
+format_status(_Opt, [_PDict, State]) ->
+    [{data, [{"State", state_strip_creds(State)}]}].
+
+
 do_last_checkpoint(#rep_state{seqs_in_progress = [],
     highest_seq_done = {_Ts, ?LOWEST_SEQ}} = State) ->
     {stop, normal, cancel_timer(State)};
@@ -506,8 +610,10 @@ do_last_checkpoint(#rep_state{seqs_in_progress = [],
     highest_seq_done = Seq} = State) ->
     case do_checkpoint(State#rep_state{current_through_seq = Seq}) of
     {ok, NewState} ->
+        couch_stats:increment_counter([couch_replicator, checkpoints, success]),
         {stop, normal, cancel_timer(NewState)};
     Error ->
+        couch_stats:increment_counter([couch_replicator, checkpoints, failure]),
         {stop, Error, State}
     end.
 
@@ -518,7 +624,7 @@ start_timer(State) ->
     {ok, Ref} ->
         Ref;
     Error ->
-        ?LOG_ERROR("Replicator, error scheduling checkpoint:  ~p", [Error]),
+        couch_log:error("Replicator, error scheduling checkpoint:  ~p", [Error]),
         nil
     end.
 
@@ -532,9 +638,13 @@ cancel_timer(#rep_state{timer = Timer} = State) ->
 
 init_state(Rep) ->
     #rep{
-        source = Src, target = Tgt,
-        options = Options, user_ctx = UserCtx
+        id = {BaseId, _Ext},
+        source = Src0, target = Tgt,
+        options = Options, user_ctx = UserCtx,
+        type = Type, view = View
     } = Rep,
+    % Adjust minimum number of http source connections to 2 to avoid deadlock
+    Src = adjust_maxconn(Src0, BaseId),
     {ok, Source} = couch_replicator_api_wrap:db_open(Src, [{user_ctx, UserCtx}]),
     {ok, Target} = couch_replicator_api_wrap:db_open(Tgt, [{user_ctx, UserCtx}],
         get_value(create_target, Options, false)),
@@ -547,6 +657,9 @@ init_state(Rep) ->
     {StartSeq0, History} = compare_replication_logs(SourceLog, TargetLog),
     StartSeq1 = get_value(since_seq, Options, StartSeq0),
     StartSeq = {0, StartSeq1},
+
+    SourceSeq = get_value(<<"update_seq">>, SourceInfo, ?LOWEST_SEQ),
+
     #doc{body={CheckpointHistory}} = SourceLog,
     State = #rep_state{
         rep_details = Rep,
@@ -561,7 +674,7 @@ init_state(Rep) ->
         committed_seq = StartSeq,
         source_log = SourceLog,
         target_log = TargetLog,
-        rep_starttime = couch_util:rfc1123_date(),
+        rep_starttime = httpd_util:rfc1123_date(),
         src_starttime = get_value(<<"instance_start_time">>, SourceInfo),
         tgt_starttime = get_value(<<"instance_start_time">>, TargetInfo),
         session_id = couch_uuids:random(),
@@ -571,9 +684,12 @@ init_state(Rep) ->
             start_db_compaction_notifier(Target, self()),
         source_monitor = db_monitor(Source),
         target_monitor = db_monitor(Target),
-        source_seq = get_value(<<"update_seq">>, SourceInfo, ?LOWEST_SEQ),
+        source_seq = SourceSeq,
         use_checkpoints = get_value(use_checkpoints, Options, true),
-        checkpoint_interval = get_value(checkpoint_interval, Options, 5000)
+        checkpoint_interval = get_value(checkpoint_interval, Options,
+                                        ?DEFAULT_CHECKPOINT_INTERVAL),
+        type = Type,
+        view = View
     },
     State#rep_state{timer = start_timer(State)}.
 
@@ -605,59 +721,6 @@ fold_replication_logs([Db | Rest] = Dbs, Vsn, LogId, NewId, Rep, Acc) ->
     end.
 
 
-spawn_changes_reader(StartSeq, #httpdb{} = Db, ChangesQueue, Options) ->
-    spawn_link(fun() ->
-        put(last_seq, StartSeq),
-        put(retries_left, Db#httpdb.retries),
-        read_changes(StartSeq, Db#httpdb{retries = 0}, ChangesQueue, Options)
-    end);
-spawn_changes_reader(StartSeq, Db, ChangesQueue, Options) ->
-    spawn_link(fun() ->
-        read_changes(StartSeq, Db, ChangesQueue, Options)
-    end).
-
-read_changes(StartSeq, Db, ChangesQueue, Options) ->
-    try
-        couch_replicator_api_wrap:changes_since(Db, all_docs, StartSeq,
-            fun(#doc_info{high_seq = Seq, id = Id} = DocInfo) ->
-                case Id of
-                <<>> ->
-                    % Previous CouchDB releases had a bug which allowed a doc
-                    % with an empty ID to be inserted into databases. Such doc
-                    % is impossible to GET.
-                    ?LOG_ERROR("Replicator: ignoring document with empty ID in "
-                        "source database `~s` (_changes sequence ~p)",
-                        [couch_replicator_api_wrap:db_uri(Db), Seq]);
-                _ ->
-                    ok = couch_work_queue:queue(ChangesQueue, DocInfo)
-                end,
-                put(last_seq, Seq)
-            end, Options),
-        couch_work_queue:close(ChangesQueue)
-    catch exit:{http_request_failed, _, _, _} = Error ->
-        case get(retries_left) of
-        N when N > 0 ->
-            put(retries_left, N - 1),
-            LastSeq = get(last_seq),
-            Db2 = case LastSeq of
-            StartSeq ->
-                ?LOG_INFO("Retrying _changes request to source database ~s"
-                    " with since=~p in ~p seconds",
-                    [couch_replicator_api_wrap:db_uri(Db), LastSeq, Db#httpdb.wait / 1000]),
-                ok = timer:sleep(Db#httpdb.wait),
-                Db#httpdb{wait = 2 * Db#httpdb.wait};
-            _ ->
-                ?LOG_INFO("Retrying _changes request to source database ~s"
-                    " with since=~p", [couch_replicator_api_wrap:db_uri(Db), LastSeq]),
-                Db
-            end,
-            read_changes(LastSeq, Db2, ChangesQueue, Options);
-        _ ->
-            exit(Error)
-        end
-    end.
-
-
 spawn_changes_manager(Parent, ChangesQueue, BatchSize) ->
     spawn_link(fun() ->
         changes_manager_loop_open(Parent, ChangesQueue, BatchSize, 1)
@@ -683,10 +746,8 @@ do_checkpoint(#rep_state{use_checkpoints=false} = State) ->
     NewState = State#rep_state{checkpoint_history = {[{<<"use_checkpoints">>, false}]} },
     {ok, NewState};
 do_checkpoint(#rep_state{current_through_seq=Seq, committed_seq=Seq} = State) ->
-    SourceCurSeq = source_cur_seq(State),
-    NewState = State#rep_state{source_seq = SourceCurSeq},
-    update_task(NewState),
-    {ok, NewState};
+    update_task(State),
+    {ok, State};
 do_checkpoint(State) ->
     #rep_state{
         source_name=SourceName,
@@ -713,10 +774,10 @@ do_checkpoint(State) ->
          {checkpoint_commit_failure,
              <<"Failure on target commit: ", (to_binary(Reason))/binary>>};
     {SrcInstanceStartTime, TgtInstanceStartTime} ->
-        ?LOG_INFO("recording a checkpoint for `~s` -> `~s` at source update_seq ~p",
+        couch_log:notice("recording a checkpoint for `~s` -> `~s` at source update_seq ~p",
             [SourceName, TargetName, NewSeq]),
         StartTime = ?l2b(ReplicationStartTime),
-        EndTime = ?l2b(couch_util:rfc1123_date()),
+        EndTime = ?l2b(httpd_util:rfc1123_date()),
         NewHistoryEntry = {[
             {<<"session_id">>, SessionId},
             {<<"start_time">>, StartTime},
@@ -724,11 +785,11 @@ do_checkpoint(State) ->
             {<<"start_last_seq">>, StartSeq},
             {<<"end_last_seq">>, NewSeq},
             {<<"recorded_seq">>, NewSeq},
-            {<<"missing_checked">>, Stats#rep_stats.missing_checked},
-            {<<"missing_found">>, Stats#rep_stats.missing_found},
-            {<<"docs_read">>, Stats#rep_stats.docs_read},
-            {<<"docs_written">>, Stats#rep_stats.docs_written},
-            {<<"doc_write_failures">>, Stats#rep_stats.doc_write_failures}
+            {<<"missing_checked">>, couch_replicator_stats:missing_checked(Stats)},
+            {<<"missing_found">>, couch_replicator_stats:missing_found(Stats)},
+            {<<"docs_read">>, couch_replicator_stats:docs_read(Stats)},
+            {<<"docs_written">>, couch_replicator_stats:docs_written(Stats)},
+            {<<"doc_write_failures">>, couch_replicator_stats:doc_write_failures(Stats)}
         ]},
         BaseHistory = [
             {<<"session_id">>, SessionId},
@@ -744,9 +805,9 @@ do_checkpoint(State) ->
             [
                 {<<"start_time">>, StartTime},
                 {<<"end_time">>, EndTime},
-                {<<"docs_read">>, Stats#rep_stats.docs_read},
-                {<<"docs_written">>, Stats#rep_stats.docs_written},
-                {<<"doc_write_failures">>, Stats#rep_stats.doc_write_failures}
+                {<<"docs_read">>, couch_replicator_stats:docs_read(Stats)},
+                {<<"docs_written">>, couch_replicator_stats:docs_written(Stats)},
+                {<<"doc_write_failures">>, couch_replicator_stats:doc_write_failures(Stats)}
             ]
         end,
         % limit history to 50 entries
@@ -760,9 +821,7 @@ do_checkpoint(State) ->
                 Source, SourceLog#doc{body = NewRepHistory}, source),
             {TgtRevPos, TgtRevId} = update_checkpoint(
                 Target, TargetLog#doc{body = NewRepHistory}, target),
-            SourceCurSeq = source_cur_seq(State),
             NewState = State#rep_state{
-                source_seq = SourceCurSeq,
                 checkpoint_history = NewRepHistory,
                 committed_seq = NewTsSeq,
                 source_log = SourceLog#doc{revs={SrcRevPos, [SrcRevId]}},
@@ -866,22 +925,22 @@ compare_replication_logs(SrcDoc, TgtDoc) ->
     false ->
         SourceHistory = get_value(<<"history">>, RepRecProps, []),
         TargetHistory = get_value(<<"history">>, RepRecPropsTgt, []),
-        ?LOG_INFO("Replication records differ. "
+        couch_log:notice("Replication records differ. "
                 "Scanning histories to find a common ancestor.", []),
-        ?LOG_DEBUG("Record on source:~p~nRecord on target:~p~n",
+        couch_log:debug("Record on source:~p~nRecord on target:~p~n",
                 [RepRecProps, RepRecPropsTgt]),
         compare_rep_history(SourceHistory, TargetHistory)
     end.
 
 compare_rep_history(S, T) when S =:= [] orelse T =:= [] ->
-    ?LOG_INFO("no common ancestry -- performing full replication", []),
+    couch_log:notice("no common ancestry -- performing full replication", []),
     {?LOWEST_SEQ, []};
 compare_rep_history([{S} | SourceRest], [{T} | TargetRest] = Target) ->
     SourceId = get_value(<<"session_id">>, S),
     case has_session_id(SourceId, Target) of
     true ->
         RecordSeqNum = get_value(<<"recorded_seq">>, S, ?LOWEST_SEQ),
-        ?LOG_INFO("found a common replication record with source_seq ~p",
+        couch_log:notice("found a common replication record with source_seq ~p",
             [RecordSeqNum]),
         {RecordSeqNum, SourceRest};
     false ->
@@ -889,7 +948,7 @@ compare_rep_history([{S} | SourceRest], [{T} | TargetRest] = Target) ->
         case has_session_id(TargetId, SourceRest) of
         true ->
             RecordSeqNum = get_value(<<"recorded_seq">>, T, ?LOWEST_SEQ),
-            ?LOG_INFO("found a common replication record with source_seq ~p",
+            couch_log:notice("found a common replication record with source_seq ~p",
                 [RecordSeqNum]),
             {RecordSeqNum, TargetRest};
         false ->
@@ -914,38 +973,51 @@ db_monitor(#db{} = Db) ->
 db_monitor(_HttpDb) ->
     nil.
 
+get_pending_count(St) ->
+    Rep = St#rep_state.rep_details,
+    Timeout = get_value(connection_timeout, Rep#rep.options),
+    TimeoutMicro = Timeout * 1000,
+    case get(pending_count_state) of
+        {LastUpdate, PendingCount} ->
+            case timer:now_diff(os:timestamp(), LastUpdate) > TimeoutMicro of
+                true ->
+                    NewPendingCount = get_pending_count_int(St),
+                    put(pending_count_state, {os:timestamp(), NewPendingCount}),
+                    NewPendingCount;
+                false ->
+                    PendingCount
+            end;
+        undefined ->
+            NewPendingCount = get_pending_count_int(St),
+            put(pending_count_state, {os:timestamp(), NewPendingCount}),
+            NewPendingCount
+    end.
 
-source_cur_seq(#rep_state{source = #httpdb{} = Db, source_seq = Seq}) ->
-    case (catch couch_replicator_api_wrap:get_db_info(Db#httpdb{retries = 3})) of
-    {ok, Info} ->
-        get_value(<<"update_seq">>, Info, Seq);
+
+get_pending_count_int(#rep_state{source = #httpdb{} = Db0}=St) ->
+    {_, Seq} = St#rep_state.highest_seq_done,
+    Db = Db0#httpdb{retries = 3},
+    case (catch couch_replicator_api_wrap:get_pending_count(Db, Seq)) of
+    {ok, Pending} ->
+        Pending;
     _ ->
-        Seq
+        null
     end;
-source_cur_seq(#rep_state{source = Db, source_seq = Seq}) ->
-    {ok, Info} = couch_replicator_api_wrap:get_db_info(Db),
-    get_value(<<"update_seq">>, Info, Seq).
+get_pending_count_int(#rep_state{source = Db}=St) ->
+    {_, Seq} = St#rep_state.highest_seq_done,
+    {ok, Pending} = couch_replicator_api_wrap:get_pending_count(Db, Seq),
+    Pending.
 
 
 update_task(State) ->
     #rep_state{
-        current_through_seq = {_, CurSeq},
-        source_seq = SourceCurSeq
+        current_through_seq = {_, ThroughSeq},
+        highest_seq_done = {_, HighestSeq}
     } = State,
     couch_task_status:update(
         rep_stats(State) ++ [
-        {source_seq, SourceCurSeq},
-        case is_number(CurSeq) andalso is_number(SourceCurSeq) of
-        true ->
-            case SourceCurSeq of
-            0 ->
-                {progress, 0};
-            _ ->
-                {progress, (CurSeq * 100) div SourceCurSeq}
-            end;
-        false ->
-            {progress, null}
-        end
+        {source_seq, HighestSeq},
+        {through_seq, ThroughSeq}
     ]).
 
 
@@ -955,11 +1027,11 @@ rep_stats(State) ->
         stats = Stats
     } = State,
     [
-        {revisions_checked, Stats#rep_stats.missing_checked},
-        {missing_revisions_found, Stats#rep_stats.missing_found},
-        {docs_read, Stats#rep_stats.docs_read},
-        {docs_written, Stats#rep_stats.docs_written},
-        {doc_write_failures, Stats#rep_stats.doc_write_failures},
+        {revisions_checked, couch_replicator_stats:missing_checked(Stats)},
+        {missing_revisions_found, couch_replicator_stats:missing_found(Stats)},
+        {docs_read, couch_replicator_stats:docs_read(Stats)},
+        {docs_written, couch_replicator_stats:docs_written(Stats)},
+        {changes_pending, get_pending_count(State)},
+        {doc_write_failures, couch_replicator_stats:doc_write_failures(Stats)},
         {checkpointed_source_seq, CommittedSeq}
     ].
-

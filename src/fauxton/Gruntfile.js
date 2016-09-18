@@ -15,16 +15,22 @@
 // configuration file, which you can learn more about here:
 // https://github.com/cowboy/grunt/blob/master/docs/configuring.md
 
-module.exports = function(grunt) {
-  var helper = require('./tasks/helper').init(grunt),
-  _ = grunt.util._,
-  fs = require('fs');
+/*jslint node: true */
+"use strict";
+
+const path = require('path');
+var webpackConfig = require("./webpack.config.dev.js");
+
+module.exports = function (grunt) {
+  var helper = require('./tasks/helper.js'),
+      initHelper = helper.init(grunt),
+      _ = grunt.util._,
+      fs = require('fs');
 
   var couch_config = function () {
-
     var default_couch_config = {
       fauxton: {
-        db: 'http://localhost:5984/fauxton',
+        db: helper.couch + 'fauxton',
         app: './couchapp.js',
         options: {
           okay_if_missing: true
@@ -32,15 +38,15 @@ module.exports = function(grunt) {
       }
     };
 
-    var settings_couch_config = helper.readSettingsFile().couch_config;
+    var settings_couch_config = initHelper.readSettingsFile().couch_config;
     return settings_couch_config || default_couch_config;
   }();
 
   var cleanableAddons =  function () {
     var theListToClean = [];
-    helper.processAddons(function(addon){
+    initHelper.processAddons(function (addon) {
       // Only clean addons that are included from a local dir
-      if (addon.path){
+      if (addon.path) {
         theListToClean.push("app/addons/" + addon.name);
       }
     });
@@ -48,124 +54,52 @@ module.exports = function(grunt) {
     return theListToClean;
   }();
 
-  var cleanable = function(){
+  var cleanable = function () {
     // Whitelist files and directories to be cleaned
     // You'll always want to clean these two directories
     // Now find the external addons you have and add them for cleaning up
     return _.union(["dist/", "app/load_addons.js"], cleanableAddons);
   }();
 
-  var assets = function(){
-    // Base assets
-    var theAssets = {
-      less:{
-        paths: ["assets/less"],
-        files: {
-          "dist/debug/css/fauxton.css": "assets/less/fauxton.less"
-        }
-      },
-      img: ["assets/img/**"],
-      // used in concat:index_css to keep file ordering intact
-      // fauxton.css should load first
-      css: ["assets/css/*.css", "dist/debug/css/fauxton.css"]
-    };
-    helper.processAddons(function(addon){
-      // Less files from addons
-      var root = addon.path || "app/addons/" + addon.name;
-      var lessPath = root + "/assets/less";
-      if(fs.existsSync(lessPath)){
-        // .less files exist for this addon
-        theAssets.less.paths.push(lessPath);
-        theAssets.less.files["dist/debug/css/" + addon.name + ".css"] =
-          lessPath + "/" + addon.name + ".less";
-        theAssets.css.push("dist/debug/css/" + addon.name + ".css");
+  var templateSettings = (function getTemplateSettings () {
+    var settings = initHelper.readSettingsFile();
+
+    var i18n = JSON.stringify(initHelper.readI18nFile(), null, ' ');
+
+    Object.keys(settings.template).forEach(function (key) {
+      settings.template[key].variables.generationDate = new Date().toISOString();
+      if (!settings.template[key].variables.generationLabel) {
+        settings.template[key].variables.generationLabel = 'Generated: ';
       }
-      // Images
-      root = addon.path || "app/addons/" + addon.name;
-      var imgPath = root + "/assets/img";
-      if(fs.existsSync(imgPath)){
-        theAssets.img.push(imgPath + "/**");
-      }
+      settings.template[key].app.i18n = i18n;
     });
-    return theAssets;
-  }();
 
-  var templateSettings = function(){
-    var defaultSettings = {
-     "development": {
-        "src": "assets/index.underscore",
-        "dest": "dist/debug/index.html",
-        "variables": {
-          "requirejs": "/assets/js/libs/require.js",
-          "css": "./css/index.css",
-          "base": null
-        }
-      },
-      "release": {
-        "src": "assets/index.underscore",
-        "dest": "dist/debug/index.html",
-        "variables": {
-          "requirejs": "./js/require.js",
-          "css": "./css/index.css",
-          "base": null
-        }
-      }
-    };
-
-    var settings = helper.readSettingsFile();
-    return settings.template || defaultSettings;
-  }();
+    return settings.template;
+  })();
 
   var couchserver_config  = function () {
     // add a "couchserver" key to settings.json with JSON that matches the
     // keys and values below (plus your customizations) to have Fauxton work
     // against a remote CouchDB-compatible server.
     var defaults = {
-      dist: './dist/debug/',
-      port: 8000,
+      port: helper.devServerPort,
       proxy: {
-        target: {
-          host: 'localhost',
-          port: 5984,
-          https: false
-        },
-        // This sets the Host header in the proxy so that you can use external
-        // CouchDB instances and not have the Host set to 'localhost'
-        changeOrigin: true
+        target: helper.couch
       }
     };
 
-    return helper.readSettingsFile().couchserver || defaults;
+    return initHelper.readSettingsFile().couchserver || defaults;
   }();
 
-  grunt.initConfig({
+  var config = {
 
     // The clean task ensures all files are removed from the dist/ directory so
     // that no files linger from previous builds.
     clean: {
-      release:  cleanable,
-      watch: cleanableAddons
-    },
-
-    less: {
-      compile: {
-        options: {
-          paths: assets.less.paths
-        },
-        files: assets.less.files
-      }
-    },
-
-    // The jshint option for scripturl is set to lax, because the anchor
-    // override inside main.js needs to test for them so as to not accidentally
-    // route. Settings expr true so we can do `migtBeNullObject && mightBeNullObject.coolFunction()`
-    jshint: {
-      all: ['app/**/*.js', 'Gruntfile.js', "!app/**/assets/js/*.js"],
       options: {
-        scripturl: true,
-        evil: true,
-        expr: true
-      }
+        'force': true
+      },
+      release:  cleanable
     },
 
     // The jst task compiles all application templates into JavaScript
@@ -178,12 +112,12 @@ module.exports = function(grunt) {
     jst: {
       compile: {
         options: {
-          processContent: function(src) {
+          processContent: function (src) {
             return src.replace(/<!--[\s\S]*?-->/gm, '');
           }
         },
         files: {
-          "dist/debug/templates.js": [
+          'dist/tmp-out/templates.js': [
             "app/templates/**/*.html",
             "app/addons/**/templates/**/*.html"
           ]
@@ -193,93 +127,15 @@ module.exports = function(grunt) {
 
     template: templateSettings,
 
-    // The concatenate task is used here to merge the almond require/define
-    // shim and the templates into the application code.  It's named
-    // dist/debug/require.js, because we want to only load one script file in
-    // index.html.
     concat: {
-      requirejs: {
-        src: [ "assets/js/libs/require.js", "dist/debug/templates.js", "dist/debug/require.js"],
-        dest: "dist/debug/js/require.js"
+      bundle_js: {
+        src: ['dist/tmp-out/templates.js', "dist/debug/bundle.js"],
+        dest: "dist/debug/bundle.js"
       },
 
-      index_css: {
-        src: assets.css,
-        dest: 'dist/debug/css/index.css'
-      },
-
-      test_config_js: {
-        src: ["dist/debug/templates.js", "test/test.config.js"],
-        dest: 'test/test.config.js'
-      },
-    },
-
-    cssmin: {
-      compress: {
-        files: {
-          "dist/release/css/index.css": [
-            "dist/debug/css/index.css", 'assets/css/*.css',
-            "app/addons/**/assets/css/*.css"
-          ]
-        },
-        options: {
-          report: 'min'
-        }
-      }
-    },
-
-    uglify: {
-      release: {
-        files: {
-          "dist/release/js/require.js": [
-            "dist/debug/js/require.js"
-          ]
-        }
-      }
-    },
-
-    // Runs a proxy server for easier development, no need to keep deploying to couchdb
-    couchserver: couchserver_config,
-
-    watch: {
-      js: { 
-        files: helper.watchFiles(['.js'], ["./app/**/*.js", '!./app/load_addons.js',"./assets/**/*.js", "./test/**/*.js"]),
-        tasks: ['watchRun'],
-      },
-      style: {
-        files: helper.watchFiles(['.less','.css'],["./app/**/*.css","./app/**/*.less","./assets/**/*.css", "./assets/**/*.less"]),
-        tasks: ['clean:watch', 'dependencies','less', 'concat:index_css'],
-      },
-      html: {
-        // the index.html is added in as a dummy file incase there is no
-        // html dependancies this will break. So we need one include pattern
-        files: helper.watchFiles(['.html'], ['./index.html']),
-        tasks: ['clean:watch', 'dependencies']
-      },
-      options: {
-        nospawn: true,
-        debounceDelay: 500
-      }
-    },
-
-    requirejs: {
-      compile: {
-        options: {
-          baseUrl: 'app',
-          // Include the main configuration file.
-          mainConfigFile: "app/config.js",
-
-          // Output file.
-          out: "dist/debug/require.js",
-
-          // Root application module.
-          name: "config",
-
-          // Do not wrap everything in an IIFE.
-          wrap: false,
-          optimize: "none",
-          findNestedDependencies: true
-        }
+      bundlerelease_js: {
+        src: ['dist/tmp-out/templates.js', "dist/release/bundle.js"],
+        dest: "dist/tmp-out/bundle.js"
       }
     },
 
@@ -289,40 +145,50 @@ module.exports = function(grunt) {
       couchdb: {
         files: [
           // this gets built in the template task
-          {src: "dist/release/index.html", dest: "../../share/www/fauxton/index.html"},
-          {src: ["**"], dest: "../../share/www/fauxton/js/", cwd:'dist/release/js/',  expand: true},
-          {src: ["**"], dest: "../../share/www/fauxton/img/", cwd:'dist/release/img/', expand: true},
-          {src: ["**"], dest: "../../share/www/fauxton/css/", cwd:"dist/release/css/", expand: true}
+          {src: "dist/release/index.html", dest: "../../share/www/index.html"},
+          {src: ["**"], dest: '../../share/www/dashboard.assets/', cwd: 'dist/release/dashboard.assets/',  expand: true},
         ]
       },
       couchdebug: {
         files: [
           // this gets built in the template task
-          {src: "dist/debug/index.html", dest: "../../share/www/fauxton/index.html"},
-          {src: ["**"], dest: "../../share/www/fauxton/js/", cwd:'dist/debug/js/',  expand: true},
-          {src: ["**"], dest: "../../share/www/fauxton/img/", cwd:'dist/debug/img/', expand: true},
-          {src: ["**"], dest: "../../share/www/fauxton/css/", cwd:"dist/debug/css/", expand: true}
+          {src: "dist/debug/index.html", dest: "../../share/www/index.html"},
         ]
       },
-      ace: {
-        files: [
-          {src: "assets/js/libs/ace/worker-json.js", dest: "dist/release/js/ace/worker-json.js"},
-          {src: "assets/js/libs/ace/mode-json.js", dest: "dist/release/js/ace/mode-json.js"},
-          {src: "assets/js/libs/ace/theme-crimson_editor.js", dest: "dist/release/js/ace/theme-crimson_editor.js"},
-          {src: "assets/js/libs/ace/mode-javascript.js", dest: "dist/release/js/ace/mode-javascript.js"},
-          {src: "assets/js/libs/ace/worker-javascript.js", dest: "dist/release/js/ace/worker-javascript.js"},
+      dist:{
+        files:[
+          {src: 'dist/debug/index.html', dest: 'dist/release/index.html'},
+          {src: './favicon.ico', dest: "dist/release/favicon.ico"}
         ]
       },
 
-      dist:{
+      distDepsRequire: {
         files:[
-          {src: "dist/debug/index.html", dest: "dist/release/index.html"},
-          {src: assets.img, dest: "dist/release/img/", flatten: true, expand: true}
+          {src: 'assets/**', dest: 'dist/tmp-out/', flatten: false, expand: false},
         ]
       },
-      debug:{
+
+      debug: {
         files:[
-          {src: assets.img, dest: "dist/debug/img/", flatten: true, expand: true}
+          {src: './favicon.ico', dest: "dist/debug/favicon.ico"}
+        ]
+      },
+
+      testTemplates: {
+        files: [
+          {src: 'dist/tmp-out/templates.js', dest: 'test/templates.js'}
+       ]
+      },
+      devTemplates: {
+        files: [
+          {src: 'dist/tmp-out/templates.js', dest: 'dist/debug/templates.js'}
+       ]
+      },
+
+      testfiles: {
+        files:[
+          {src: ['test/**'], dest: 'dist/debug/', flatten: false, expand: true},
+          {src: 'assets/**', dest: 'dist/debug/', flatten: false, expand: false},
         ]
       }
     },
@@ -339,6 +205,7 @@ module.exports = function(grunt) {
       }
     },
     gen_initialize: templateSettings,
+    checkTestExists: templateSettings,
 
     mkcouchdb: couch_config,
     rmcouchdb: couch_config,
@@ -346,60 +213,84 @@ module.exports = function(grunt) {
 
     mochaSetup: {
       default: {
-        files: { src: helper.watchFiles(['[Ss]pec.js'], ['./app/**/*[Ss]pec.js'])},
-        template: 'test/test.config.underscore',
-        config: './app/config.js'
+        files: {
+          src: initHelper.getFileList(['[Ss]pec.js'], [
+            './app/core/**/*[Ss]pec.js',
+            './app/addons/**/*[Ss]pec.js',
+            './app/addons/**/*[Ss]pec.react.jsx',
+            './app/addons/**/*[Ss]pec.jsx'
+          ])
+        },
+        template: 'test/test.config.underscore'
       }
     },
 
-    mocha_phantomjs: {
-      all: ['test/runner.html']
-    }
+    shell: {
+      webpack: {
+        command: 'npm run webpack:dev'
+      },
 
-  });
+      webpackrelease: {
+        command: 'npm run webpack:release'
+      },
 
-  // on watch events configure jshint:all to only run on changed file
-  grunt.event.on('watch', function(action, filepath) {
-    if (!!filepath.match(/.js$/) && filepath.indexOf('test.config.js') === -1) {
-      grunt.config(['jshint', 'all'], filepath);
-    }
+      webpacktest: {
+        command: 'npm run webpack:test'
+      },
 
-    if (!!filepath.match(/[Ss]pec.js$/)) {
-      //grunt.task.run(['mochaSetup','jst', 'concat:test_config_js', 'mocha_phantomjs']);
-    }
-  });
+      phantomjs: {
+        command: 'npm run phantomjs'
+      }
+    },
+
+    exec: {
+      start_nightWatch: {
+        command: __dirname + '/node_modules/nightwatch/bin/nightwatch' +
+        ' -c ' + __dirname + '/test/nightwatch_tests/nightwatch.json'
+      }
+    },
+
+    // generates the nightwatch.json file with appropriate content for this env
+    initNightwatch: {
+      default: {
+        settings: initHelper.readSettingsFile(),
+        template: 'test/nightwatch_tests/nightwatch.json.underscore',
+        dest: 'test/nightwatch_tests/nightwatch.json'
+      }
+    },
+
+    // these rename the already-bundled, minified requireJS and CSS files to include their hash
+    md5: {
+      bundlejs: {
+        files: { 'dist/release/dashboard.assets/js/': 'dist/tmp-out/bundle.js' },
+        options: {
+          afterEach: function (fileChanges) {
+            // replace the REQUIREJS_FILE placeholder with the actual filename
+            const newFilename = path.basename(fileChanges.newPath);
+            config.template.release.variables.bundlejs = config.template.release.variables.bundlejs.replace(/BUNDLEJS_FILE/, newFilename);
+          }
+        }
+      }
+    },
+
+  };
+
+  grunt.initConfig(config);
 
   /*
    * Load Grunt plugins
    */
   // Load fauxton specific tasks
   grunt.loadTasks('tasks');
-  // Load the couchapp task
-  grunt.loadNpmTasks('grunt-couchapp');
-  // Load the copy task
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  // Load the exec task
-  grunt.loadNpmTasks('grunt-exec');
-  // Load Require.js task
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  // Load Copy task
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  // Load Clean task
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  // Load jshint task
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  // Load jst task
-  grunt.loadNpmTasks('grunt-contrib-jst');
-  // Load less task
-  grunt.loadNpmTasks('grunt-contrib-less');
-  // Load concat task
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  // Load UglifyJS task
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  // Load CSSMin task
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-mocha-phantomjs');
 
+  grunt.loadNpmTasks('grunt-couchapp');
+  grunt.loadNpmTasks('grunt-exec');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-jst');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-md5');
   /*
    * Default task
    */
@@ -409,31 +300,43 @@ module.exports = function(grunt) {
   /*
    * Transformation tasks
    */
-  // clean out previous build artefactsa and lint
-  grunt.registerTask('lint', ['clean', 'jshint']);
-  grunt.registerTask('test', ['lint', 'dependencies', 'gen_initialize:development', 'test_inline']);
-  // lighter weight test task for use inside dev/watch
-  grunt.registerTask('test_inline', ['mochaSetup','jst', 'concat:test_config_js','mocha_phantomjs']);
-  // Fetch dependencies (from git or local dir), lint them and make load_addons
-  grunt.registerTask('dependencies', ['get_deps', 'gen_load_addons:default']);
-  // build templates, js and css
-  grunt.registerTask('build', ['less', 'concat:index_css', 'jst', 'requirejs', 'concat:requirejs', 'template:release']);
-  // minify code and css, ready for release.
-  grunt.registerTask('minify', ['uglify', 'cssmin:compress']);
+  grunt.registerTask('test', ['checkTestExists', 'clean:release', 'dependencies', 'copy:debug', 'gen_initialize:development', 'test_inline']);
 
+  // lighter weight test task for use inside dev/watch
+  grunt.registerTask('test_inline', ['mochaSetup', 'shell:webpacktest', 'jst', 'copy:testTemplates', 'shell:phantomjs']);
+  // Fetch dependencies (from git or local dir)
+  grunt.registerTask('dependencies', ['get_deps', 'gen_load_addons:default']);
+
+  // minify code and css, ready for release.
+  grunt.registerTask('build', ['copy:distDepsRequire', 'jst', 'shell:webpackrelease', 'concat:bundlerelease_js',
+    'md5:bundlejs', 'template:release']);
   /*
    * Build the app in either dev, debug, or release mode
    */
   // dev server
-  grunt.registerTask('dev', ['debugDev', 'couchserver']);
-  // build a debug release
-  grunt.registerTask('debug', ['lint', 'dependencies', "gen_initialize:development", 'concat:requirejs','less', 'concat:index_css', 'template:development', 'copy:debug']);
-  grunt.registerTask('debugDev', ['clean', 'dependencies', "gen_initialize:development",'jshint','less', 'concat:index_css', 'template:development', 'copy:debug']);
+  grunt.registerTask('dev', function () {
+    console.log('This is deprecated. Please run npm run dev instead');
+  });
 
-  grunt.registerTask('watchRun', ['clean:watch', 'dependencies', 'jshint']);
+  // build a debug release
+  grunt.registerTask('debug', ['clean', 'dependencies', "gen_initialize:development",
+    'template:development', 'copy:debug']);
+
+  grunt.registerTask('debugDev', ['clean', 'dependencies', "gen_initialize:development",
+    'template:development', 'copy:debug', 'jst', 'shell:webpack', 'concat:bundle_js']);
+
+  grunt.registerTask('devSetup', ['dependencies', "gen_initialize:development",
+    'template:development', 'copy:debug', 'jst', 'copy:devTemplates']);
+  grunt.registerTask('devSetupWithClean', ['clean', 'devSetup']);
+
+  grunt.registerTask('watchRun', ['clean:watch', 'dependencies', 'shell:stylecheck']);
+
   // build a release
-  grunt.registerTask('release', ['clean' ,'dependencies', "gen_initialize:release", 'jshint', 'build', 'minify', 'copy:dist', 'copy:ace']);
-  grunt.registerTask('couchapp_release', ['clean' ,'dependencies', "gen_initialize:couchapp", 'jshint', 'build', 'minify', 'copy:dist', 'copy:ace']);
+  grunt.registerTask('release_commons_prefix', ['clean', 'dependencies']);
+  grunt.registerTask('release_commons_suffix', ['build', 'copy:dist']);
+
+  grunt.registerTask('release', ['release_commons_prefix', 'gen_initialize:release', 'release_commons_suffix']);
+  grunt.registerTask('couchapp_release', ['release_commons_prefix', 'gen_initialize:couchapp', 'release_commons_suffix']);
 
   /*
    * Install into CouchDB in either debug, release, or couchapp mode
@@ -448,4 +351,10 @@ module.exports = function(grunt) {
   grunt.registerTask('couchapp_install', ['rmcouchdb:fauxton', 'mkcouchdb:fauxton', 'couchapp:fauxton']);
   // setup and install fauxton as couchapp
   grunt.registerTask('couchapp_deploy', ['couchapp_setup', 'couchapp_install']);
+
+  /*
+   * Nightwatch functional testing
+   */
+  //Start Nightwatch test from terminal, using: $ grunt nightwatch
+  grunt.registerTask('nightwatch', ['initNightwatch', 'exec:start_nightWatch']);
 };

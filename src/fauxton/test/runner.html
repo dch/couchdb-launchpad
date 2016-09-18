@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <!--
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -13,21 +12,22 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 -->
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <title>testrunnner Fauxton</title>
-    <link rel="stylesheet" href="mocha/mocha.css" />
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
   </head>
   <body>
     <div id="mocha"></div>
-    <script type="text/javascript" src="mocha/mocha.js"></script>
-    <script type="text/javascript" src="mocha/sinon.js"></script>
+    <script type="text/javascript" src="../node_modules/mocha/mocha.js"></script>
     <script type="text/javascript">
       // MOCHA SETUP
       mocha.setup('bdd');
       mocha.reporter('html');
     </script>
-    <script data-main="./test.config.js" src="../assets/js/libs/require.js"></script>
+    <script src="./templates.js"></script>
+    <script src="./bundle.js"></script>
   </body>
 </html>

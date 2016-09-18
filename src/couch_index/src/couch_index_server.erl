@@ -12,25 +12,71 @@
 
 -module(couch_index_server).
 -behaviour(gen_server).
+-behaviour(config_listener).
 
--export([start_link/0, get_index/4, get_index/3, get_index/2]).
--export([config_change/2, update_notify/1]).
+-vsn(2).
+
+-export([start_link/0, validate/2, get_index/4, get_index/3, get_index/2]).
 
 -export([init/1, terminate/2, code_change/3]).
 -export([handle_call/3, handle_cast/2, handle_info/2]).
 
--include("couch_db.hrl").
+% Exported for callbacks
+-export([
+    handle_config_change/5,
+    handle_config_terminate/3,
+    handle_db_event/3
+]).
+
+-include_lib("couch/include/couch_db.hrl").
 
 -define(BY_SIG, couchdb_indexes_by_sig).
 -define(BY_PID, couchdb_indexes_by_pid).
 -define(BY_DB, couchdb_indexes_by_db).
-
+-define(RELISTEN_DELAY, 5000).
 
 -record(st, {root_dir}).
 
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
+
+validate(DbName, DDoc) ->
+    LoadModFun = fun
+        ({ModNameList, "true"}) ->
+            try
+                [list_to_existing_atom(ModNameList)]
+            catch error:badarg ->
+                []
+            end;
+        ({_ModNameList, _Enabled}) ->
+            []
+    end,
+    ValidateFun = fun
+        (ModName) ->
+            ModName:validate(DbName, DDoc)
+    end,
+    EnabledIndexers = lists:flatmap(LoadModFun, config:get("indexers")),
+    lists:foreach(ValidateFun, EnabledIndexers).
+
+
+get_index(Module, #db{name = <<"shards/", _/binary>> = DbName}, DDoc) ->
+    case is_record(DDoc, doc) of
+        true -> get_index(Module, DbName, DDoc, nil);
+        false -> get_index(Module, DbName, DDoc)
+    end;
+get_index(Module, <<"shards/", _/binary>> = DbName, DDoc) ->
+    {Pid, Ref} = spawn_monitor(fun() ->
+        exit(fabric:open_doc(mem3:dbname(DbName), DDoc, [ejson_body, ?ADMIN_CTX]))
+    end),
+    receive {'DOWN', Ref, process, Pid, {ok, Doc}} ->
+        get_index(Module, DbName, Doc, nil);
+    {'DOWN', Ref, process, Pid, Error} ->
+        Error
+    after 61000 ->
+        erlang:demonitor(Ref, [flush]),
+        {error, timeout}
+    end;
 
 get_index(Module, DbName, DDoc) ->
     get_index(Module, DbName, DDoc, nil).
@@ -41,7 +87,7 @@ get_index(Module, DbName, DDoc, Fun) when is_binary(DbName) ->
         get_index(Module, Db, DDoc, Fun)
     end);
 get_index(Module, Db, DDoc, Fun) when is_binary(DDoc) ->
-    case couch_db:open_doc(Db, DDoc, [ejson_body]) of
+    case couch_db:open_doc(Db, DDoc, [ejson_body, ?ADMIN_CTX]) of
         {ok, Doc} -> get_index(Module, Db, Doc, Fun);
         Error -> Error
     end;
@@ -69,11 +115,11 @@ get_index(Module, IdxState) ->
 
 init([]) ->
     process_flag(trap_exit, true),
-    couch_config:register(fun ?MODULE:config_change/2),
+    ok = config:listen_for_changes(?MODULE, couch_index_util:root_dir()),
     ets:new(?BY_SIG, [protected, set, named_table]),
     ets:new(?BY_PID, [private, set, named_table]),
     ets:new(?BY_DB, [protected, bag, named_table]),
-    couch_db_update_notifier:start_link(fun ?MODULE:update_notify/1),
+    couch_event:link_listener(?MODULE, handle_db_event, nil, [all_dbs]),
     RootDir = couch_index_util:root_dir(),
     couch_file:init_delete_dir(RootDir),
     {ok, #st{root_dir=RootDir}}.
@@ -117,7 +163,6 @@ handle_cast({reset_indexes, DbName}, State) ->
     reset_indexes(DbName, State#st.root_dir),
     {noreply, State}.
 
-
 handle_info({'EXIT', Pid, Reason}, Server) ->
     case ets:lookup(?BY_PID, Pid) of
         [{Pid, {DbName, Sig}}] ->
@@ -129,12 +174,37 @@ handle_info({'EXIT', Pid, Reason}, Server) ->
         _Else ->
             ok
     end,
-    {noreply, Server}.
+    {noreply, Server};
+handle_info(restart_config_listener, State) ->
+    ok = config:listen_for_changes(?MODULE, couch_index_util:root_dir()),
+    {noreply, State};
+handle_info(Msg, State) ->
+    couch_log:warning("~p did not expect ~p", [?MODULE, Msg]),
+    {noreply, State}.
 
 
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
+
+handle_config_change("couchdb", "index_dir", RootDir, _, RootDir) ->
+    {ok, RootDir};
+handle_config_change("couchdb", "view_index_dir", RootDir, _, RootDir) ->
+    {ok, RootDir};
+handle_config_change("couchdb", "index_dir", _, _, _) ->
+    exit(whereis(couch_index_server), config_change),
+    remove_handler;
+handle_config_change("couchdb", "view_index_dir", _, _, _) ->
+    exit(whereis(couch_index_server), config_change),
+    remove_handler;
+handle_config_change(_, _, _, _, RootDir) ->
+    {ok, RootDir}.
+
+handle_config_terminate(_, stop, _) ->
+    ok;
+handle_config_terminate(_Server, _Reason, _State) ->
+    erlang:send_after(?RELISTEN_DELAY, whereis(?MODULE), restart_config_listener),
+    {ok, couch_index_util:root_dir()}.
 
 new_index({Mod, IdxState, DbName, Sig}) ->
     DDocId = Mod:get(idx_name, IdxState),
@@ -175,27 +245,21 @@ rem_from_ets(DbName, Sig, DDocId, Pid) ->
     ets:delete_object(?BY_DB, {DbName, {DDocId, Sig}}).
 
 
-config_change("couchdb", "view_index_dir") ->
-    exit(whereis(?MODULE), config_change);
-config_change("couchdb", "index_dir") ->
-    exit(whereis(?MODULE), config_change).
-
-
-update_notify({deleted, DbName}) ->
-    gen_server:cast(?MODULE, {reset_indexes, DbName});
-update_notify({created, DbName}) ->
-    gen_server:cast(?MODULE, {reset_indexes, DbName});
-update_notify({ddoc_updated, {DbName, DDocId}}) ->
-    lists:foreach(
-        fun({_DbName, {_DDocId, Sig}}) ->
-            case ets:lookup(?BY_SIG, {DbName, Sig}) of
-                [{_, IndexPid}] ->
-                    (catch gen_server:cast(IndexPid, ddoc_updated));
-                [] ->
-                    ok
-            end
-        end,
-        ets:match_object(?BY_DB, {DbName, {DDocId, '$1'}}));
-update_notify(_) ->
-    ok.
-
+handle_db_event(DbName, created, St) ->
+    gen_server:cast(?MODULE, {reset_indexes, DbName}),
+    {ok, St};
+handle_db_event(DbName, deleted, St) ->
+    gen_server:cast(?MODULE, {reset_indexes, DbName}),
+    {ok, St};
+handle_db_event(DbName, {ddoc_updated, DDocId}, St) ->
+    lists:foreach(fun({_DbName, {_DDocId, Sig}}) ->
+        case ets:lookup(?BY_SIG, {DbName, Sig}) of
+            [{_, IndexPid}] ->
+                (catch gen_server:cast(IndexPid, ddoc_updated));
+            [] ->
+                ok
+        end
+    end, ets:match_object(?BY_DB, {DbName, {DDocId, '$1'}})),
+    {ok, St};
+handle_db_event(_DbName, _Event, St) ->
+    {ok, St}.

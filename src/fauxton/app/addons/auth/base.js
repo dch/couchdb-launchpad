@@ -10,64 +10,101 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-define([
-       "app",
-       "api",
-       "addons/auth/routes"
-],
+import app from "../../app";
+import FauxtonAPI from "../../core/api";
+import Auth from "./routes";
+import "./assets/less/auth.less";
 
-function(app, FauxtonAPI, Auth) {
+Auth.session = new Auth.Session();
+FauxtonAPI.setSession(Auth.session);
+app.session = Auth.session;
 
-  Auth.session = new Auth.Session();
-  FauxtonAPI.setSession(Auth.session);
-  app.session = Auth.session;
+Auth.initialize = function () {
 
-  Auth.initialize = function() {
-    Auth.navLink = new Auth.NavLink({model: Auth.session});
+  FauxtonAPI.addHeaderLink({
+    id: 'auth',
+    title: 'Login',
+    href: '#login',
+    icon: 'fonticon-user',
+    bottomNav: true
+  });
 
-    FauxtonAPI.addHeaderLink({
-      title: "Auth", 
-      href: "#_auth",
-      view: Auth.navLink,
-      icon: "fonticon-user",
-      bottomNav: true,
-      establish: [FauxtonAPI.session.fetchUser()]
-    });
-      
+  Auth.session.on('change', function () {
+    var session = Auth.session;
+    var link = {};
 
-    var auth = function (session, roles) {
-      var deferred = $.Deferred();
+    if (session.isAdminParty()) {
+      link = {
+        id: 'auth',
+        title: 'Admin Party!',
+        href: '#createAdmin',
+        icon: 'fonticon-user',
+        bottomNav: true
+      };
+    } else if (session.isLoggedIn()) {
+      link = {
+        id: 'auth',
+        title: session.user().name,
+        href: '#changePassword',
+        icon: 'fonticon-user',
+        bottomNav: true
+      };
 
-      if (session.isAdminParty()) {
-        session.trigger("authenticated");
-        deferred.resolve();
-      } else if(session.matchesRoles(roles)) {
-        session.trigger("authenticated");
-        deferred.resolve();
-      } else {
-        deferred.reject();
-      }
+      // ensure the footer link is removed before adding it
+      FauxtonAPI.removeHeaderLink({ id: 'logout', footerNav: true });
+      FauxtonAPI.addHeaderLink({
+        id: 'logout',
+        footerNav: true,
+        href: '#logout',
+        title: 'Logout',
+        icon: '',
+        className: 'logout'
+      });
+    } else {
+      link = {
+        id: 'auth',
+        title: 'Login',
+        href: '#login',
+        icon: 'fonticon-user',
+        bottomNav: true
+      };
+      FauxtonAPI.removeHeaderLink({ id: 'logout', footerNav: true });
+    }
+    FauxtonAPI.updateHeaderLink(link);
+  });
 
-      return [deferred];
-    };
+  Auth.session.fetchUser().then(function () {
+    Auth.session.trigger('change');
+  });
 
-    var authDenied = function () {
-      var url = window.location.hash.replace('#','');
-      FauxtonAPI.navigate('/noAccess?urlback=' + url, {replace: true});
-    };
+  var auth = function (session, roles) {
+    var deferred = $.Deferred();
 
-    FauxtonAPI.auth.registerAuth(auth);
-    FauxtonAPI.auth.registerAuthDenied(authDenied);
+    if (session.isAdminParty()) {
+      session.trigger('authenticated');
+      deferred.resolve();
+    } else if (session.matchesRoles(roles)) {
+      session.trigger('authenticated');
+      deferred.resolve();
+    } else {
+      deferred.reject();
+    }
 
-    FauxtonAPI.session.on('change', function () {
-      if (FauxtonAPI.session.isLoggedIn()) {
-        FauxtonAPI.addHeaderLink({footerNav: true, href:"#logout", title:"Logout", icon: "", className: 'logout'});
-      } else {
-        FauxtonAPI.removeHeaderLink({title: "Logout", footerNav: true});
-      }
-    });
+    return [deferred];
   };
 
+  var authDenied = function () {
+    var url = window.location.hash.replace('#', '');
+    var pattern = /login\?urlback=/g;
 
-  return Auth;
-});
+    if (pattern.test(url)) {
+      url = url.replace('login?urlback=', '');
+    }
+    FauxtonAPI.navigate('/login?urlback=' + url, { replace: true });
+  };
+
+  FauxtonAPI.auth.registerAuth(auth);
+  FauxtonAPI.auth.registerAuthDenied(authDenied);
+};
+
+export default Auth;

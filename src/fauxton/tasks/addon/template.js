@@ -16,14 +16,14 @@ exports.description = 'Generate a skeleton for an addon.';
 
 exports.notes = '';
 
-exports.after = "Created your addon! Don't forget to update your"+
+exports.after = "Created your addon! Don't forget to update your" +
                 " settings.json for it to be compiled and deployed";
 
 // Any existing file or directory matching this wildcard will cause a warning.
 // exports.warnOn = '*';
 
 // The actual init template.
-exports.template = function(grunt, init, done) {
+exports.template = function (grunt, init, done) {
 
   // destpath
   init.process(
@@ -31,21 +31,22 @@ exports.template = function(grunt, init, done) {
     [
       {
         name: "name",
-        message: "Add on Name",
+        message: "Addon Name",
         validator: /^[\w\-\.]+$/,
         default: "WickedCool"
       },
       {
         name: "path",
-        message: "Location of add ons",
+        message: "Location of addons",
         default: "app/addons"
       },
       {
         name: "assets",
-        message: "Do you need an assets folder? (for .less)",
+        message: "Do you need an assets folder? (for .less or external JS libs)",
         default: 'y/N'
       }
     ],
+
     function (err, props) {
       // Files to copy (and process).
       var files = init.filesToCopy(props);
@@ -54,17 +55,14 @@ exports.template = function(grunt, init, done) {
       init.copyAndProcess(files, props);
 
       // Make the assets dir if requested
-      if (props.assets == "y"){
+      if (props.assets == "y") {
         var asspath = props.path + "/" + props.name.toLowerCase() + "/assets";
         grunt.file.mkdir(asspath);
         grunt.log.writeln("Created " + asspath);
       }
 
-      var tmplpath = props.path + "/" + props.name.toLowerCase() + "/templates";
-      grunt.file.mkdir(tmplpath);
-      grunt.log.writeln("Created " + tmplpath);
       // All done!
       done();
     }
-  )
+  );
 };

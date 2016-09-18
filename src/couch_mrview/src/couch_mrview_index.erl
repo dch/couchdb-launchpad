@@ -17,8 +17,9 @@
 -export([init/2, open/2, close/1, reset/1, delete/1]).
 -export([start_update/3, purge/4, process_doc/3, finish_update/1, commit/1]).
 -export([compact/3, swap_compacted/2]).
+-export([index_file_exists/1]).
 
--include("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
 -include_lib("couch_mrview/include/couch_mrview.hrl").
 
 
@@ -38,27 +39,64 @@ get(Property, State) ->
             Opts = State#mrst.design_opts,
             IncDesign = couch_util:get_value(<<"include_design">>, Opts, false),
             LocalSeq = couch_util:get_value(<<"local_seq">>, Opts, false),
+            SeqIndexed = couch_util:get_value(<<"seq_indexed">>, Opts, false),
+            KeySeqIndexed = couch_util:get_value(<<"keyseq_indexed">>, Opts, false),
             if IncDesign -> [include_design]; true -> [] end
-                ++ if LocalSeq -> [local_seq]; true -> [] end;
+                ++ if LocalSeq -> [local_seq]; true -> [] end
+                ++ if KeySeqIndexed -> [keyseq_indexed]; true -> [] end
+                ++ if SeqIndexed -> [seq_indexed]; true -> [] end;
+        fd ->
+            State#mrst.fd;
+        language ->
+            State#mrst.language;
+        views ->
+            State#mrst.views;
         info ->
             #mrst{
                 fd = Fd,
                 sig = Sig,
-                id_btree = Btree,
+                id_btree = IdBtree,
+                log_btree = LogBtree,
                 language = Lang,
                 update_seq = UpdateSeq,
                 purge_seq = PurgeSeq,
-                views = Views
+                views = Views,
+                design_opts = Opts
             } = State,
-            {ok, Size} = couch_file:bytes(Fd),
-            {ok, DataSize} = couch_mrview_util:calculate_data_size(Btree,Views),
+            {ok, FileSize} = couch_file:bytes(Fd),
+            {ok, ExternalSize} = couch_mrview_util:calculate_external_size(Views),
+            LogBtSize = case LogBtree of
+                nil ->
+                    0;
+                _ ->
+                    couch_btree:size(LogBtree)
+            end,
+            ActiveSize = couch_btree:size(IdBtree) + LogBtSize + ExternalSize,
+
+            IncDesign = couch_util:get_value(<<"include_design">>, Opts, false),
+            LocalSeq = couch_util:get_value(<<"local_seq">>, Opts, false),
+            SeqIndexed = couch_util:get_value(<<"seq_indexed">>, Opts, false),
+            KeySeqIndexed = couch_util:get_value(<<"keyseq_indexed">>, Opts, false),
+            UpdateOptions =
+                if IncDesign -> [<<"include_design">>]; true -> [] end
+                ++ if LocalSeq -> [<<"local_seq">>]; true -> [] end
+                ++ if KeySeqIndexed -> [<<"keyseq_indexed">>]; true -> [] end
+                ++ if SeqIndexed -> [<<"seq_indexed">>]; true -> [] end,
+
+
             {ok, [
                 {signature, list_to_binary(couch_index_util:hexsig(Sig))},
                 {language, Lang},
-                {disk_size, Size},
-                {data_size, DataSize},
+                {disk_size, FileSize}, % legacy
+                {data_size, ExternalSize}, % legacy
+                {sizes, {[
+                    {file, FileSize},
+                    {active, ActiveSize},
+                    {external, ExternalSize}
+                ]}},
                 {update_seq, UpdateSeq},
-                {purge_seq, PurgeSeq}
+                {purge_seq, PurgeSeq},
+                {update_options, UpdateOptions}
             ]};
         Other ->
             throw({unknown_index_property, Other})
@@ -96,27 +134,25 @@ open(Db, State) ->
                 {ok, {OldSig, Header}} ->
                     % Matching view signatures.
                     NewSt = couch_mrview_util:init_state(Db, Fd, State, Header),
-                    {ok, RefCounter} = couch_ref_counter:start([Fd]),
-                    {ok, NewSt#mrst{refc=RefCounter}};
+                    {ok, NewSt};
                 % end of upgrade code for <= 1.2.x
                 {ok, {Sig, Header}} ->
                     % Matching view signatures.
                     NewSt = couch_mrview_util:init_state(Db, Fd, State, Header),
-                    {ok, RefCounter} = couch_ref_counter:start([Fd]),
-                    {ok, NewSt#mrst{refc=RefCounter}};
+                    {ok, NewSt};
                 _ ->
                     NewSt = couch_mrview_util:reset_index(Db, Fd, State),
-                    {ok, RefCounter} = couch_ref_counter:start([Fd]),
-                    {ok, NewSt#mrst{refc=RefCounter}}
+                    {ok, NewSt}
             end;
         {error, Reason} = Error ->
-            ?LOG_ERROR("Failed to open view file '~s': ~s",
-                       [IndexFName, file:format_error(Reason)]),
+            couch_log:error("Failed to open view file '~s': ~s",
+                            [IndexFName, file:format_error(Reason)]),
             Error
     end.
 
 
 close(State) ->
+    erlang:demonitor(State#mrst.fd_monitor, [flush]),
     couch_file:close(State#mrst.fd).
 
 
@@ -160,3 +196,11 @@ compact(Db, State, Opts) ->
 swap_compacted(OldState, NewState) ->
     couch_mrview_compactor:swap_compacted(OldState, NewState).
 
+
+index_file_exists(State) ->
+    #mrst{
+        db_name=DbName,
+        sig=Sig
+    } = State,
+    IndexFName = couch_mrview_util:index_file(DbName, Sig),
+    filelib:is_file(IndexFName).

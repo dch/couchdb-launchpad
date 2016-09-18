@@ -18,7 +18,8 @@
 % Notes:
 % Many options and apis aren't yet supported here, they are added as needed.
 
--include("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
+-include_lib("couch_mrview/include/couch_mrview.hrl").
 -include("couch_replicator_api_wrap.hrl").
 
 -export([
@@ -26,6 +27,8 @@
     db_open/3,
     db_close/1,
     get_db_info/1,
+    get_pending_count/2,
+    get_view_info/3,
     update_doc/3,
     update_doc/4,
     update_docs/3,
@@ -68,20 +71,48 @@ db_open(Db, Options) ->
 
 db_open(#httpdb{} = Db1, _Options, Create) ->
     {ok, Db} = couch_replicator_httpc:setup(Db1),
-    case Create of
-    false ->
-        ok;
-    true ->
-        send_req(Db, [{method, put}], fun(_, _, _) -> ok end)
-    end,
-    send_req(Db, [{method, head}],
-        fun(200, _, _) ->
-            {ok, Db};
-        (401, _, _) ->
-            throw({unauthorized, ?l2b(db_uri(Db))});
-        (_, _, _) ->
-            throw({db_not_found, ?l2b(db_uri(Db))})
-        end);
+    try
+        case Create of
+        false ->
+            ok;
+        true ->
+            send_req(Db, [{method, put}],
+                fun(401, _, _) ->
+                    throw({unauthorized, ?l2b(db_uri(Db))});
+                (_, _, _) ->
+                    ok
+                end)
+        end,
+        send_req(Db, [{method, get}],
+            fun(200, _, {Props}) ->
+                UpdateSeq = get_value(<<"update_seq">>, Props),
+                InstanceStart = get_value(<<"instance_start_time">>, Props),
+                case {UpdateSeq, InstanceStart} of
+                    {undefined, _} ->
+                        throw({db_not_found, ?l2b(db_uri(Db))});
+                    {_, undefined} ->
+                        throw({db_not_found, ?l2b(db_uri(Db))});
+                    _ ->
+                        {ok, Db}
+                end;
+            (200, _, _Body) ->
+                 throw({db_not_found, ?l2b(db_uri(Db))});
+            (401, _, _) ->
+                throw({unauthorized, ?l2b(db_uri(Db))});
+            (_, _, _) ->
+                throw({db_not_found, ?l2b(db_uri(Db))})
+            end)
+    catch
+        throw:Error ->
+            db_close(Db),
+            throw(Error);
+        error:Error ->
+            db_close(Db),
+            erlang:error(Error);
+        exit:Error ->
+            db_close(Db),
+            erlang:exit(Error)
+    end;
 db_open(DbName, Options, Create) ->
     try
         case Create of
@@ -93,7 +124,7 @@ db_open(DbName, Options, Create) ->
             couch_db:create(DbName, Options)
         end,
         case couch_db:open(DbName, Options) of
-        {error, illegal_database_name, _} ->
+        {error, {illegal_database_name, _}} ->
             throw({db_not_found, DbName});
         {not_found, _Reason} ->
             throw({db_not_found, DbName});
@@ -122,6 +153,40 @@ get_db_info(#db{name = DbName, user_ctx = UserCtx}) ->
     {ok, Info} = couch_db:get_db_info(Db),
     couch_db:close(Db),
     {ok, [{couch_util:to_binary(K), V} || {K, V} <- Info]}.
+
+
+get_pending_count(#httpdb{} = Db, Seq) when is_number(Seq) ->
+    % Source looks like Apache CouchDB and not Cloudant so we fall
+    % back to using update sequence differences.
+    send_req(Db, [], fun(200, _, {Props}) ->
+        case get_value(<<"update_seq">>, Props) of
+            UpdateSeq when is_number(UpdateSeq) ->
+                {ok, UpdateSeq - Seq};
+            _ ->
+                {ok, null}
+        end
+    end);
+get_pending_count(#httpdb{} = Db, Seq) ->
+    Options = [{path, "_changes"}, {qs, [{"since", ?JSON_ENCODE(Seq)}, {"limit", "0"}]}],
+    send_req(Db, Options, fun(200, _, {Props}) ->
+        {ok, couch_util:get_value(<<"pending">>, Props, null)}
+    end);
+get_pending_count(#db{name=DbName}=Db, Seq) when is_number(Seq) ->
+    {ok, CountDb} = couch_db:open(DbName, [{user_ctx, Db#db.user_ctx}]),
+    Pending = couch_db:count_changes_since(CountDb, Seq),
+    couch_db:close(CountDb),
+    {ok, Pending}.
+
+get_view_info(#httpdb{} = Db, DDocId, ViewName) ->
+    Path = io_lib:format("~s/_view/~s/_info", [DDocId, ViewName]),
+    send_req(Db, [{path, Path}],
+        fun(200, _, {Props}) ->
+            {VInfo} = couch_util:get_value(<<"view_index">>, Props, {[]}),
+            {ok, VInfo}
+        end);
+get_view_info(#db{name = DbName}, DDocId, ViewName) ->
+    {ok, VInfo} = couch_mrview:get_view_info(DbName, DDocId, ViewName),
+    {ok, [{couch_util:to_binary(K), V} || {K, V} <- VInfo]}.
 
 
 ensure_full_commit(#httpdb{} = Db) ->
@@ -167,7 +232,7 @@ open_doc_revs(#httpdb{retries = 0} = HttpDb, Id, Revs, Options, _Fun, _Acc) ->
     Url = couch_util:url_strip_password(
         couch_replicator_httpc:full_url(HttpDb, [{path,Path}, {qs,QS}])
     ),
-    ?LOG_ERROR("Replication crashing because GET ~s failed", [Url]),
+    couch_log:error("Replication crashing because GET ~s failed", [Url]),
     exit(kaboom);
 open_doc_revs(#httpdb{} = HttpDb, Id, Revs, Options, Fun, Acc) ->
     Path = encode_doc_id(Id),
@@ -178,7 +243,7 @@ open_doc_revs(#httpdb{} = HttpDb, Id, Revs, Options, Fun, Acc) ->
           (200, Headers, StreamDataFun) ->
             remote_open_doc_revs_streamer_start(Self),
             {<<"--">>, _, _} = couch_httpd:parse_multipart_request(
-                get_value("Content-Type", Headers),
+                header_value("Content-Type", Headers),
                 StreamDataFun,
                 fun mp_parse_mixed/1
             );
@@ -221,6 +286,8 @@ open_doc_revs(#httpdb{} = HttpDb, Id, Revs, Options, Fun, Acc) ->
     receive
         {'DOWN', Ref, process, Pid, {exit_ok, Ret}} ->
             Ret;
+        {'DOWN', Ref, process, Pid, {{nocatch, missing_doc}, _}} ->
+            throw(missing_doc);
         {'DOWN', Ref, process, Pid, {{nocatch, {missing_stub,_} = Stub}, _}} ->
             throw(Stub);
         {'DOWN', Ref, process, Pid, request_uri_too_long} ->
@@ -229,7 +296,8 @@ open_doc_revs(#httpdb{} = HttpDb, Id, Revs, Options, Fun, Acc) ->
                 true ->
                     throw(request_uri_too_long);
                 false ->
-                    ?LOG_INFO("Reducing url length to ~B because of 414 response", [NewMaxLen]),
+                    couch_log:info("Reducing url length to ~B because of"
+                                   " 414 response", [NewMaxLen]),
                     Options1 = lists:keystore(max_url_len, 1, Options,
                                               {max_url_len, NewMaxLen}),
                     open_doc_revs(HttpDb, Id, Revs, Options1, Fun, Acc)
@@ -240,7 +308,7 @@ open_doc_revs(#httpdb{} = HttpDb, Id, Revs, Options, Fun, Acc) ->
             ),
             #httpdb{retries = Retries, wait = Wait0} = HttpDb,
             Wait = 2 * erlang:min(Wait0 * 2, ?MAX_WAIT),
-            ?LOG_INFO("Retrying GET to ~s in ~p seconds due to error ~p",
+            couch_log:notice("Retrying GET to ~s in ~p seconds due to error ~w",
                 [Url, Wait / 1000, error_reason(Else)]
             ),
             ok = timer:sleep(Wait),
@@ -312,7 +380,7 @@ update_doc(#httpdb{} = HttpDb, #doc{id = DocId} = Doc, Options, Type) ->
         HttpDb#httpdb{retries = 0},
         [{method, put}, {path, encode_doc_id(DocId)},
             {qs, QArgs}, {headers, Headers}, {body, Body}],
-        fun(Code, _, {Props}) when Code =:= 200 orelse Code =:= 201 ->
+        fun(Code, _, {Props}) when Code =:= 200 orelse Code =:= 201 orelse Code =:= 202 ->
                 {ok, couch_doc:parse_rev(get_value(<<"rev">>, Props))};
             (409, _, _) ->
                 throw(conflict);
@@ -388,9 +456,9 @@ update_docs(Db, DocList, Options, UpdateType) ->
     {ok, bulk_results_to_errors(DocList, Result, UpdateType)}.
 
 
-changes_since(#httpdb{headers = Headers1} = HttpDb, Style, StartSeq,
-    UserFun, Options) ->
-    HeartBeat = erlang:max(1000, HttpDb#httpdb.timeout div 3),
+changes_since(#httpdb{headers = Headers1, timeout = InactiveTimeout} = HttpDb,
+              Style, StartSeq, UserFun, Options) ->
+    Timeout = erlang:max(1000, InactiveTimeout div 3),
     BaseQArgs = case get_value(continuous, Options, false) of
     false ->
         [{"feed", "normal"}];
@@ -398,14 +466,19 @@ changes_since(#httpdb{headers = Headers1} = HttpDb, Style, StartSeq,
         [{"feed", "continuous"}]
     end ++ [
         {"style", atom_to_list(Style)}, {"since", ?JSON_ENCODE(StartSeq)},
-        {"heartbeat", integer_to_list(HeartBeat)}
-    ],
+        {"timeout", integer_to_list(Timeout)}
+           ],
     DocIds = get_value(doc_ids, Options),
-    {QArgs, Method, Body, Headers} = case DocIds of
-    undefined ->
+    Selector = get_value(selector, Options),
+    {QArgs, Method, Body, Headers} = case {DocIds, Selector} of
+    {undefined, undefined} ->
         QArgs1 = maybe_add_changes_filter_q_args(BaseQArgs, Options),
         {QArgs1, get, [], Headers1};
-    _ when is_list(DocIds) ->
+    {undefined, _} when is_tuple(Selector) ->
+        Headers2 = [{"Content-Type", "application/json"} | Headers1],
+        JsonSelector = ?JSON_ENCODE({[{<<"selector">>, Selector}]}),
+        {[{"filter", "_selector"} | BaseQArgs], post, JsonSelector, Headers2};
+    {_, undefined} when is_list(DocIds) ->
         Headers2 = [{"Content-Type", "application/json"} | Headers1],
         JsonDocIds = ?JSON_ENCODE({[{<<"doc_ids">>, DocIds}]}),
         {[{"filter", "_doc_ids"} | BaseQArgs], post, JsonDocIds, Headers2}
@@ -430,17 +503,23 @@ changes_since(#httpdb{headers = Headers1} = HttpDb, Style, StartSeq,
                                 UserFun(DocInfo);
                             false ->
                                 ok
-                            end
+                            end;
+                        (LastSeq) ->
+                            UserFun(LastSeq)
                         end,
                         parse_changes_feed(Options, UserFun2, DataStreamFun2)
                     end)
         end);
 changes_since(Db, Style, StartSeq, UserFun, Options) ->
-    Filter = case get_value(doc_ids, Options) of
-    undefined ->
+    DocIds = get_value(doc_ids, Options),
+    Selector = get_value(selector, Options),
+    Filter = case {DocIds, Selector} of
+    {undefined, undefined} ->
         ?b2l(get_value(filter, Options, <<>>));
-    _DocIds ->
-        "_doc_ids"
+    {_, undefined} ->
+        "_doc_ids";
+    {undefined, _} ->
+        "_selector"
     end,
     Args = #changes_args{
         style = Style,
@@ -456,7 +535,7 @@ changes_since(Db, Style, StartSeq, UserFun, Options) ->
     },
     QueryParams = get_value(query_params, Options, {[]}),
     Req = changes_json_req(Db, Filter, QueryParams, Options),
-    ChangesFeedFun = couch_changes:handle_changes(Args, {json_req, Req}, Db),
+    ChangesFeedFun = couch_changes:handle_db_changes(Args, {json_req, Req}, Db),
     ChangesFeedFun(fun({change, Change, _}, _) ->
             UserFun(json_to_doc_info(Change));
         (_, _) ->
@@ -471,6 +550,10 @@ maybe_add_changes_filter_q_args(BaseQS, Options) ->
     undefined ->
         BaseQS;
     FilterName ->
+        %% get list of view attributes
+        ViewFields0 = [atom_to_list(F) || F <- record_info(fields,  mrargs)],
+        ViewFields = ["key" | ViewFields0],
+
         {Params} = get_value(query_params, Options, {[]}),
         [{"filter", ?b2l(FilterName)} | lists:foldl(
             fun({K, V}, QSAcc) ->
@@ -478,6 +561,12 @@ maybe_add_changes_filter_q_args(BaseQS, Options) ->
                 case lists:keymember(Ks, 1, QSAcc) of
                 true ->
                     QSAcc;
+                false when FilterName =:= <<"_view">> ->
+                    V1 = case lists:member(Ks, ViewFields) of
+                        true -> ?JSON_ENCODE(V);
+                        false -> couch_util:to_list(V)
+                    end,
+                    [{Ks, V1} | QSAcc];
                 false ->
                     [{Ks, couch_util:to_list(V)} | QSAcc]
                 end
@@ -500,6 +589,8 @@ changes_json_req(_Db, "", _QueryParams, _Options) ->
     {[]};
 changes_json_req(_Db, "_doc_ids", _QueryParams, Options) ->
     {[{<<"doc_ids">>, get_value(doc_ids, Options)}]};
+changes_json_req(_Db, "_selector", _QueryParams, Options) ->
+    {[{<<"selector">>, get_value(selector, Options)}]};
 changes_json_req(Db, FilterName, {QueryParams}, _Options) ->
     {ok, Info} = couch_db:get_db_info(Db),
     % simulate a request to db_name/_changes
@@ -553,7 +644,7 @@ options_to_query_args([{open_revs, all} | Rest], Acc) ->
 options_to_query_args([latest | Rest], Acc) ->
     options_to_query_args(Rest, [{"latest", "true"} | Acc]);
 options_to_query_args([{open_revs, Revs} | Rest], Acc) ->
-    JsonRevs = ?b2l(?JSON_ENCODE(couch_doc:revs_to_strs(Revs))),
+    JsonRevs = ?b2l(iolist_to_binary(?JSON_ENCODE(couch_doc:revs_to_strs(Revs)))),
     options_to_query_args(Rest, [{"open_revs", JsonRevs} | Acc]).
 
 atts_since_arg(_UrlLen, [], _MaxLen, Acc) ->
@@ -596,19 +687,20 @@ receive_docs(Streamer, UserFun, Ref, UserAcc) ->
     {started_open_doc_revs, NewRef} ->
         restart_remote_open_doc_revs(Ref, NewRef);
     {headers, Ref, Headers} ->
-        case get_value("content-type", Headers) of
+        case header_value("content-type", Headers) of
         {"multipart/related", _} = ContentType ->
-            case doc_from_multi_part_stream(
+            case couch_doc:doc_from_multi_part_stream(
                 ContentType,
                 fun() -> receive_doc_data(Streamer, Ref) end,
                 Ref) of
-            {ok, Doc, Parser} ->
+            {ok, Doc, WaitFun, Parser} ->
                 case run_user_fun(UserFun, {ok, Doc}, UserAcc, Ref) of
                 {ok, UserAcc2} ->
                     ok;
                 {skip, UserAcc2} ->
-                    couch_doc:abort_multi_part_stream(Parser)
+                    couch_httpd_multipart:abort_multipart_stream(Parser)
                 end,
+                WaitFun(),
                 receive_docs(Streamer, UserFun, Ref, UserAcc2)
             end;
         {"application/json", []} ->
@@ -728,44 +820,6 @@ receive_doc_data(Streamer, Ref) ->
         {<<>>, fun() -> receive_doc_data(Streamer, Ref) end}
     end.
 
-doc_from_multi_part_stream(ContentType, DataFun, Ref) ->
-    Self = self(),
-    Parser = spawn_link(fun() ->
-        {<<"--">>, _, _} = couch_httpd:parse_multipart_request(
-            ContentType, DataFun,
-            fun(Next) -> couch_doc:mp_parse_doc(Next, []) end),
-        unlink(Self)
-        end),
-    Parser ! {get_doc_bytes, Ref, self()},
-    receive
-    {started_open_doc_revs, NewRef} ->
-        unlink(Parser),
-        exit(Parser, kill),
-        restart_remote_open_doc_revs(Ref, NewRef);
-    {doc_bytes, Ref, DocBytes} ->
-        Doc = couch_doc:from_json_obj(?JSON_DECODE(DocBytes)),
-        ReadAttachmentDataFun = fun() ->
-            link(Parser),
-            Parser ! {get_bytes, Ref, self()},
-            receive
-            {started_open_doc_revs, NewRef} ->
-                unlink(Parser),
-                exit(Parser, kill),
-                receive {bytes, Ref, _} -> ok after 0 -> ok end,
-                restart_remote_open_doc_revs(Ref, NewRef);
-            {bytes, Ref, Bytes} ->
-                Bytes
-            end
-        end,
-        Atts2 = lists:map(
-            fun(#att{data = follows} = A) ->
-                A#att{data = ReadAttachmentDataFun};
-            (A) ->
-                A
-            end, Doc#doc.atts),
-        {ok, Doc#doc{atts = Atts2}, Parser}
-    end.
-
 
 changes_ev1(object_start, UserFun, UserAcc) ->
     fun(Ev) -> changes_ev2(Ev, UserFun, UserAcc) end.
@@ -805,18 +859,31 @@ parse_changes_line(object_start, UserFun) ->
     end.
 
 json_to_doc_info({Props}) ->
-    RevsInfo = lists:map(
-        fun({Change}) ->
-            Rev = couch_doc:parse_rev(get_value(<<"rev">>, Change)),
-            Del = (true =:= get_value(<<"deleted">>, Change)),
-            #rev_info{rev=Rev, deleted=Del}
-        end, get_value(<<"changes">>, Props)),
-    #doc_info{
-        id = get_value(<<"id">>, Props),
-        high_seq = get_value(<<"seq">>, Props),
-        revs = RevsInfo
-    }.
+    case get_value(<<"changes">>, Props) of
+    undefined ->
+        {last_seq, get_value(<<"last_seq">>, Props)};
+    Changes ->
+        RevsInfo0 = lists:map(
+            fun({Change}) ->
+                Rev = couch_doc:parse_rev(get_value(<<"rev">>, Change)),
+                Del = couch_replicator_utils:is_deleted(Change),
+                #rev_info{rev=Rev, deleted=Del}
+            end, Changes),
 
+        RevsInfo = case get_value(<<"removed">>, Props) of
+            true ->
+                [_ | RevsInfo1] = RevsInfo0,
+                RevsInfo1;
+            _ ->
+                RevsInfo0
+        end,
+
+        #doc_info{
+            id = get_value(<<"id">>, Props),
+            high_seq = get_value(<<"seq">>, Props),
+            revs = RevsInfo
+        }
+    end.
 
 bulk_results_to_errors(Docs, {ok, Results}, interactive_edit) ->
     lists:reverse(lists:foldl(
@@ -892,4 +959,16 @@ stream_doc({LenLeft, Id}) when LenLeft > 0 ->
     erlang:get({doc_streamer, Id}) ! {get_data, Ref, self()},
     receive {data, Ref, Data} ->
         {ok, Data, {LenLeft - iolist_size(Data), Id}}
+    end.
+
+header_value(Key, Headers) ->
+    header_value(Key, Headers, undefined).
+
+header_value(Key, Headers, Default) ->
+    Headers1 = [{string:to_lower(K), V} || {K, V} <- Headers],
+    case lists:keyfind(string:to_lower(Key), 1, Headers1) of
+        {_, Value} ->
+            Value;
+        _ ->
+            Default
     end.

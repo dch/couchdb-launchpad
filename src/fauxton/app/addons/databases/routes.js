@@ -10,60 +10,45 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-define([
-  "app",
+import app from "../../app";
+import FauxtonAPI from "../../core/api";
+import Databases from "./resources";
+import Actions from "./actions";
+import Components from "./components.react";
 
-  "api",
+var AllDbsRouteObject = FauxtonAPI.RouteObject.extend({
+  layout: 'one_pane',
 
-  // Modules
-  "addons/databases/resources",
-  // TODO:: fix the include flow modules so we don't have to require views here
-  "addons/databases/views"
-],
+  crumbs: [
+    {"name": "Databases"}
+  ],
 
-function(app, FauxtonAPI, Databases, Views) {
+  routes: {
+    "": "allDatabases",
+    "index.html": "allDatabases",
+    "_all_dbs(:params)": "allDatabases"
+  },
 
-  var AllDbsRouteObject = FauxtonAPI.RouteObject.extend({
-    layout: "one_pane",
+  roles: ['fx_loggedIn'],
 
-    crumbs: [
-      {"name": "Databases", "link": "/_all_dbs"}
-    ],
+  selectedHeader: "Databases",
+  disableLoader: true,
 
-    routes: {
-      "": "allDatabases",
-      "index.html": "allDatabases",
-      "_all_dbs(:params)": "allDatabases"
-    },
+  initialize: function () {
+    this.databases = new Databases.List();
+  },
 
-    apiUrl: function() {
-      return [this.databases.url("apiurl"), this.databases.documentation()];
-    },
+  allDatabases: function () {
+    Actions.init(this.databases);
+    this.setComponent("#right-header", Components.RightDatabasesHeader);
+    this.setComponent("#dashboard-content", Components.DatabasesController);
+    this.setComponent("#footer", Components.DatabasePagination);
+  },
 
-    selectedHeader: "Databases",
-
-    initialize: function() {
-      this.databases = new Databases.List();
-      this.deferred = FauxtonAPI.Deferred();
-    },
-
-    allDatabases: function() {
-      var params = app.getParams(),
-          dbPage = params.page;
-
-      this.databasesView = this.setView("#dashboard-content", new Views.List({
-        collection: this.databases
-      }));
-
-      this.databasesView.setPage(dbPage);
-    },
-
-    establish: function() {
-     return [this.databases.fetchOnce()];
-    }
-  });
-
-  Databases.RouteObjects = [AllDbsRouteObject];
-
-  return Databases;
+  apiUrl: function () {
+    return [this.databases.url("apiurl"), this.databases.documentation()];
+  }
 });
+Databases.RouteObjects = [AllDbsRouteObject];
+
+export default Databases;

@@ -17,11 +17,14 @@
 %% API
 -export([start_link/2, run/2, is_running/1, update/2, restart/2]).
 
+%% for upgrades
+-export([update/3]).
+
 %% gen_server callbacks
 -export([init/1, terminate/2, code_change/3]).
 -export([handle_call/3, handle_cast/2, handle_info/2]).
 
--include("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
 
 -record(st, {
     idx,
@@ -35,7 +38,7 @@ start_link(Index, Module) ->
 
 
 run(Pid, IdxState) ->
-    gen_server:call(Pid, {update, IdxState}, infinity).
+    gen_server:call(Pid, {update, IdxState}).
 
 
 is_running(Pid) ->
@@ -64,17 +67,17 @@ handle_call({update, _IdxState}, _From, #st{pid=Pid}=State) when is_pid(Pid) ->
     {reply, ok, State};
 handle_call({update, IdxState}, _From, #st{idx=Idx, mod=Mod}=State) ->
     Args = [Mod:get(db_name, IdxState), Mod:get(idx_name, IdxState)],
-    ?LOG_INFO("Starting index update for db: ~s idx: ~s", Args),
-    Pid = spawn_link(fun() -> update(Idx, Mod, IdxState) end),
+    couch_log:info("Starting index update for db: ~s idx: ~s", Args),
+    Pid = spawn_link(?MODULE, update, [Idx, Mod, IdxState]),
     {reply, ok, State#st{pid=Pid}};
 handle_call({restart, IdxState}, _From, #st{idx=Idx, mod=Mod}=State) ->
     Args = [Mod:get(db_name, IdxState), Mod:get(idx_name, IdxState)],
-    ?LOG_INFO("Restarting index update for db: ~s idx: ~s", Args),
+    couch_log:info("Restarting index update for db: ~s idx: ~s", Args),
     case is_pid(State#st.pid) of
         true -> couch_util:shutdown_sync(State#st.pid);
         _ -> ok
     end,
-    Pid = spawn_link(fun() -> update(Idx, State#st.mod, IdxState) end),
+    Pid = spawn_link(?MODULE, update, [Idx, State#st.mod, IdxState]),
     {reply, ok, State#st{pid=Pid}};
 handle_call(is_running, _From, #st{pid=Pid}=State) when is_pid(Pid) ->
     {reply, true, State};
@@ -89,12 +92,12 @@ handle_cast(_Mesg, State) ->
 handle_info({'EXIT', _, {updated, Pid, IdxState}}, #st{pid=Pid}=State) ->
     Mod = State#st.mod,
     Args = [Mod:get(db_name, IdxState), Mod:get(idx_name, IdxState)],
-    ?LOG_INFO("Index update finished for db: ~s idx: ~s", Args),
+    couch_log:info("Index update finished for db: ~s idx: ~s", Args),
     ok = gen_server:cast(State#st.idx, {updated, IdxState}),
     {noreply, State#st{pid=undefined}};
 handle_info({'EXIT', _, {reset, Pid}}, #st{idx=Idx, pid=Pid}=State) ->
     {ok, NewIdxState} = gen_server:call(State#st.idx, reset),
-    Pid2 = spawn_link(fun() -> update(Idx, State#st.mod, NewIdxState) end),
+    Pid2 = spawn_link(?MODULE, update, [Idx, State#st.mod, NewIdxState]),
     {noreply, State#st{pid=Pid2}};
 handle_info({'EXIT', Pid, normal}, #st{pid=Pid}=State) ->
     {noreply, State#st{pid=undefined}};
@@ -137,12 +140,20 @@ update(Idx, Mod, IdxState) ->
 
         NumChanges = couch_db:count_changes_since(Db, CurrSeq),
 
-        LoadDoc = fun(DocInfo) ->
-            #doc_info{
-                id=DocId,
-                high_seq=Seq,
-                revs=[#rev_info{deleted=Deleted} | _]
-            } = DocInfo,
+        GetSeq = fun
+            (#full_doc_info{update_seq=Seq}) -> Seq;
+            (#doc_info{high_seq=Seq}) -> Seq
+        end,
+
+        GetInfo = fun
+            (#full_doc_info{id=Id, update_seq=Seq, deleted=Del}=FDI) ->
+                {Id, Seq, Del, couch_doc:to_doc_info(FDI)};
+            (#doc_info{id=Id, high_seq=Seq, revs=[RI|_]}=DI) ->
+                {Id, Seq, RI#rev_info.deleted, DI}
+        end,
+
+        LoadDoc = fun(DI) ->
+            {DocId, Seq, Deleted, DocInfo} = GetInfo(DI),
 
             case {IncludeDesign, DocId} of
                 {false, <<"_design/", _/binary>>} ->
@@ -156,13 +167,13 @@ update(Idx, Mod, IdxState) ->
         end,
 
         Proc = fun(DocInfo, _, {IdxStateAcc, _}) ->
-            HighSeq = DocInfo#doc_info.high_seq,
-            case CommittedOnly and (HighSeq > DbCommittedSeq) of
+            case CommittedOnly and (GetSeq(DocInfo) > DbCommittedSeq) of
                 true ->
                     {stop, {IdxStateAcc, false}};
                 false ->
                     {Doc, Seq} = LoadDoc(DocInfo),
                     {ok, NewSt} = Mod:process_doc(Doc, Seq, IdxStateAcc),
+                    garbage_collect(),
                     {ok, {NewSt, true}}
             end
         end,

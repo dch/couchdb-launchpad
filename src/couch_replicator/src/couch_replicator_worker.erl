@@ -12,6 +12,7 @@
 
 -module(couch_replicator_worker).
 -behaviour(gen_server).
+-vsn(1).
 
 % public API
 -export([start_link/5]).
@@ -20,7 +21,7 @@
 -export([init/1, terminate/2, code_change/3]).
 -export([handle_call/3, handle_cast/2, handle_info/2]).
 
--include("couch_db.hrl").
+-include_lib("couch/include/couch_db.hrl").
 -include("couch_replicator_api_wrap.hrl").
 -include("couch_replicator.hrl").
 
@@ -31,9 +32,6 @@
 -define(MAX_BULK_ATTS_PER_DOC, 8).
 -define(STATS_DELAY, 10000000).              % 10 seconds (in microseconds)
 
--define(inc_stat(StatPos, Stats, Inc),
-    setelement(StatPos, Stats, element(StatPos, Stats) + Inc)).
-
 -import(couch_replicator_utils, [
     open_db/1,
     close_db/1,
@@ -42,7 +40,6 @@
 ]).
 -import(couch_util, [
     to_binary/1,
-    get_value/2,
     get_value/3
 ]).
 
@@ -62,7 +59,7 @@
     writer = nil,
     pending_fetch = nil,
     flush_waiter = nil,
-    stats = #rep_stats{},
+    stats = couch_replicator_stats:new(),
     source_db_compaction_notifier = nil,
     target_db_compaction_notifier = nil,
     batch = #batch{}
@@ -236,7 +233,7 @@ queue_fetch_loop(Source, Target, Parent, Cp, ChangesManager) ->
         close_db(Target2),
         ok = gen_server:call(Cp, {report_seq_done, ReportSeq, Stats}, infinity),
         erlang:put(last_stats_report, now()),
-        ?LOG_DEBUG("Worker reported completion of seq ~p", [ReportSeq]),
+        couch_log:debug("Worker reported completion of seq ~p", [ReportSeq]),
         queue_fetch_loop(Source, Target, Parent, Cp, ChangesManager)
     end.
 
@@ -247,9 +244,9 @@ local_process_batch([], _Cp, _Src, _Tgt, #batch{docs = []}, Stats) ->
 local_process_batch([], Cp, Source, Target, #batch{docs = Docs, size = Size}, Stats) ->
     case Target of
     #httpdb{} ->
-        ?LOG_DEBUG("Worker flushing doc batch of size ~p bytes", [Size]);
+        couch_log:debug("Worker flushing doc batch of size ~p bytes", [Size]);
     #db{} ->
-        ?LOG_DEBUG("Worker flushing doc batch of ~p docs", [Size])
+        couch_log:debug("Worker flushing doc batch of ~p docs", [Size])
     end,
     Stats2 = flush_docs(Target, Docs),
     Stats3 = couch_replicator_utils:sum_stats(Stats, Stats2),
@@ -298,8 +295,13 @@ fetch_doc(Source, {Id, Revs, PAs}, DocHandler, Acc) ->
         couch_replicator_api_wrap:open_doc_revs(
             Source, Id, Revs, [{atts_since, PAs}, latest], DocHandler, Acc)
     catch
+    throw:missing_doc ->
+        couch_log:error("Retrying fetch and update of document `~s` as it is "
+            "unexpectedly missing. Missing revisions are: ~s",
+            [Id, couch_doc:revs_to_strs(Revs)]),
+        couch_replicator_api_wrap:open_doc_revs(Source, Id, Revs, [latest], DocHandler, Acc);
     throw:{missing_stub, _} ->
-        ?LOG_ERROR("Retrying fetch and update of document `~s` due to out of "
+        couch_log:error("Retrying fetch and update of document `~s` due to out of "
             "sync attachment stubs. Missing revisions are: ~s",
             [Id, couch_doc:revs_to_strs(Revs)]),
         couch_replicator_api_wrap:open_doc_revs(Source, Id, Revs, [latest], DocHandler, Acc)
@@ -307,20 +309,20 @@ fetch_doc(Source, {Id, Revs, PAs}, DocHandler, Acc) ->
 
 
 local_doc_handler({ok, Doc}, {Target, DocList, Stats, Cp}) ->
-    Stats2 = ?inc_stat(#rep_stats.docs_read, Stats, 1),
+    Stats2 = couch_replicator_stats:increment(docs_read, Stats),
     case batch_doc(Doc) of
     true ->
         {ok, {Target, [Doc | DocList], Stats2, Cp}};
     false ->
-        ?LOG_DEBUG("Worker flushing doc with attachments", []),
+        couch_log:debug("Worker flushing doc with attachments", []),
         Target2 = open_db(Target),
         Success = (flush_doc(Target2, Doc) =:= ok),
         close_db(Target2),
         Stats3 = case Success of
         true ->
-            ?inc_stat(#rep_stats.docs_written, Stats2, 1);
+            couch_replicator_stats:increment(docs_written, Stats2);
         false ->
-            ?inc_stat(#rep_stats.doc_write_failures, Stats2, 1)
+            couch_replicator_stats:increment(doc_write_failures, Stats2)
         end,
         Stats4 = maybe_report_stats(Cp, Stats3),
         {ok, {Target, DocList, Stats4, Cp}}
@@ -337,29 +339,29 @@ remote_doc_handler({ok, Doc}, {Parent, Target} = Acc) ->
     % source. The data property of each attachment is a function that starts
     % streaming the attachment data from the remote source, therefore it's
     % convenient to call it ASAP to avoid ibrowse inactivity timeouts.
-    Stats = #rep_stats{docs_read = 1},
-    ?LOG_DEBUG("Worker flushing doc with attachments", []),
+    Stats = couch_replicator_stats:new([{docs_read, 1}]),
+    couch_log:debug("Worker flushing doc with attachments", []),
     Target2 = open_db(Target),
     Success = (flush_doc(Target2, Doc) =:= ok),
     close_db(Target2),
     {Result, Stats2} = case Success of
     true ->
-        {{ok, Acc}, ?inc_stat(#rep_stats.docs_written, Stats, 1)};
+        {{ok, Acc}, couch_replicator_stats:increment(docs_written, Stats)};
     false ->
-        {{skip, Acc}, ?inc_stat(#rep_stats.doc_write_failures, Stats, 1)}
+        {{skip, Acc}, couch_replicator_stats:increment(doc_write_failures, Stats)}
     end,
     ok = gen_server:call(Parent, {add_stats, Stats2}, infinity),
     Result;
-remote_doc_handler(_, Acc) ->
-    {ok, Acc}.
+remote_doc_handler({{not_found, missing}, _}, _Acc) ->
+    throw(missing_doc).
 
 
 spawn_writer(Target, #batch{docs = DocList, size = Size}) ->
     case {Target, Size > 0} of
     {#httpdb{}, true} ->
-        ?LOG_DEBUG("Worker flushing doc batch of size ~p bytes", [Size]);
+        couch_log:debug("Worker flushing doc batch of size ~p bytes", [Size]);
     {#db{}, true} ->
-        ?LOG_DEBUG("Worker flushing doc batch of ~p docs", [Size]);
+        couch_log:debug("Worker flushing doc batch of ~p docs", [Size]);
     _ ->
         ok
     end,
@@ -377,7 +379,7 @@ after_full_flush(#state{stats = Stats, flush_waiter = Waiter} = State) ->
     gen_server:reply(Waiter, {ok, Stats}),
     erlang:put(last_stats_report, now()),
     State#state{
-        stats = #rep_stats{},
+        stats = couch_replicator_stats:new(),
         flush_waiter = nil,
         writer = nil,
         batch = #batch{}
@@ -390,8 +392,8 @@ maybe_flush_docs(Doc,State) ->
         stats = Stats, cp = Cp
     } = State,
     {Batch2, WStats} = maybe_flush_docs(Target, Batch, Doc),
-    Stats2 = couch_replicator_utils:sum_stats(Stats, WStats),
-    Stats3 = ?inc_stat(#rep_stats.docs_read, Stats2, 1),
+    Stats2 = couch_replicator_stats:sum_stats(Stats, WStats),
+    Stats3 = couch_replicator_stats:increment(docs_read, Stats2),
     Stats4 = maybe_report_stats(Cp, Stats3),
     State#state{stats = Stats4, batch = Batch2}.
 
@@ -400,33 +402,35 @@ maybe_flush_docs(#httpdb{} = Target, Batch, Doc) ->
     #batch{docs = DocAcc, size = SizeAcc} = Batch,
     case batch_doc(Doc) of
     false ->
-        ?LOG_DEBUG("Worker flushing doc with attachments", []),
+        couch_log:debug("Worker flushing doc with attachments", []),
         case flush_doc(Target, Doc) of
         ok ->
-            {Batch, #rep_stats{docs_written = 1}};
+            {Batch, couch_replicator_stats:new([{docs_written, 1}])};
         _ ->
-            {Batch, #rep_stats{doc_write_failures = 1}}
+            {Batch, couch_replicator_stats:new([{doc_write_failures, 1}])}
         end;
     true ->
         JsonDoc = ?JSON_ENCODE(couch_doc:to_json_obj(Doc, [revs, attachments])),
         case SizeAcc + iolist_size(JsonDoc) of
         SizeAcc2 when SizeAcc2 > ?DOC_BUFFER_BYTE_SIZE ->
-            ?LOG_DEBUG("Worker flushing doc batch of size ~p bytes", [SizeAcc2]),
+            couch_log:debug("Worker flushing doc batch of size ~p bytes", [SizeAcc2]),
             Stats = flush_docs(Target, [JsonDoc | DocAcc]),
             {#batch{}, Stats};
         SizeAcc2 ->
-            {#batch{docs = [JsonDoc | DocAcc], size = SizeAcc2}, #rep_stats{}}
+            Stats = couch_replicator_stats:new(),
+            {#batch{docs = [JsonDoc | DocAcc], size = SizeAcc2}, Stats}
         end
     end;
 
 maybe_flush_docs(#db{} = Target, #batch{docs = DocAcc, size = SizeAcc}, Doc) ->
     case SizeAcc + 1 of
     SizeAcc2 when SizeAcc2 >= ?DOC_BUFFER_LEN ->
-        ?LOG_DEBUG("Worker flushing doc batch of ~p docs", [SizeAcc2]),
+        couch_log:debug("Worker flushing doc batch of ~p docs", [SizeAcc2]),
         Stats = flush_docs(Target, [Doc | DocAcc]),
         {#batch{}, Stats};
     SizeAcc2 ->
-        {#batch{docs = [Doc | DocAcc], size = SizeAcc2}, #rep_stats{}}
+        Stats = couch_replicator_stats:new(),
+        {#batch{docs = [Doc | DocAcc], size = SizeAcc2}, Stats}
     end.
 
 
@@ -435,13 +439,14 @@ batch_doc(#doc{atts = []}) ->
 batch_doc(#doc{atts = Atts}) ->
     (length(Atts) =< ?MAX_BULK_ATTS_PER_DOC) andalso
         lists:all(
-            fun(#att{disk_len = L, data = Data}) ->
+            fun(Att) ->
+                [L, Data] = couch_att:fetch([disk_len, data], Att),
                 (L =< ?MAX_BULK_ATT_SIZE) andalso (Data =/= stub)
             end, Atts).
 
 
 flush_docs(_Target, []) ->
-    #rep_stats{};
+    couch_replicator_stats:new();
 
 flush_docs(Target, DocList) ->
     {ok, Errors} = couch_replicator_api_wrap:update_docs(
@@ -449,35 +454,35 @@ flush_docs(Target, DocList) ->
     DbUri = couch_replicator_api_wrap:db_uri(Target),
     lists:foreach(
         fun({Props}) ->
-            ?LOG_ERROR("Replicator: couldn't write document `~s`, revision `~s`,"
+            couch_log:error("Replicator: couldn't write document `~s`, revision `~s`,"
                 " to target database `~s`. Error: `~s`, reason: `~s`.",
                 [get_value(id, Props, ""), get_value(rev, Props, ""), DbUri,
                     get_value(error, Props, ""), get_value(reason, Props, "")])
         end, Errors),
-    #rep_stats{
-        docs_written = length(DocList) - length(Errors),
-        doc_write_failures = length(Errors)
-    }.
+    couch_replicator_stats:new([
+        {docs_written, length(DocList) - length(Errors)},
+        {doc_write_failures, length(Errors)}
+    ]).
 
 flush_doc(Target, #doc{id = Id, revs = {Pos, [RevId | _]}} = Doc) ->
     try couch_replicator_api_wrap:update_doc(Target, Doc, [], replicated_changes) of
     {ok, _} ->
         ok;
     Error ->
-        ?LOG_ERROR("Replicator: error writing document `~s` to `~s`: ~s",
+        couch_log:error("Replicator: error writing document `~s` to `~s`: ~s",
             [Id, couch_replicator_api_wrap:db_uri(Target), couch_util:to_binary(Error)]),
         Error
     catch
     throw:{missing_stub, _} = MissingStub ->
         throw(MissingStub);
     throw:{Error, Reason} ->
-        ?LOG_ERROR("Replicator: couldn't write document `~s`, revision `~s`,"
+        couch_log:error("Replicator: couldn't write document `~s`, revision `~s`,"
             " to target database `~s`. Error: `~s`, reason: `~s`.",
             [Id, couch_doc:rev_to_str({Pos, RevId}),
                 couch_replicator_api_wrap:db_uri(Target), to_binary(Error), to_binary(Reason)]),
         {error, Error};
     throw:Err ->
-        ?LOG_ERROR("Replicator: couldn't write document `~s`, revision `~s`,"
+        couch_log:error("Replicator: couldn't write document `~s`, revision `~s`,"
             " to target database `~s`. Error: `~s`.",
             [Id, couch_doc:rev_to_str({Pos, RevId}),
                 couch_replicator_api_wrap:db_uri(Target), to_binary(Err)]),
@@ -486,20 +491,23 @@ flush_doc(Target, #doc{id = Id, revs = {Pos, [RevId | _]}} = Doc) ->
 
 
 find_missing(DocInfos, Target) ->
-    {IdRevs, AllRevsCount} = lists:foldr(
-        fun(#doc_info{id = Id, revs = RevsInfo}, {IdRevAcc, CountAcc}) ->
-            Revs = [Rev || #rev_info{rev = Rev} <- RevsInfo],
-            {[{Id, Revs} | IdRevAcc], CountAcc + length(Revs)}
-        end,
-        {[], 0}, DocInfos),
+    {IdRevs, AllRevsCount} = lists:foldr(fun
+                (#doc_info{revs = []}, {IdRevAcc, CountAcc}) ->
+                    {IdRevAcc, CountAcc};
+                (#doc_info{id = Id, revs = RevsInfo}, {IdRevAcc, CountAcc}) ->
+                    Revs = [Rev || #rev_info{rev = Rev} <- RevsInfo],
+                    {[{Id, Revs} | IdRevAcc], CountAcc + length(Revs)}
+            end, {[], 0}, DocInfos),
+
+
     {ok, Missing} = couch_replicator_api_wrap:get_missing_revs(Target, IdRevs),
     MissingRevsCount = lists:foldl(
         fun({_Id, MissingRevs, _PAs}, Acc) -> Acc + length(MissingRevs) end,
         0, Missing),
-    Stats = #rep_stats{
-        missing_checked = AllRevsCount,
-        missing_found = MissingRevsCount
-    },
+    Stats = couch_replicator_stats:new([
+        {missing_checked, AllRevsCount},
+        {missing_found, MissingRevsCount}
+    ]),
     {Missing, Stats}.
 
 
@@ -509,7 +517,7 @@ maybe_report_stats(Cp, Stats) ->
     true ->
         ok = gen_server:call(Cp, {add_stats, Stats}, infinity),
         erlang:put(last_stats_report, Now),
-        #rep_stats{};
+        couch_replicator_stats:new();
     false ->
         Stats
     end.

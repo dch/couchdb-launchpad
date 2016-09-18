@@ -10,23 +10,27 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 /*ALL DOCS TABLE*/
-tr.all-docs-item {
-  border: none;
-  background: transparent;
-    .btn-group {
-        position: absolute;
-        right: 0;
-        top: 6px;
-    }
-}
+@import "../../../../../assets/less/variables.less";
+@import "../../../../../assets/less/bootstrap/variables.less";
+@import "../../../../../assets/less/bootstrap/mixins.less";
+@import "query-options.less";
+@import "view-editor.less";
+@import "changes.less";
+@import "sidenav.less";
+@import "index-results.less";
+@import "doc-editor.less";
+@import "header.less";
+@import "revision-browser";
+
+
 button.beautify {
-	margin-top: 20px;
+  margin-top: 20px;
 }
 
 .toggle-btns {
-    label{
-        margin-right: 0;
-    }
+  label {
+    margin-right: 0;
+  }
 }
 
 #per-page {
@@ -34,93 +38,113 @@ button.beautify {
 
   #select-per-page {
     margin-top: 10px;
+    width: 60px;
   }
-
 }
 
-
-#query div.controls-group.well{
-    height: 150px;
-}
-
-/** used in all_docs_list.html **/
-.view {
-    table td div {
-        position: relative;
-    }
-
-    table td div div {
-        display: none;
-        line-height: 1;
-        position: absolute;
-        right: 4px;
-        top: 4px;
-    }
-
-    table td div:hover div a.edits {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    table td div:hover div {
-        display: block;
-    }
+#query div.controls-group.well {
+  height: 180px;
+  margin-right: 17px;
 }
 
 /** used in view_editor.html **/
-.design-doc-group{
-    .span3 { margin: 0;}
-    #new-ddoc-section {
-        margin-top: 10px;
-        label{ width: 100px}
-        .controls{
-            margin-left: 100px;
-        }
+.design-doc-group {
+  .span3 {
+    margin: 0;
+  }
+  #new-ddoc-section {
+    margin-top: 10px;
+    width: 325px;
+    label {
+      width: 100px
     }
-}
-
-/** used in changes.html **/
-.change-box {
-  margin: 0 20px 20px 20px;
-}
-
-.change-wrapper {
-  margin-top: 57px;
-  border-bottom: 1px solid #dddddd;
-  &:last-child {
-    border-bottom: none;
-  }
-  .row-fluid {
-    padding: 4px 0 4px 0;
-  }
-  .row-fluid:first {
-    padding: 0px 0 4px 0;
-  }
-  a:hover.js-copy {
-    text-decoration: none;
-  }
-  .js-json-container {
-    display: none;
-  }
-  .span2 {
-    font-weight: bold;
+    .controls {
+      margin-left: 100px;
+    }
   }
 }
 
-#map-function, #reduce-function{
+#map-function, #reduce-function {
+  width: 100%;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+.metadata-page {
+  font-size: 14px;
+  padding: 20px;
+
+  .preheading {
+    font-size: 14px;
+  }
+  h2 {
+    margin: 5px 0 15px;
+  }
+  h3 {
+    font-size: 22px;
+    margin-top: 12px;
+  }
+  header {
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 10px;
+  }
+  .icon-question-sign {
+    margin-left: 4px;
+  }
+  section {
+    line-height: 21px;
     width: 100%;
-    font-size: 16px;
+
+    ul {
+      list-style-type: none;
+      margin: 0 0 15px;
+      padding: 0;
+    }
+    .item-title {
+      margin-right: 6px;
+    }
+  }
 }
 
-#editor-container {
-    width: 1316px;
-    height: 688px;
-    font-size: 16px;
+button.delete {
+  margin-left: 4px;
+}
+
+button.string-edit {
+  position: absolute;
+  padding: 0;
+  z-index: 1000;
+  width: 20px;
+  left: 22px;
+
+  i.icon {
+    margin-right: 0px;
+  }
+}
+
+button.string-edit[disabled] {
+  display: none;
+}
+
+#string-edit-modal {
+  div.modal {
+    overflow-x: visible;
+    width: initial;
+    min-width: 560px;
+  }
+}
+
+#string-editor-wrapper {
+  height: 500px;
+  width: 100%;
+
+  &>div {
+    height: 100%;
+  }
 }
 
 #keys-input {
-  display: inline-block;
-  width: 35%;
+  width: 100%;
 }
 
 #keys-error {
@@ -131,4 +155,70 @@ button.beautify {
   word-wrap: break-word;
 }
 
+#dashboard-upper-content {
+  .js-query-keys-wrapper {
+    padding-top: 0;
+  }
 
+  /** used in query-options.html**/
+  .custom-inputs {
+    .row-fluid {
+      padding-top: 20px;
+      .radio, .checkbox {
+        padding-left: 0;
+      }
+      .checkbox.inline,
+      #skipRows {
+        margin-bottom: 0;
+        padding: 6px;
+      }
+    }
+  }
+}
+
+.nav-list {
+  border-top: none;
+}
+
+.end-of-results {
+  margin-bottom: 30px;
+
+  .muted {
+    margin-bottom: 0px;
+  }
+}
+
+body #dashboard #react-headerbar {
+  float: left;
+  overflow: hidden;
+}
+
+.doc-editor-extension-icons {
+  display: inline-block;
+}
+
+.pagination-footer {
+  .footer-table-control label {
+    margin: 0;
+    padding: 0;
+    line-height: initial;
+  }
+
+  .footer-table-control {
+    float: right;
+    display: inline-block;
+    input {
+      margin: 0 5px 0 15px;
+    }
+    margin: 17px 40px 17px 20px;
+  }
+
+  .footer-doc-control-prioritized-wrapper {
+    margin-right: 18px;
+  }
+
+  .page-controls {
+    border-right: solid 1px @btnBorder;
+  }
+
+}
