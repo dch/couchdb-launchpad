@@ -9,10 +9,11 @@ Build-Depends: autoconf-archive,
                dh-autoreconf,
                dh-systemd,
                erlang-crypto,
-               erlang-dev (>= 1:14.b.4),
+               erlang-dev (>= 1:18),
                erlang-eunit,
                erlang-inets,
                erlang-os-mon,
+               erlang-reltool,
                erlang-syntax-tools,
                erlang-xmerl,
                help2man,
@@ -89,5 +90,5 @@ Description: RESTful document oriented database - system-wide instance
  client libraries that make this even easier for a variety of programming
  languages and environments.
  .
- This package adds the Upstart job and other items needed for a system-wide
+ This package adds the systemd unit and other items needed for a system-wide
  CouchDB instance that is started at boot.

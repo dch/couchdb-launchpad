@@ -1,5 +1,5 @@
 Upstream-Name: CouchDB
-Upstream-Maintainer: Noah Slater <nslater@apache.org>
+Upstream-Maintainer: Dave Cottlehuber <dch@apache.org>
 Upstream-Source: http://couchdb.apache.org/downloads.html
 
 Files: *
